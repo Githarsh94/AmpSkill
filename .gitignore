@@ -1,0 +1,6 @@
+Client/node_modules
+Client/.next
+Client/.env.local
+Server/node_modules
+Server/.env
+Server/src/config/serviceAccountKey.json
