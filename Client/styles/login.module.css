@@ -1,0 +1,97 @@
+/* login.module.css */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #F0F4F8;
+}
+
+.loginBox {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 28rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.text {
+  color: #4A5568;
+  margin-bottom: 0.5rem;
+}
+
+.roleSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.role {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.375rem;
+}
+
+.button {
+  background-color: #E2E8F0;
+  color: #4A5568;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #CBD5E0;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.hr {
+  flex: 1;
+  border: 0;
+  height: 1px;
+  background-color: #E2E8F0;
+}
+
+.orText {
+  padding: 0 1rem;
+  color: #A0AEC0;
+}
+
+.googleBtn {
+  margin-top: 1.5rem;
+}
+
+.signup {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #A0AEC0;
+  margin-top: 1rem;
+}
+
+.signupLink {
+  color: #3182CE;
+  text-decoration: none;
+}
+
+.signupLink:hover {
+  text-decoration: underline;
+}

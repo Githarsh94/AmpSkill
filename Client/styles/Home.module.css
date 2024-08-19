@@ -1,0 +1,127 @@
+/* Home.module.css */
+
+
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background-color: #ffffff;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .authButtons button {
+    margin-left: 15px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .authButtons .login {
+    background-color: transparent;
+    color: #5cb85c;
+    border: 2px solid #5cb85c;
+  }
+  
+  .authButtons .getStarted {
+    background-color: #5cb85c;
+    color: white;
+  }
+  
+  .main {
+    padding: 50px 100px;
+  }
+  
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .heroContent {
+    max-width: 600px;
+  }
+  
+  .heroContent h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .heroContent p {
+    font-size: 18px;
+    margin-bottom: 30px;
+  }
+  
+  .heroButtons button {
+    margin-right: 20px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .heroButtons .signUp {
+    background-color: #5cb85c;
+    color: white;
+  }
+  
+  .heroButtons .requestDemo {
+    background-color: transparent;
+    color: #5cb85c;
+    border: 2px solid #5cb85c;
+  }
+  
+  .tabs {
+    margin-top: 50px;
+    display: flex;
+    border-bottom: 2px solid #cccccc;
+  }
+  
+  .tab {
+    margin-right: 50px;
+    padding-bottom: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .tab:hover,
+  .tab.active {
+    border-bottom-color: #5cb85c;
+  }
+  
+  .features {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+  }
+  
+  .featureCard {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    width: 30%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .featureCard h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 22px;
+  }
+  
+  .featureCard p {
+    font-size: 16px;
+    color: #555555;
+  }
+  

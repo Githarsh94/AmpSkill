@@ -1,0 +1,126 @@
+/* signup.module.css */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.signupBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-width: 400px;
+}
+
+.title {
+    font-size: 2em;
+    color: #333;
+    /* margin-bottom: 20px; */
+    font-family: 'Roboto', sans-serif;
+}
+
+.formContainer {
+    width: 100%;
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.roleSelection {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+.roleSelection label {
+    color: #555;
+    font-family: 'Roboto', sans-serif;
+}
+
+.signupButton {
+    width: 100%;
+    padding: 12px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-family: 'Roboto', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.signupButton:hover {
+    background-color: #45a049;
+}
+
+.orKeyword {
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    color: #888;
+}
+
+.googleContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.googleButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    font-family: 'Roboto', sans-serif;
+}
+
+.googleButton:hover {
+    background-color: #357ae8;
+}
+
+.imageContainer {
+    display: none; /* Hide for now on small screens */
+    margin-left: 20px;
+}
+
+.signupImage {
+    /* width: 100%; */
+    min-width: 90%;
+    min-height: 100%;
+    /* margin-right: 5%; */
+    border-radius: 8px;
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+    .container {
+        flex-direction: row;
+    }
+
+    .imageContainer {
+        display: block;
+    }
+}

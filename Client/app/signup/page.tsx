@@ -2,23 +2,25 @@
 
 import { useState } from 'react';
 import { auth } from '../../lib/firebaseConfig';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
 import styles from '../../styles/signup.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function Login() {
+export default function SignUp() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
 
-    const handleGoogleLogin = async (role: string) => {
+    const handleGoogleSignUp = async (role: string) => {
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
 
-            const response = await fetch('http://localhost:3000/api/auth/google-login', {
+            const response = await fetch('http://localhost:3000/api/auth/google-signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,27 +29,29 @@ export default function Login() {
             });
 
             const data = await response.json();
-
             if (!response.ok) {
-                // toast.error(data.message);
+                setError(data.message);
+                console.error(data.message);
                 throw new Error(data.message);
             }
 
+            setMessage(data.message);
             toast.success(data.message);
-        } catch (error) {
-            console.error('Error during Google login:', error);
-            toast.error(''+error);
+            // Optionally redirect to login page
+        } catch (error: any) {
+            console.error('Error during Google sign-up:', error);
+            toast.error('Error during Google sign-up: ' + error.message);
         }
     };
 
-    const handleManualLogin = async () => {
+    const handleManualSignUp = async () => {
         if (!role) {
             toast.error('Please select a role.');
             return;
         }
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch('http://localhost:3000/api/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,17 +60,16 @@ export default function Login() {
             });
 
             const data = await response.json();
-
             if (response.ok) {
-                toast.success('Login Successful');
-                // setTimeout(() => window.location.href = '/dashboard', 2000);
+                toast.success('Account created successfully. Please log in.');
+                // Optionally redirect to login page
             } else {
-                // toast.error(data.message);
+                console.error(data.message);
                 throw new Error(data.message);
             }
-        } catch (error) {
-            console.error('Error during manual login:', error);
-            toast.error(''+error);
+        } catch (error: any) {
+            console.error('Error during manual sign-up:', error);
+            toast.error('Failed to sign up. Please try again: ' + error.message);
         }
     };
 
@@ -121,17 +124,17 @@ export default function Login() {
                             Student
                         </label>
                     </div>
-                    <button className={styles.signupButton} onClick={handleManualLogin}>Login</button>
+                    <button className={styles.signupButton} onClick={handleManualSignUp}>Sign Up</button>
                     <span className={styles.orKeyword}>or</span>
                     <div className={styles.googleContainer}>
-                        <button className={styles.googleButton} onClick={() => handleGoogleLogin('admin')}>
-                          Login as Admin with Google
+                        <button className={styles.googleButton} onClick={() => handleGoogleSignUp('admin')}>
+                            Sign Up as Admin with Google
                         </button>
-                        <button className={styles.googleButton} onClick={() => handleGoogleLogin('teacher')}>
-                          Login as Teacher with Google
+                        <button className={styles.googleButton} onClick={() => handleGoogleSignUp('teacher')}>
+                            Sign Up as Teacher with Google
                         </button>
-                        <button className={styles.googleButton} onClick={() => handleGoogleLogin('student')}>
-                          Login as Student with Google
+                        <button className={styles.googleButton} onClick={() => handleGoogleSignUp('student')}>
+                            Sign Up as Student with Google
                         </button>
                     </div>
                 </div>

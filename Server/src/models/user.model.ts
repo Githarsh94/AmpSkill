@@ -1,16 +1,27 @@
-// src/models/user.model.ts
 import { Schema, model, Document } from 'mongoose';
 
-interface IUser extends Document {
+export interface IUser extends Document {
+    uid: string;
     email: string;
+    name: string;
+    picture?: string;
     role: 'admin' | 'teacher' | 'student';
-    batches: Schema.Types.ObjectId[];
+    provider: string;
+    batch: Schema.Types.ObjectId;
+    createdAt: Date;
 }
 
-const userSchema = new Schema<IUser>({
+const UserSchema = new Schema<IUser>({
+    uid: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
-    role: { type: String },
-    batches: [{ type: Schema.Types.ObjectId, ref: 'Batch' }],
+    name: { type: String, required: true },
+    picture: { type: String },
+    role: { type: String, enum: ['admin', 'teacher', 'student'], required: true },
+    provider: { type: String, required: true },
+    batch: [{ type: Schema.Types.ObjectId, ref: 'Batch' }],
+    createdAt: { type: Date, default: Date.now },
 });
 
-export const User = model<IUser>('User', userSchema);
+const User = model<IUser>('User', UserSchema);
+
+export { User };
