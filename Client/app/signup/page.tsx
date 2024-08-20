@@ -11,8 +11,6 @@ export default function SignUp() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
 
     const handleGoogleSignUp = async (role: string) => {
         const provider = new GoogleAuthProvider();
@@ -30,17 +28,14 @@ export default function SignUp() {
 
             const data = await response.json();
             if (!response.ok) {
-                setError(data.message);
                 console.error(data.message);
                 throw new Error(data.message);
             }
-
-            setMessage(data.message);
             toast.success(data.message);
             // Optionally redirect to login page
         } catch (error: any) {
             console.error('Error during Google sign-up:', error);
-            toast.error('Error during Google sign-up: ' + error.message);
+            toast.error(error.message);
         }
     };
 
@@ -60,16 +55,14 @@ export default function SignUp() {
             });
 
             const data = await response.json();
-            if (response.ok) {
-                toast.success('Account created successfully. Please log in.');
-                // Optionally redirect to login page
-            } else {
+            if (!response.ok) {
                 console.error(data.message);
                 throw new Error(data.message);
             }
+            toast.success('Account created successfully. Please log in.');
         } catch (error: any) {
             console.error('Error during manual sign-up:', error);
-            toast.error('Failed to sign up. Please try again: ' + error.message);
+            toast.error(error.message);
         }
     };
 
@@ -142,16 +135,16 @@ export default function SignUp() {
             <div className={styles.imageContainer}>
                 <img src="/images/signup-look.jpg" alt="Illustration" className={styles.signupImage} />
             </div>
-            <ToastContainer 
-                position="top-center" 
-                autoClose={3000} 
-                hideProgressBar={false} 
-                newestOnTop={false} 
-                closeOnClick 
-                rtl={false} 
-                pauseOnFocusLoss 
-                draggable 
-                pauseOnHover 
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
                 theme="colored"
             />
         </div>

@@ -34,9 +34,9 @@ export default function Login() {
             }
 
             toast.success(data.message);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error during Google login:', error);
-            toast.error(''+error);
+            toast.error(error.message);
         }
     };
 
@@ -64,9 +64,9 @@ export default function Login() {
                 // toast.error(data.message);
                 throw new Error(data.message);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error during manual login:', error);
-            toast.error(''+error);
+            toast.error(error.message);
         }
     };
 
@@ -125,13 +125,13 @@ export default function Login() {
                     <span className={styles.orKeyword}>or</span>
                     <div className={styles.googleContainer}>
                         <button className={styles.googleButton} onClick={() => handleGoogleLogin('admin')}>
-                          Login as Admin with Google
+                            Login as Admin with Google
                         </button>
                         <button className={styles.googleButton} onClick={() => handleGoogleLogin('teacher')}>
-                          Login as Teacher with Google
+                            Login as Teacher with Google
                         </button>
                         <button className={styles.googleButton} onClick={() => handleGoogleLogin('student')}>
-                          Login as Student with Google
+                            Login as Student with Google
                         </button>
                     </div>
                 </div>
@@ -139,16 +139,16 @@ export default function Login() {
             <div className={styles.imageContainer}>
                 <img src="/images/signup-look.jpg" alt="Illustration" className={styles.signupImage} />
             </div>
-            <ToastContainer 
-                position="top-center" 
-                autoClose={3000} 
-                hideProgressBar={false} 
-                newestOnTop={false} 
-                closeOnClick 
-                rtl={false} 
-                pauseOnFocusLoss 
-                draggable 
-                pauseOnHover 
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
                 theme="colored"
             />
         </div>

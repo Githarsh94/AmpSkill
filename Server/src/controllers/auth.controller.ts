@@ -30,7 +30,7 @@ export const AuthController = {
             });
 
             await newUser.save();
-            res.status(201).json({ message: 'User registered successfully', user: newUser });
+            res.status(201).json({ message: `User registered successfully as ${role}.Please log in.` });
         } catch (error) {
             res.status(500).json({ message: (error as Error).message });
         }
@@ -49,16 +49,16 @@ export const AuthController = {
             // Check if user exists in MongoDB
             const existingUser = await User.findOne({ email });
             if (!existingUser) {
-                return res.status(404).json({ message: 'User not found in database.' });
+                return res.status(404).json({ message: 'User not found.' });
             }
 
             // Compare roles
             const { role } = req.body;
             if (existingUser.role !== role) {
-                return res.status(403).json({ message: `Role mismatch: Expected ${existingUser.role}, got ${role}. `});
+                return res.status(403).json({ message: `Role mismatch: Expected ${existingUser.role}, got ${role}. ` });
             }
 
-            res.status(200).json({ message: 'User logged in successfully', user: existingUser });
+            res.status(200).json({ message: `Successfully logged in as ${role}` });
         } catch (error) {
             res.status(500).json({ message: (error as Error).message });
         }
@@ -94,7 +94,7 @@ export const AuthController = {
             }
 
             // Notify the user that they have registered successfully
-            res.status(200).json({ message: `User registered as ${role}. Please log in. `});
+            res.status(200).json({ message: `User registered as ${role}. Please log in. ` });
         } catch (error) {
             res.status(500).json({ message: (error as Error).message });
         }
@@ -110,17 +110,17 @@ export const AuthController = {
             const { email } = decodedToken;
 
             // Find the user in the database
-            const user = await User.findOne({ email });
+            const existingUser = await User.findOne({ email });
 
-            if (!user) {
+            if (!existingUser) {
                 return res.status(404).json({ message: 'User not found' });
             }
 
             // Check if the role matches
-            if (user.role === role) {
-                res.status(200).json({ message: `Successfully logged in as ${role} `});
+            if (existingUser.role === role) {
+                res.status(200).json({ message: `Successfully logged in as ${role}` });
             } else {
-                res.status(400).json({ message: 'Role does not match the registered role' });
+                res.status(400).json({ message: `Role mismatch: Expected ${existingUser.role}, got ${role}. ` });
             }
         } catch (error) {
             res.status(500).json({ message: (error as Error).message });
