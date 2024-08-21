@@ -2,13 +2,11 @@
 import { Router } from 'express';
 import { AdminController } from '../controllers/admin.controller';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
-import { RoleMiddleware } from '../middlewares/role.middleware';
 
 const router = Router();
 
 router.use(AuthMiddleware.isAuthenticated);
-router.use(RoleMiddleware.isAdmin);
 
-router.post('/assign-teachers', AdminController.assignTeachersToBatch);
-
+router.post('/dashboard/assign-teachers', AdminController.assignTeachersToBatch);
+router.post('/dashboard/profile', AdminController.profile);
 export default router;

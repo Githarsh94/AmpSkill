@@ -1,10 +1,13 @@
 import React from 'react';
 import '../styles/globals.css';
+import { AuthProvider } from '../context/AuthContext';
+
 
 export const metadata = {
   title: 'AmpSkill',
   description: 'Online Assessment Platform',
 };
+
 
 export default function RootLayout({
   children,
@@ -13,7 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

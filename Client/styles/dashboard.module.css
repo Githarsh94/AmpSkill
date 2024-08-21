@@ -1,0 +1,83 @@
+/* styles/dashboard.module.css */
+
+.container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.sidebar {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-right: 1px solid #e5e5e5;
+    border-radius: 15px;
+    margin: 20px;
+}
+
+.sidebarButton {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebarButton:hover {
+    background-color: #0056b3;
+}
+
+.mainContent {
+    flex: 3;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.userInfo {
+    padding: 20px;
+    background-color: #eef3f7;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.profileSection {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.profileImage {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #007BFF;
+}
+
+.datetimeContainer {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}

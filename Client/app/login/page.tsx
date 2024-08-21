@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { auth } from '../../lib/firebaseConfig';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../lib/firebaseConfig';
 import styles from '../../styles/signup.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,12 +13,15 @@ export default function Login() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
+    const { setEmail: setAuthEmail } = useAuth(); // Access the context
+    const Router = useRouter();
 
     const handleGoogleLogin = async (role: string) => {
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
+            const userEmail = result.user.email; // Get the email
 
             const response = await fetch('http://localhost:3000/api/auth/google-login', {
                 method: 'POST',
@@ -29,11 +34,12 @@ export default function Login() {
             const data = await response.json();
 
             if (!response.ok) {
-                // toast.error(data.message);
                 throw new Error(data.message);
             }
 
+            setAuthEmail(userEmail || ""); // Store the email in context
             toast.success(data.message);
+            setTimeout(() => Router.push('/dashboard/admin'), 2000);
         } catch (error: any) {
             console.error('Error during Google login:', error);
             toast.error(error.message);
@@ -58,10 +64,10 @@ export default function Login() {
             const data = await response.json();
 
             if (response.ok) {
+                setAuthEmail(email); // Store the email in context
                 toast.success('Login Successful');
-                // setTimeout(() => window.location.href = '/dashboard', 2000);
+                setTimeout(() => Router.push('/dashboard/admin'), 2000);
             } else {
-                // toast.error(data.message);
                 throw new Error(data.message);
             }
         } catch (error: any) {
@@ -69,6 +75,7 @@ export default function Login() {
             toast.error(error.message);
         }
     };
+
 
     return (
         <div className={styles.container}>

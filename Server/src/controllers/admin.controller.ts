@@ -18,4 +18,15 @@ export const AdminController = {
             res.status(500).json({ message: (error as Error).message });
         }
     },
+    profile: async (req: Request, res: Response) => {
+        const { email } = req.body;
+        try {
+            const user = await User.findOne({ email });
+            if (!user) throw new Error("User doesn't exist");
+            else res.status(200).json(user);
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message });
+        }
+    }
+
 };
