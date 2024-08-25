@@ -6,7 +6,7 @@ import { User } from '../models/user.model';
 
 export const AuthController = {
     signUp: async (req: Request, res: Response) => {
-        const { name,email, password, role } = req.body;
+        const { name, email, password, role } = req.body;
 
         try {
             // Check if the user already exists in MongoDB
@@ -17,12 +17,12 @@ export const AuthController = {
 
             // Sign up the user with Firebase
             const firebaseUser = await AuthService.signUpWithEmail(email, password);
-            console.log(firebaseUser);
+            // console.log(firebaseUser);
             // Store the new user in MongoDB
             const newUser = new User({
                 uid: firebaseUser.user.uid,
                 email: firebaseUser.user.email,
-                name:  name,
+                name: name,
                 picture: firebaseUser.user.photoURL || '',
                 role: role, // Role passed from the front-end
                 provider: 'firebase',

@@ -1,6 +1,7 @@
 // src/controllers/teacher.controller.ts
 import { Request, Response } from 'express';
 import { Test } from '../models/test.model';
+import { User } from '../models/user.model';
 import csv from 'csvtojson';
 import xlsx from 'xlsx';
 
@@ -39,4 +40,14 @@ export const TeacherController = {
             res.status(500).json({ message: (error as Error).message });
         }
     },
+    profile: async (req: Request, res: Response) => {
+        const { email } = req.body;
+        try {
+            const user = await User.findOne({ email });
+            if (!user) throw new Error("User doesn't exist");
+            else res.status(200).json(user);
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message });
+        }
+    }
 };

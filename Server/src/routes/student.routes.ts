@@ -8,5 +8,5 @@ const router = Router();
 router.use(AuthMiddleware.isAuthenticated);
 
 router.post('/enter-test', StudentController.enterTest);
-
+router.post('/dashboard/profile', StudentController.profile);
 export default router;

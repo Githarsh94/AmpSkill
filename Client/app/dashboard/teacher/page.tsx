@@ -1,51 +1,95 @@
 'use client';
 
-import { useState } from 'react';
-import styles from '@/styles/dashboard.module.css';
+import { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import styles from '../../../styles/dashboard.module.css';
+import Profile from '../../../components/Profile';
+import { fetchTeacherProfile } from '../../../Services/teacher';
+import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/user';
 
 export default function TeacherDashboard() {
+    const [activeComponent, setActiveComponent] = useState('Profile');
+    const email = useUserStore((state) => state.user.email);
+    const setUser = useUserStore((state) => state.setUser);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
-    const handleViewBatches = async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch('/api/teacher/view-batches', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                // Process the data (e.g., display batches)
-                toast.success('Batches fetched successfully!');
-            } else {
-                throw new Error(data.message);
+    useEffect(() => {
+        const loadProfile = async () => {
+            setIsLoading(true);
+            try {
+                const userProfile = await fetchTeacherProfile(email!);
+                setUser(userProfile);
+            } catch (error) {
+                console.error(error);
+                toast.error((error as Error).message);
+            } finally {
+                setIsLoading(false);
             }
-        } catch (error) {
-            toast.error('Failed to fetch batches.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        };
 
-    const handleLogout = () => {
-        // Your logout logic here
-        toast.success('Logged out successfully');
+        loadProfile();
+    }, [email, setUser]);
+
+    const renderComponent = () => {
+        switch (activeComponent) {
+            case 'Profile':
+                return <Profile />;
+            case 'Batches':
+                return <div>Batches</div>;
+            case 'Tests':
+                return <div>Tests</div>;
+            case 'Assignments':
+                return <div>Assignments</div>;
+            default:
+                return <Profile />;
+        }
     };
 
     return (
         <div className={styles.container}>
-            <h1>Teacher Dashboard</h1>
-            <button className={styles.actionButton} onClick={handleViewBatches} disabled={isLoading}>
-                {isLoading ? 'Fetching...' : 'View Assigned Batches'}
-            </button>
-            <button className={styles.logoutButton} onClick={handleLogout}>
-                Logout
-            </button>
+            <div className={styles.sidebar}>
+                <button
+                    className={styles.sidebarButton}
+                    onClick={() => setActiveComponent('Profile')}
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Fetching...' : 'Profile'}
+                </button>
+                <button
+                    className={styles.sidebarButton}
+                    onClick={() => setActiveComponent('Batches')}
+                >
+                    Batches
+                </button>
+                <button
+                    className={styles.sidebarButton}
+                    onClick={() => setActiveComponent('Assignments')}
+                    disabled={isLoading}
+                >
+                    Assignments
+                </button>
+                <button
+                    className={styles.sidebarButton}
+                    onClick={() => setActiveComponent('Tests')}
+                    disabled={isLoading}
+                >
+                    Tests
+                </button>
+                <button className={styles.sidebarButton} onClick={() => router.push('/login')}>
+                    Logout
+                </button>
+            </div>
+
+            <div className={styles.mainContent}>
+                <header className={styles.header}>
+                    <h1>AmpSkill Student Dashboard</h1>
+                </header>
+                {renderComponent()}
+            </div>
+
             <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
         </div>
     );

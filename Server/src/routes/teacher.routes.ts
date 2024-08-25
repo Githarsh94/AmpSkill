@@ -11,5 +11,6 @@ router.use(AuthMiddleware.isAuthenticated);
 
 router.post('/add-test', TeacherController.addTest);
 router.post('/upload-questions', upload.single('file'), TeacherController.uploadQuestions);
+router.post('/dashboard/profile', TeacherController.profile);
 
 export default router;

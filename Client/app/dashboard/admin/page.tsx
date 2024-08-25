@@ -1,23 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '../../../styles/dashboard.module.css';
-import { useProfile } from '../../../context/ProfileContext';
 import Profile from '../../../components/Profile';
 import AddBatch from '../../../components/AddBatch';
 import AssignTeacher from '../../../components/AssignTeacher';
 import { fetchAdminProfile, assignTeacher } from '../../../Services/admin';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/user';
 
 export default function AdminDashboard() {
     const [activeComponent, setActiveComponent] = useState('Profile');
-    const { email } = useAuth();
-    const { setUser } = useProfile();
+    const email = useUserStore((state) => state.user.email);
+    const setUser = useUserStore((state) => state.setUser);
     const [isLoading, setIsLoading] = useState(false);
-    const router= useRouter();
+    const router = useRouter();
 
     useEffect(() => {
         const loadProfile = async () => {
@@ -25,7 +24,6 @@ export default function AdminDashboard() {
             try {
                 const userProfile = await fetchAdminProfile(email!);
                 setUser(userProfile);
-                toast.success('Profile loaded successfully!');
             } catch (error) {
                 console.error(error);
                 toast.error((error as Error).message);

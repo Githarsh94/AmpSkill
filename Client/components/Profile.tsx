@@ -1,8 +1,8 @@
-import { useProfile } from '../context/ProfileContext';
 import styles from '../styles/dashboard.module.css';
+import { useUserStore } from '@/store/user';
 
 export default function Profile() {
-    const { user } = useProfile();
+    const user = useUserStore((state) => state.user);
 
     return (
         <div className={styles.profileContent}>

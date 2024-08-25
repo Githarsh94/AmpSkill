@@ -19,7 +19,9 @@ export default function Home() {
           <Link href='/login'>
             <button className={styles.login}>Log in</button>
           </Link>
-          <button className={styles.getStarted}>Get started</button>
+          <Link href="/signup">
+            <button className={styles.getStarted}>Get started</button>
+          </Link>
         </div>
       </header>
 
@@ -30,7 +32,7 @@ export default function Home() {
             <p>We make it easy to build and deliver assessments, measure and improve skills, and understand your team's potential.</p>
             <div className={styles.heroButtons}>
               <Link href="/signup">
-                 <button className={styles.signUp}>Sign up</button>
+                <button className={styles.signUp}>Sign up</button>
               </Link>
               <button className={styles.requestDemo}>Request demo</button>
             </div>

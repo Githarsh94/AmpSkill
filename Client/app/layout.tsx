@@ -1,7 +1,5 @@
 import React from 'react';
 import '../styles/globals.css';
-import { AuthProvider } from '../context/AuthContext';
-import { ProfileProvider } from '../context/ProfileContext'; // Import the ProfileProvider
 
 export const metadata = {
   title: 'AmpSkill',
@@ -16,11 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <ProfileProvider>
-            {children}
-          </ProfileProvider>
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );

@@ -1,19 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../lib/firebaseConfig';
 import styles from '../../styles/signup.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useUserStore } from '@/store/user';
 
 export default function Login() {
-    const [email, setEmail] = useState<string>("");
+    const email = useUserStore((state) => state.user.email);
+    const setEmail = useUserStore((state) => state.setEmail);
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
-    const { setEmail: setAuthEmail } = useAuth(); // Access the context
     const Router = useRouter();
 
     const handleGoogleLogin = async (role: string) => {
@@ -37,9 +37,9 @@ export default function Login() {
                 throw new Error(data.message);
             }
 
-            setAuthEmail(userEmail || ""); // Store the email in context
+            setEmail(userEmail!); // Store the email in context
             toast.success(data.message);
-            setTimeout(() => Router.push('/dashboard/admin'), 2000);
+            setTimeout(() => Router.push(`/dashboard/${role}`), 2000);
         } catch (error: any) {
             console.error('Error during Google login:', error);
             toast.error(error.message);
@@ -64,9 +64,9 @@ export default function Login() {
             const data = await response.json();
 
             if (response.ok) {
-                setAuthEmail(email); // Store the email in context
+                setEmail(email);
                 toast.success('Login Successful');
-                setTimeout(() => Router.push('/dashboard/admin'), 2000);
+                setTimeout(() => Router.push(`/dashboard/${role}`), 2000);
             } else {
                 throw new Error(data.message);
             }
