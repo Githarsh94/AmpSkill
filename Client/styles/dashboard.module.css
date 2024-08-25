@@ -81,3 +81,7 @@
     font-size: 14px;
     color: #555;
 }
+.profileContent{
+    display: flex;
+    justify-content: space-between;
+}

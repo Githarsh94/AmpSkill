@@ -29,7 +29,9 @@ export default function Home() {
             <h1>Assess, train, and develop your organization</h1>
             <p>We make it easy to build and deliver assessments, measure and improve skills, and understand your team's potential.</p>
             <div className={styles.heroButtons}>
-              <button className={styles.signUp}>Sign up</button>
+              <Link href="/signup">
+                 <button className={styles.signUp}>Sign up</button>
+              </Link>
               <button className={styles.requestDemo}>Request demo</button>
             </div>
           </div>

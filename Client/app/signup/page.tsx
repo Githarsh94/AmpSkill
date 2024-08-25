@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignUp() {
     const [email, setEmail] = useState<string>("");
+    const [name,setName]=useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
 
@@ -51,7 +52,7 @@ export default function SignUp() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password, role }),
+                body: JSON.stringify({ name,email, password, role }),
             });
 
             const data = await response.json();
@@ -71,6 +72,12 @@ export default function SignUp() {
             <div className={styles.signupBox}>
                 <h1 className={styles.title}>AmpSkill</h1>
                 <div className={styles.formContainer}>
+                    <input
+                            placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className={styles.input}
+                        />
                     <input
                         type="email"
                         placeholder="Email"
