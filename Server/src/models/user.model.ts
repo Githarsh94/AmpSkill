@@ -7,7 +7,6 @@ export interface IUser extends Document {
     picture?: string;
     role: 'admin' | 'teacher' | 'student';
     provider: string;
-    batch: Schema.Types.ObjectId;
     createdAt: Date;
 }
 
@@ -18,7 +17,6 @@ const UserSchema = new Schema<IUser>({
     picture: { type: String },
     role: { type: String, enum: ['admin', 'teacher', 'student'], required: true },
     provider: { type: String, required: true },
-    batch: [{ type: Schema.Types.ObjectId, ref: 'Batch' }],
     createdAt: { type: Date, default: Date.now },
 });
 

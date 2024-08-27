@@ -22,7 +22,7 @@ export const AuthController = {
             const newUser = new User({
                 uid: firebaseUser.user.uid,
                 email: firebaseUser.user.email,
-                name: name,
+                name: name || 'Anonymous',
                 picture: firebaseUser.user.photoURL || '',
                 role: role, // Role passed from the front-end
                 provider: 'firebase',
@@ -72,7 +72,7 @@ export const AuthController = {
             const decodedToken = await auth.verifyIdToken(idToken);
 
             // Extract user info from token
-            const { uid, email, name, picture, batch } = decodedToken;
+            const { uid, email, name, picture } = decodedToken;
 
             // Check if the user already exists
             let user = await User.findOne({ email });
@@ -86,7 +86,6 @@ export const AuthController = {
                     picture,
                     role,
                     provider: 'google',
-                    batch,
                 });
                 await user.save();
             } else {

@@ -5,7 +5,7 @@ import { AuthMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.use(AuthMiddleware.isAuthenticated);
+router.use(AuthMiddleware);
 
 router.post('/enter-test', StudentController.enterTest);
 router.post('/dashboard/profile', StudentController.profile);

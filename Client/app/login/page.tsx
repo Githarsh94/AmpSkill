@@ -14,6 +14,7 @@ export default function Login() {
     const setEmail = useUserStore((state) => state.setEmail);
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
+    const [formEmail, setFormEmail] = useState<string>("");
     const Router = useRouter();
 
     const handleGoogleLogin = async (role: string) => {
@@ -85,8 +86,8 @@ export default function Login() {
                     <input
                         type="email"
                         placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={formEmail}
+                        onChange={(e) => setFormEmail(e.target.value)}
                         className={styles.input}
                     />
                     <input

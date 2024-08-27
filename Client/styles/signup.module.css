@@ -50,6 +50,11 @@
 .roleSelection label {
     color: #555;
     font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+}
+
+.roleSelection label input {
+    cursor: pointer;
 }
 
 .signupButton {
@@ -102,7 +107,8 @@
 }
 
 .imageContainer {
-    display: none; /* Hide for now on small screens */
+    display: none;
+    /* Hide for now on small screens */
     margin-left: 20px;
 }
 

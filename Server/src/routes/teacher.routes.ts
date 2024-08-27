@@ -7,7 +7,7 @@ import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
 const router = Router();
 
-router.use(AuthMiddleware.isAuthenticated);
+router.use(AuthMiddleware);
 
 router.post('/add-test', TeacherController.addTest);
 router.post('/upload-questions', upload.single('file'), TeacherController.uploadQuestions);
