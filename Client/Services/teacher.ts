@@ -1,3 +1,5 @@
+import { auth } from '../lib/firebaseConfig';
+
 interface UserProfile {
     name: string;
     email: string;
@@ -7,9 +9,20 @@ interface UserProfile {
 }
 
 export const fetchTeacherProfile = async (email: string): Promise<UserProfile> => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error('User not authenticated');
+    }
+
+    const idToken = await user.getIdToken();
+
     const response = await fetch('http://localhost:3000/api/teacher/dashboard/profile', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
         body: JSON.stringify({ email }),
     });
 

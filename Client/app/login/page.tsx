@@ -10,7 +10,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useUserStore } from '@/store/user';
 
 export default function Login() {
-    const email = useUserStore((state) => state.user.email);
     const setEmail = useUserStore((state) => state.setEmail);
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
@@ -59,13 +58,13 @@ export default function Login() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password, role }),
+                body: JSON.stringify({ email: formEmail, password, role }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                setEmail(email);
+                setEmail(formEmail);
                 toast.success('Login Successful');
                 setTimeout(() => Router.push(`/dashboard/${role}`), 2000);
             } else {
@@ -87,7 +86,7 @@ export default function Login() {
                         type="email"
                         placeholder="Email"
                         value={formEmail}
-                        onChange={(e) => setFormEmail(e.target.value)}
+                        onChange={(e) => setFormEmail(e.target.value.toLowerCase())}
                         className={styles.input}
                     />
                     <input

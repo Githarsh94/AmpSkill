@@ -86,3 +86,47 @@
     display: flex;
     justify-content: space-between;
 }
+
+/* src/styles/dashboard.module.css */
+
+.batchContent {
+    margin-top: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 auto;
+}
+
+.form input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.submitButton {
+    padding: 10px;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submitButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.addButtons {
+    background-color: #0070f3;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 200px;
+}

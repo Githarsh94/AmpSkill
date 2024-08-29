@@ -7,7 +7,7 @@ interface IBatch extends Document {
     branch: { type: String, required: true },
     year: { type: Number, required: true },
     students: { type: [String], required: true },
-    teachers: { type: [{ email: String, subject: String }], required: true },
+    teachers: { type: [{ teacher: String, subject: String }], required: true },
 }
 
 const batchSchema = new Schema<IBatch>({
@@ -16,7 +16,7 @@ const batchSchema = new Schema<IBatch>({
     branch: { type: String, required: true },
     year: { type: Number, required: true },
     students: { type: [String], required: true },
-    teachers: { type: [{ email: String, subject: String }], required: true },
+    teachers: { type: [{ teacher: String, subject: String }], required: true },
 });
 
 export const Batch = model<IBatch>('Batch', batchSchema);

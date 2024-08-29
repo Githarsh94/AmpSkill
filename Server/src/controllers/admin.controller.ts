@@ -44,9 +44,9 @@ export const AdminController = {
             const nonExistingTeachers = [];
             const nonTeachers = [];
             for (const obj of teachers) {
-                const user = await User.findOne({ email: obj.email });
+                const user = await User.findOne({ email: obj.teacher });
                 if (!user) {
-                    nonExistingTeachers.push(obj.email);
+                    nonExistingTeachers.push(obj.teacher);
                 } else if (user.role !== 'teacher') {
                     nonTeachers.push(obj.email);
                 }
