@@ -20,7 +20,9 @@ export default function TeacherDashboard() {
         const loadProfile = async () => {
             setIsLoading(true);
             try {
+                console.log(email);
                 const userProfile = await fetchTeacherProfile(email!);
+                console.log(userProfile);
                 setUser(userProfile);
             } catch (error) {
                 console.error(error);

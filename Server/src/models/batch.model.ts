@@ -1,22 +1,32 @@
 // src/models/batch.model.ts
 import { Schema, model, Document } from 'mongoose';
 
-interface IBatch extends Document {
-    batchName: { type: String, required: true },
-    department: { type: String, required: true },
-    branch: { type: String, required: true },
-    year: { type: Number, required: true },
-    students: { type: [String], required: true },
-    teachers: { type: [{ teacher: String, subject: String }], required: true },
+interface ITeacher {
+    teacher: string;
+    subject: string;
 }
 
+interface IBatch extends Document {
+    batchName: string;
+    department: string;
+    branch: string;
+    year: number;
+    students: string[];
+    teachers: ITeacher[];
+}
+
+const teacherSchema = new Schema<ITeacher>({
+    teacher: { type: String, required: true },
+    subject: { type: String, required: true },
+});
+
 const batchSchema = new Schema<IBatch>({
-    batchName: { type: String, required: true },
-    department: { type: String, required: true },
-    branch: { type: String, required: true },
-    year: { type: Number, required: true },
-    students: { type: [String], required: true },
-    teachers: { type: [{ teacher: String, subject: String }], required: true },
+    batchName: { type: String},
+    department: { type: String},
+    branch: { type: String},
+    year: { type: Number },
+    students: { type: [String]},
+    teachers: { type: [teacherSchema]},
 });
 
 export const Batch = model<IBatch>('Batch', batchSchema);

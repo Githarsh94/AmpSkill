@@ -25,7 +25,7 @@ export const fetchTeacherProfile = async (email: string): Promise<UserProfile> =
         },
         body: JSON.stringify({ email }),
     });
-
+    console.log(response)
     if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message || 'Failed to fetch profile');
