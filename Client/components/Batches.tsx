@@ -3,7 +3,16 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import styles from '../styles/dashboard.module.css';
-import { addBatch } from '../Services/admin';
+import { addBatch, fetchBatches, deleteBatch } from '../Services/admin';
+
+interface IBatch {
+    batchName: string;
+    department: string;
+    branch: string;
+    year: number;
+    students: string[];
+    teachers: { teacher: string, subject: string }[];
+}
 
 const AddBatch = () => {
     const [batchName, setBatchName] = useState('');
@@ -15,6 +24,20 @@ const AddBatch = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [teacherEmails, setTeacherEmails] = useState<string[]>([]);
     const [subjectNames, setSubjectNames] = useState<string[]>([]);
+    const [batches, setBatches] = useState<IBatch[]>([]);
+
+    useEffect(() => {
+        const loadBatches = async () => {
+            try {
+                const batches = await fetchBatches();
+                setBatches(batches);
+            } catch (error) {
+                console.error('Failed to fetch batches:', error);
+                toast.error((error as Error).message);
+            }
+        };
+        loadBatches();
+    }, []);
 
     const handleAddBatch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,6 +51,18 @@ const AddBatch = () => {
             toast.error((error as Error).message);
         } finally {
             setIsLoading(false);
+            fetchBatches().then((batches) => setBatches(batches));
+        }
+    };
+
+    const handleDeleteBatch = async (batchName: string, department: string, branch: string, year: number) => {
+        try {
+            await deleteBatch(batchName, department, branch, year);
+            fetchBatches().then((batches) => setBatches(batches));
+            toast.success('Batch deleted successfully');
+        } catch (error) {
+            console.error('Failed to delete batch:', error);
+            toast.error((error as Error).message);
         }
     };
 
@@ -82,6 +117,32 @@ const AddBatch = () => {
 
     return (
         <div className={styles.batchContent}>
+            <div className={styles.batchList}>
+                <h2>Batches</h2>
+                {batches.map((batch, index) => (
+                    <div key={index} className={styles.batchItem}>
+                        <p>Batch Name: {batch.batchName}</p>
+                        <p>Department: {batch.department}</p>
+                        <p>Branch: {batch.branch}</p>
+                        <p>Year: {batch.year}</p>
+                        <p>Students: {batch.students.join(', ')}</p>
+                        <p>Teachers:</p>
+                        <ul>
+                            {batch.teachers.map((teacher, index) => (
+                                <li key={index}>
+                                    Teacher: {teacher.teacher}, Subject: {teacher.subject}
+                                </li>
+                            ))}
+                        </ul>
+                        <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDeleteBatch(batch.batchName, batch.department, batch.branch, batch.year)}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                ))}
+            </div>
             <h2>Add Batch</h2>
             <form onSubmit={handleAddBatch} className={styles.form}>
                 <input
@@ -118,70 +179,77 @@ const AddBatch = () => {
                     placeholder="Student Email"
                 />
                 <label>{students.join(', ')}</label>
-                <button
-                    className={styles.addButtons}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        addStudent();
-                    }}
-                >
-                    Add Student
-                </button>
-                <button
-                    className={styles.addButtons}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setStudents([]);
-                    }
-                    }
-                >Clear Students</button>
+                <div className={styles.buttonsContainer}>
+                    <button
+                        className={styles.addButtons}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addStudent();
+                        }}
+                    >
+                        Add Student
+                    </button>
+                    <button
+                        className={styles.addButtons}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setStudents([]);
+                        }
+                        }
+                    >Clear Students</button>
+                </div>
+
                 <input
                     id='teachers'
                     type="text"
                     placeholder="Teacher Email"
                 />
                 <label>{teacherEmails.join(', ')}</label>
-                <button
-                    className={styles.addButtons}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        addTeacher();
-                    }}
-                >Add Teacher
-                </button>
-                <button
-                    className={styles.addButtons}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setTeacherEmails([]);
-                    }
-                    }
-                >Clear Teachers</button>
+                <div className={styles.buttonsContainer}>
+                    <button
+                        className={styles.addButtons}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addTeacher();
+                        }}
+                    >Add Teacher
+                    </button>
+                    <button
+                        className={styles.addButtons}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setTeacherEmails([]);
+                        }
+                        }
+                    >Clear Teachers</button>
+                </div>
                 <input
                     id='subjects'
                     type="text"
                     placeholder="Subject Name"
                 />
                 <label>{subjectNames.join(', ')}</label>
-                <button
-                    className={styles.addButtons}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        addSubject();
-                    }}
-                >
-                    Add Subject
-                </button>
-                <button
-                    className={styles.addButtons}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setSubjectNames([]);
-                    }
-                    }
-                >
-                    Clear Subjects
-                </button>
+                <div className={styles.buttonsContainer}>
+                    <button
+                        className={styles.addButtons}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addSubject();
+                        }}
+                    >
+                        Add Subject
+                    </button>
+                    <button
+                        className={styles.addButtons}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setSubjectNames([]);
+                        }
+                        }
+                    >
+                        Clear Subjects
+                    </button>
+                </div>
                 <button type="submit" className={styles.submitButton} disabled={isLoading}>
                     {isLoading ? 'Adding...' : 'Add Batch'}
                 </button>

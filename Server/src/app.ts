@@ -7,9 +7,11 @@ import teacherRoutes from './routes/teacher.routes';
 import studentRoutes from './routes/student.routes';
 import authRoutes from './routes/auth.routes';
 import cors from 'cors';
+import loggerMiddleware from './middlewares/logger.middleware';
 
 const app = express();
 
+app.use(loggerMiddleware);
 app.use(cors(
     {
         origin: '*',

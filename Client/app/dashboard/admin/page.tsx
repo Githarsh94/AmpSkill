@@ -5,9 +5,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '../../../styles/dashboard.module.css';
 import Profile from '../../../components/Profile';
-import AddBatch from '../../../components/AddBatch';
+import Batches from '../../../components/Batches';
 import AssignTeacher from '../../../components/AssignTeacher';
-import { fetchAdminProfile, assignTeacher } from '../../../Services/admin';
+import { fetchAdminProfile } from '../../../Services/admin';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 
@@ -35,25 +35,12 @@ export default function AdminDashboard() {
         loadProfile();
     }, [email, setUser]);
 
-    const handleAssignTeacher = async () => {
-        setIsLoading(true);
-        try {
-            await assignTeacher({ /* your payload here */ });
-            toast.success('Teacher assigned successfully!');
-        } catch (error) {
-            console.error('Failed to assign teacher:', error);
-            toast.error((error as Error).message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const renderComponent = () => {
         switch (activeComponent) {
             case 'Profile':
                 return <Profile />;
-            case 'AddBatch':
-                return <AddBatch />;
+            case 'Batches':
+                return <Batches />;
             case 'AssignTeacher':
                 return <AssignTeacher />;
             default:
@@ -73,9 +60,9 @@ export default function AdminDashboard() {
                 </button>
                 <button
                     className={styles.sidebarButton}
-                    onClick={() => setActiveComponent('AddBatch')}
+                    onClick={() => setActiveComponent('Batches')}
                 >
-                    Add Batch
+                    Batches
                 </button>
                 <button
                     className={styles.sidebarButton}
@@ -84,7 +71,13 @@ export default function AdminDashboard() {
                 >
                     Assign Teachers
                 </button>
-                <button className={styles.sidebarButton} onClick={() => router.push('/login')}>
+                <button className={styles.sidebarButton} onClick={() => {
+                    localStorage.removeItem('sessionId');
+                    localStorage.removeItem('Role');
+                    localStorage.removeItem('Email');
+                    router.push('/login')
+                }
+                }>
                     Logout
                 </button>
             </div>

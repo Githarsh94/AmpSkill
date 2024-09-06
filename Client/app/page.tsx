@@ -1,9 +1,76 @@
+'use client';
+
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '@/styles/Home.module.css';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/user';
 
 export default function Home() {
+  const setEmail = useUserStore((state) => state.setEmail);
+  const Router = useRouter();
+  const handleLogIn = () => {
+    setTimeout(() => {
+      const checkSession = async () => {
+        const sessionId = localStorage.getItem('sessionId');
+        const role = localStorage.getItem('Role');
+        const email = localStorage.getItem('Email');
+        if (sessionId && role) {
+          try {
+            const response = await fetch('http://localhost:3000/api/auth/google-login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ idToken: sessionId, role }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              setEmail(email!);
+              Router.push(`/dashboard/${role}`);
+            } else {
+              console.error('Error during session verification:', data.message);
+              localStorage.removeItem('sessionId');
+              localStorage.removeItem('Role');
+              localStorage.removeItem('Email');
+
+              // Try verifying session on the login route
+              const loginResponse = await fetch('http://localhost:3000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ idToken: sessionId, role }),
+              });
+
+              const loginData = await loginResponse.json();
+
+              if (loginResponse.ok) {
+                setEmail(email!);
+                Router.push(`/dashboard/${role}`);
+              } else {
+                console.error('Error during session verification on login route:', loginData.message);
+                localStorage.removeItem('sessionId');
+                localStorage.removeItem('Role');
+                localStorage.removeItem('Email');
+              }
+            }
+          } catch (error: any) {
+            console.error('Error during session verification:', error);
+            localStorage.removeItem('sessionId');
+            localStorage.removeItem('Role');
+            localStorage.removeItem('Email');
+          }
+        }
+      };
+
+      checkSession();
+    }, 300);
+    Router.push('/login');
+  };
   return (
     <>
       <Head>
@@ -16,9 +83,7 @@ export default function Home() {
       <header className={styles.header}>
         <div className={styles.logo}>AmpSkill</div>
         <div className={styles.authButtons}>
-          <Link href='/login'>
-            <button className={styles.login}>Log in</button>
-          </Link>
+          <button className={styles.login} onClick={() => handleLogIn()}>Log in</button>
           <Link href="/signup">
             <button className={styles.getStarted}>Get started</button>
           </Link>

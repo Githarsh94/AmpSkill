@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '../../../styles/dashboard.module.css';
 import Profile from '../../../components/Profile';
+import TestCreation from '@/components/Tests';
 import { fetchTeacherProfile } from '../../../Services/teacher';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
@@ -42,7 +43,7 @@ export default function TeacherDashboard() {
             case 'Batches':
                 return <div>Batches</div>;
             case 'Tests':
-                return <div>Tests</div>;
+                return <div><TestCreation/></div>;
             case 'Assignments':
                 return <div>Assignments</div>;
             default:
@@ -80,7 +81,13 @@ export default function TeacherDashboard() {
                 >
                     Tests
                 </button>
-                <button className={styles.sidebarButton} onClick={() => router.push('/login')}>
+                <button className={styles.sidebarButton} onClick={() => {
+                    localStorage.removeItem('sessionId');
+                    localStorage.removeItem('Role');
+                    localStorage.removeItem('Email');
+                    router.push('/login')
+                }
+                }>
                     Logout
                 </button>
             </div>

@@ -10,15 +10,6 @@ interface IQuestion {
     op4: string;
     ans: string;
 }
-
-// Interface for the batch structure
-interface IBatch {
-    batchName: string;
-    department: string;
-    branch: string;
-    year: string;
-}
-
 // Interface for the test document
 interface ITest extends Document {
     title: string;
@@ -42,6 +33,14 @@ const questionSchema = new Schema<IQuestion>({
     op4: { type: String, required: true },
     ans: { type: String, required: true },
 });
+
+// Interface for the batch structure
+interface IBatch {
+    batchName: string;
+    department: string;
+    branch: string;
+    year: string;
+}
 
 // Define the schema for the batch structure
 const batchSchema = new Schema<IBatch>({

@@ -39,7 +39,12 @@ export default function Login() {
 
             setEmail(userEmail!); // Store the email in context
             toast.success(data.message);
-            setTimeout(() => Router.push(`/dashboard/${role}`), 2000);
+            setTimeout(() => {
+                localStorage.setItem('sessionId', idToken);  // Store the session ID in localStorage
+                localStorage.setItem('Role', role); // Store the role in localStorage
+                localStorage.setItem('Email', userEmail!); // Store the email in localStorage
+                Router.push(`/dashboard/${role}`);
+            }, 2000);
         } catch (error: any) {
             console.error('Error during Google login:', error);
             toast.error(error.message);
@@ -62,11 +67,16 @@ export default function Login() {
             });
 
             const data = await response.json();
-
+            
             if (response.ok) {
                 setEmail(formEmail);
                 toast.success('Login Successful');
-                setTimeout(() => Router.push(`/dashboard/${role}`), 2000);
+                setTimeout(() => {
+                    localStorage.setItem('sessionId', data.sessionId); // Store the session ID in localStorage
+                    localStorage.setItem('Role', role); // Store the role in localStorage
+                    localStorage.setItem('Email', formEmail); // Store the email in localStorage
+                    Router.push(`/dashboard/${role}`);
+                }, 2000);
             } else {
                 throw new Error(data.message);
             }

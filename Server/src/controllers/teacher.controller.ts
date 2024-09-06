@@ -169,7 +169,6 @@ export const TeacherController = {
     
     profile: async (req: Request, res: Response) => {
         const { email } = req.body;
-        console.log(email);
         try {
             const user = await User.findOne({ email });
             // console.log(user);

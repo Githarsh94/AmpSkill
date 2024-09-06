@@ -2,9 +2,9 @@
 
 .container {
     display: flex;
-    height: 100vh;
     font-family: 'Roboto', sans-serif;
     background-color: #f8f9fa;
+    min-height: 100vh;
 }
 
 .sidebar {
@@ -49,6 +49,7 @@
 .header {
     text-align: center;
     margin-bottom: 20px;
+    font-size: larger;
 }
 
 .userInfo {
@@ -93,6 +94,12 @@
     margin-top: 20px;
 }
 
+.batchContent h2 {
+    display: flex;
+    justify-content: center;
+    font-size: larger;
+}
+
 .form {
     display: flex;
     flex-direction: column;
@@ -120,13 +127,60 @@
     cursor: not-allowed;
 }
 
+.buttonsContainer {
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+}
+
 .addButtons {
     background-color: #0070f3;
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    min-width: 200px;
+}
+
+.batchList {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.batchItem {
     display: flex;
-    justify-content: center;
     align-items: center;
-    max-width: 200px;
+    justify-content: space-around;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: #555 1px solid;
+}
+
+.batchItem p {
+    display: table-cell;
+    padding: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.batchItem ul {
+    display: table-cell;
+    padding: 10px;
+    margin: 0;
+}
+
+.batchItem li {
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #777;
+}
+
+.deleteButton {
+    background-color: #dc3545;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
 }

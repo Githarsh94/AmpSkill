@@ -6,6 +6,11 @@ interface ITeacher {
     subject: string;
 }
 
+const teacherSchema = new Schema<ITeacher>({
+    teacher: { type: String, required: true },
+    subject: { type: String, required: true },
+});
+
 interface IBatch extends Document {
     batchName: string;
     department: string;
@@ -14,12 +19,6 @@ interface IBatch extends Document {
     students: string[];
     teachers: ITeacher[];
 }
-
-const teacherSchema = new Schema<ITeacher>({
-    teacher: { type: String, required: true },
-    subject: { type: String, required: true },
-});
-
 const batchSchema = new Schema<IBatch>({
     batchName: { type: String},
     department: { type: String},

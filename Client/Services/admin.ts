@@ -18,6 +18,15 @@ interface AddBatchPayload {
     teachers: { teacher: string, subject: string }[];
 }
 
+export interface IAssignTeachersPayload {
+    batchName: string;
+    department: string;
+    branch: string;
+    year: number;
+    teachers: { teacher: string; subject: string }[];
+}
+
+
 export const fetchAdminProfile = async (email: string): Promise<UserProfile> => {
     const user = auth.currentUser;
 
@@ -44,11 +53,19 @@ export const fetchAdminProfile = async (email: string): Promise<UserProfile> => 
     return response.json();
 };
 
-export const assignTeacher = async (payload: any): Promise<void> => {
-    const response = await fetch('http://localhost:3000/api/admin/assign-teacher', {
+export const assignTeachers = async (payload: IAssignTeachersPayload): Promise<void> => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error('User not authenticated');
+    }
+
+    const idToken = await user.getIdToken();
+    const response = await fetch('http://localhost:3000/api/admin/dashboard/assignTeachers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify(payload),
     });
@@ -58,6 +75,75 @@ export const assignTeacher = async (payload: any): Promise<void> => {
         throw new Error(data.message || 'Failed to assign teacher');
     }
 };
+
+export const unassignTeachers = async (payload: IAssignTeachersPayload): Promise<void> => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error('User not authenticated');
+    }
+
+    const idToken = await user.getIdToken();
+    const response = await fetch('http://localhost:3000/api/admin/dashboard/unassignTeachers', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to unassign teacher');
+    }
+};
+
+export const fetchBatches = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+        throw new Error('User not authenticated');
+    }
+    const idToken = await user.getIdToken();
+    const response = await fetch('http://localhost:3000/api/admin/dashboard/getBatches', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({}),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to add batch');
+    }
+
+    return data;
+};
+
+export const deleteBatch = async (batchName: string, department: string, branch: string, year: number) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error('User not authenticated');
+    }
+
+    const idToken = await user.getIdToken();
+    const response = await fetch('http://localhost:3000/api/admin/dashboard/deleteBatch', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ batchName, department, branch, year }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to delete batch');
+    }
+
+    return data;
+}
 
 export const addBatch = async (batchData: AddBatchPayload) => {
     const user = auth.currentUser;
@@ -78,11 +164,10 @@ export const addBatch = async (batchData: AddBatchPayload) => {
         },
         body: JSON.stringify(batchData),
     });
-
+    const data = await response.json();
     if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.message || 'Failed to add batch');
     }
 
-    return response.json();
+    return data;
 };

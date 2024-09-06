@@ -69,7 +69,13 @@ export default function StudentDashboard() {
                 >
                     Tests
                 </button>
-                <button className={styles.sidebarButton} onClick={() => router.push('/login')}>
+                <button className={styles.sidebarButton} onClick={() => {
+                    localStorage.removeItem('sessionId');
+                    localStorage.removeItem('Role');
+                    localStorage.removeItem('Email');
+                    router.push('/login')
+                }
+                }>
                     Logout
                 </button>
             </div>

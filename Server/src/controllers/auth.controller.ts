@@ -30,18 +30,43 @@ export const AuthController = {
             });
 
             await newUser.save();
-            res.status(201).json({ message: `User registered successfully as ${role}.Please log in.` });
+            return res.status(201).json({ message: `User registered successfully as ${role}.Please log in.` });
         } catch (error) {
-            res.status(500).json({ message: (error as Error).message });
+            return res.status(500).json({ message: (error as Error).message });
         }
     },
 
     login: async (req: Request, res: Response) => {
-        const { email, password } = req.body;
+        const { email, password, idToken, role } = req.body;
+        if (idToken && role) {
+            try {
+                // Verify the ID token with Firebase Admin SDK
+                const decodedToken = await auth.verifyIdToken(idToken);
 
+                // Extract user info from token
+                const { email: userEmail } = decodedToken;
+
+                // Check if the user already exists
+                const existingUser = await User.findOne({ email: userEmail });
+
+                if (!existingUser) {
+                    return res.status(404).json({ message: 'User not found' });
+                }
+
+                // Check if the role matches
+                if (existingUser.role === role) {
+                    return res.status(200).json({ message: `Successfully logged in as ${role}` });
+                } else {
+                    return res.status(400).json({ message: `Role mismatch: Expected ${existingUser.role}, got ${role}. ` });
+                }
+            } catch (error) {
+                return res.status(500).json({ message: (error as Error).message });
+            }
+        }
         try {
             // Check if user exists in Firebase
             const user = await AuthService.loginWithEmail(email, password);
+            const idToken = await user.user.getIdToken();
             if (!user) {
                 return res.status(404).json({ message: 'User does not exist.' });
             }
@@ -52,15 +77,12 @@ export const AuthController = {
                 return res.status(404).json({ message: 'User not found.' });
             }
 
-            // Compare roles
-            const { role } = req.body;
             if (existingUser.role !== role) {
                 return res.status(403).json({ message: `Role mismatch: Expected ${existingUser.role}, got ${role}. ` });
             }
-
-            res.status(200).json({ message: `Successfully logged in as ${role}` });
+            return res.status(200).json({ message: `Successfully logged in as ${role}`, sessionId: idToken });
         } catch (error) {
-            res.status(500).json({ message: (error as Error).message });
+            return res.status(500).json({ message: (error as Error).message });
         }
     },
 
@@ -93,9 +115,9 @@ export const AuthController = {
             }
 
             // Notify the user that they have registered successfully
-            res.status(200).json({ message: `User registered as ${role}. Please log in. ` });
+            return res.status(200).json({ message: `User registered as ${role}. Please log in. ` });
         } catch (error) {
-            res.status(500).json({ message: (error as Error).message });
+            return res.status(500).json({ message: (error as Error).message });
         }
     },
 
@@ -117,12 +139,12 @@ export const AuthController = {
 
             // Check if the role matches
             if (existingUser.role === role) {
-                res.status(200).json({ message: `Successfully logged in as ${role}` });
+                return res.status(200).json({ message: `Successfully logged in as ${role}` });
             } else {
-                res.status(400).json({ message: `Role mismatch: Expected ${existingUser.role}, got ${role}. ` });
+                return res.status(400).json({ message: `Role mismatch: Expected ${existingUser.role}, got ${role}. ` });
             }
         } catch (error) {
-            res.status(500).json({ message: (error as Error).message });
+            return res.status(500).json({ message: (error as Error).message });
         }
     },
 };
