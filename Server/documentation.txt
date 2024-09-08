@@ -1,0 +1,229 @@
+# Backend Documentation
+
+This document provides an overview of the working logic and APIs of our backend system.
+
+## Working Logic
+
+The backend system is responsible for handling various tasks and processes that support the functionality of our application. It manages the data storage, processing, and communication with other components.
+
+## APIs
+
+The backend exposes a set of APIs that allow clients to interact with the system. These APIs provide access to different resources and functionalities. They can be used to retrieve data, perform operations, and manage the application's state.
+
+Please refer to this API documentation for detailed information on each endpoint and its usage.
+
+Admin Role:
+1. Profile Route
+    - Route: POST /api/admin/dashboard/profile
+    - Function: profile
+    - Description: Fetches the details of a user based on their email.
+    - Request Body: 
+      ```plaintext
+      {
+         "email": "abc@gmail.com"
+      }
+      ```
+    - Possible Responses:
+      - Success:
+         ```plaintext
+         {
+            "uid": "dfg..",
+            "email": "abc@gmail.com",
+            "name": "abc",
+            "picture": "url",
+            "role": "admin | teacher | student",
+            "provider": "firebase | google"
+         }
+         ```
+      - Error: User not found
+
+2. Add-Batch Route
+    - Route: POST /api/admin/dashboard/addBatch
+    - Function: addBatch
+    - Description: Adds a new batch to the organization.
+    - Request Body:
+      ```plaintext
+      {
+         "batchName": "Batch 1",
+         "department": "Computer Science",
+         "branch": "Information Technology",
+         "year": 2022,
+         "students": ["student1@gmail.com", "student2@gmail.com"],
+         "teachers": ["teacher1@gmail.com", "teacher2@gmail.com"]
+      }
+      ```
+    - Possible Responses:
+      - Success: Batch created successfully
+      - Error: A batch with the same properties already exists
+
+3. Assign-Teachers Route
+    - Route: POST /api/admin/dashboard/assignTeachers
+    - Function: assignTeachers
+    - Description: Assigns specific teachers to specific batches.
+    - Request Body:
+      ```plaintext
+      {
+         "batchName": "Batch 1",
+         "department": "Computer Science",
+         "branch": "Information Technology",
+         "year": 2022,
+         "teachers": ["teacher1@gmail.com", "teacher2@gmail.com"]
+      }
+      ```
+    - Possible Responses:
+      - Success: Teachers assigned successfully
+      - Error: Batch not found, Invalid teacher email ids
+
+4. Unassign-Teacher Route
+    - Route: POST /api/admin/dashboard/unassignTeachers
+    - Function: unassignTeachers
+    - Description: Unassigns specific teachers from specific batches.
+    - Request Body:
+      ```plaintext
+      {
+         "batchName": "Batch 1",
+         "department": "Computer Science",
+         "branch": "Information Technology",
+         "year": 2022,
+         "teachers": ["teacher1@gmail.com", "teacher2@gmail.com"]
+      }
+      ```
+    - Possible Responses:
+      - Success: Teachers unassigned successfully
+      - Error: Batch not found, Invalid teacher email ids
+
+5. getBatches Route
+    - Route: GET /api/admin/dashboard/getBatches
+    - Function: getBatches
+    - Description: Retrieves all batches associated with the user.
+    - Possible Responses:
+      - Success: Array of batch objects
+
+6. deleteBatch Route
+    - Route: DELETE /api/admin/dashboard/deleteBatch
+    - Function: deleteBatch
+    - Description: Deletes an existing batch.
+    - Request Body:
+      ```plaintext
+      {
+         "batchName": "Batch 1",
+         "department": "Computer Science",
+         "branch": "Information Technology",
+         "year": 2022
+      }
+      ```
+    - Possible Responses:
+      - Success: Batch deleted successfully
+      - Error: Batch not found
+
+Teacher Role:
+1. Profile Route
+    - Route: POST /dashboard/profile
+    - Function: profile
+    - Description: Fetches the profile of a user based on their email.
+    - Request Body:
+      ```plaintext
+      {
+         "email": "abc@gmail.com"
+      }
+      ```
+    - Possible Responses:
+      - Success:
+         ```plaintext
+         {
+            "uid": "dfg..",
+            "email": "abc@gmail.com",
+            "name": "abc",
+            "picture": "url",
+            "role": "admin | teacher | student",
+            "provider": "firebase | google"
+         }
+         ```
+      - Error: User not found
+
+2. Update Batch Route
+    - Route: PUT /dashboard/batch/update
+    - Function: updateBatch
+    - Description: Updates batch information such as name, department, branch, year, students, and teachers.
+    - Request Body:
+      ```plaintext
+      {
+         "batchName": "Batch 1",
+         "department": "Computer Science",
+         "branch": "Information Technology",
+         "year": 2022,
+         "students": ["student1@gmail.com", "student2@gmail.com"],
+         "teachers": ["teacher1@gmail.com", "teacher2@gmail.com"]
+      }
+      ```
+    - Possible Responses:
+      - Success: Batch updated successfully
+      - Error: Batch not found, Access denied
+
+3. View Batches Route
+    - Route: POST /dashboard/batch/view
+    - Function: viewBatches
+    - Description: Returns all batches where the requesting teacher is teaching.
+    - Possible Responses:
+      - Success: Array of batch objects
+      - Error: Access denied, No batches found
+
+4. Get Students of a Batch Route
+    - Route: POST /dashboard/batch/getStudents
+    - Function: getStudentsOfBatch
+    - Description: Fetches the list of students for a specific batch.
+    - Request Body:
+      ```plaintext
+      {
+         "batchName": "Batch 1",
+         "department": "Computer Science",
+         "branch": "Information Technology",
+         "year": 2022
+      }
+      ```
+    - Possible Responses:
+      - Success: Array of student objects
+      - Error: Batch not found, Access denied
+
+5. Upload Test Route
+    - Route: POST /dashboard/test/uploadTest
+    - Function: uploadTest
+    - Description: Uploads a test, processes an Excel or CSV file containing questions, and associates the test with specific batches.
+    - Request Body: Form data with test file and batch details
+    - Possible Responses:
+      - Success: Test uploaded successfully
+      - Error: Invalid file format, Error during upload process
+
+6. Add Single Question to Test Route
+    - Route: POST /dashboard/test/upload/addQue
+    - Function: addSingleQues
+    - Description: Adds a new question to an existing test based on the provided test ID.
+    - Request Body:
+      ```plaintext
+      {
+         "testId": "12345",
+         "question": "What is the capital of France?",
+         "options": ["London", "Paris", "Berlin", "Madrid"],
+         "answer": "Paris"
+      }
+      ```
+    - Possible Responses:
+      - Success: Question added successfully
+      - Error: Test not found, Error adding question
+
+7. Update Single Question in Test Route
+    - Route: PUT /dashboard/test/upload/updateQue
+    - Function: updateSingleQues
+    - Description: Updates an existing question within a test based on the provided test ID.
+    - Request Body:
+      ```plaintext
+      {
+         "testId": "12345",
+         "questionId": "67890",
+         "options": ["London", "Paris", "Berlin", "Madrid"],
+         "answer": "Paris"
+      }
+      ```
+    - Possible Responses:
+      - Success: Question updated successfully
+      - Error: Test not found, Question not found, Error updating question

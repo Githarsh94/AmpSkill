@@ -8,9 +8,6 @@ const upload = multer({ dest: 'uploads/' });
 const router = Router();
 
 router.use(AuthMiddleware);
-
-// router.post('/add-test', TeacherController.addTest);
-// router.post('/upload-questions', upload.single('file'), TeacherController.uploadQuestions);
 router.post('/dashboard/profile', TeacherController.profile);
 router.put('/dashboard/batch/update',TeacherController.updateBatch);
 router.post('/dashboard/batch/view',TeacherController.viewBatches);
