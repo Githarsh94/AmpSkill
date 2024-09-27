@@ -21,6 +21,9 @@ interface ITest extends Document {
     startTime: Date; // Start time of the test
     loginWindow: number; // Login window duration in minutes
     testDuration: number; // Test duration in minutes
+    isFullScreenEnforced: boolean;
+    isTabSwitchPreventionEnabled: boolean;
+    isCameraAccessRequired: boolean;
 }
 
 // Define the schema for the question structure
@@ -61,6 +64,9 @@ const testSchema = new Schema<ITest>({
     startTime: { type: Date, required: true }, // Start time of the test
     loginWindow: { type: Number, required: true }, // Login window duration in minutes
     testDuration: { type: Number, required: true }, // Test duration in minutes
+    isFullScreenEnforced: { type: Boolean, default: false },
+    isTabSwitchPreventionEnabled: { type: Boolean, default: false },
+    isCameraAccessRequired: { type: Boolean, default: false },
 });
 
 // Export the model

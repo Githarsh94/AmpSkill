@@ -7,7 +7,7 @@ import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
 const router = Router();
 
-router.use(AuthMiddleware);
+// router.use(AuthMiddleware);
 router.post('/dashboard/profile', TeacherController.profile);
 router.put('/dashboard/batch/update',TeacherController.updateBatch);
 router.post('/dashboard/batch/view',TeacherController.viewBatches);

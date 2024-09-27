@@ -1,0 +1,130 @@
+.batch-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+  
+  .batch-details__heading {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .batch-details__loading {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 20px;
+  }
+  
+  .batch-details__students-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .batch-details__student-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    color: #444;
+    font-size: 1rem;
+  }
+  
+  .batch-details__student-item:last-child {
+    border-bottom: none;
+  }
+  
+  .batch-details__button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 30px;
+  }
+  
+  .batch-details__button:hover {
+    background-color: #45a049;
+  }
+  
+  .batch-details__button:active {
+    transform: scale(0.98);
+  }
+  
+  .batch-details__form-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .batch-details__form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .batch-details__label {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .batch-details__input {
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .batch-details__input:focus {
+    outline: none;
+    border-color: #4caf50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  }
+  
+  .batch-details__form-toggle {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #4caf50;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .batch-details__form-toggle:hover {
+    color: #45a049;
+  }
+  
+  @media (max-width: 768px) {
+    .batch-details__students-list {
+      width: 100%;
+    }
+  
+    .batch-details__form-container {
+      max-width: 100%;
+    }
+  }
+  

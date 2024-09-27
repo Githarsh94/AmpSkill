@@ -7,7 +7,7 @@ import xlsx from 'xlsx';
 import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import express from 'express';
-const fs=require('fs');
+import fs from 'fs';
 import crypto from 'crypto'; // For generating a random password
 
 // Function to generate a random password
@@ -25,15 +25,15 @@ type FileNameCallback = (error: Error | null, filename: string) => void;
 // Multer storage configuration
 const storage = multer.diskStorage({
     destination: (
-        req: CustomRequest,
-        file: Express.Multer.File,
+        _req: CustomRequest,
+        _file: Express.Multer.File,
         callback: DestinationCallback
     ): void => {
         callback(null, 'uploads'); // Files will be stored in the 'uploads' directory
     },
-
+    
     filename: (
-        req: CustomRequest,
+        _req: CustomRequest,
         file: Express.Multer.File,
         callback: FileNameCallback
     ): void => {
@@ -63,67 +63,61 @@ const fileFilter = (
 };
 
 // Initialize multer with storage and file filter
-const upload = multer({ storage: storage, fileFilter: fileFilter }).single('myFile');
+const upload = multer({ storage: storage, fileFilter: fileFilter }).single('questionsFile');
 
 export const TeacherController = {
     
     uploadTest: async (req: CustomRequest, res: express.Response) => {
         upload(req, res, async (err) => {
             try {
+                // console.log(req.body);
                 if (err) {
-                    console.error('File upload error:', err);
-                    return res.status(400).send(err.message);
+                    // console.error('File upload error:', err);
+                    return res.status(400).json({ message: err.message }); // Ensure JSON response
                 }
     
                 if (req.fileValidationError) {
-                    return res.status(400).send(req.fileValidationError);
+                    return res.status(400).json({ message: req.fileValidationError }); // Ensure JSON response
                 }
     
                 if (!req.file) {
-                    return res.status(400).send('No file selected!');
+                    return res.status(400).json({ message: 'No file selected!' }); // Ensure JSON response
                 }
     
-                const {title, description, startTime, loginWindow, testDuration, batches } = req.body;
+                const {title, description, startTime, loginWindow,testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired, batches } = req.body;
+                // console.log(req.body);
     
-                // Parse the batches array from the string received in the request body
                 let parsedBatches;
                 try {
                     parsedBatches = JSON.parse(batches);
                 } catch (parseError) {
-                    console.error('Error parsing batches:', parseError);
+                    // console.error('Error parsing batches:', parseError);
                     return res.status(400).json({ message: 'Invalid batches format' });
                 }
-                
+    
                 for (const batch of parsedBatches) {
                     const { batchName, department, branch, year } = batch;
                     const foundBatch = await Batch.findOne({ batchName, department, branch, year });
-
+    
                     if (!foundBatch) {
-                        // console.warn(`Batch ${batchName} ${department} ${branch} ${year} not found.`);
                         return res.status(404).json({ message: `Batch ${batchName} ${department} ${branch} ${year} not found.` });
                     }
                 }
-                let testCode= generateRandomPassword(6);
-                // Check if a test with the same testCode already exists
+    
+                let testCode = generateRandomPassword(6);
                 let existingTest = await Test.findOne({ testCode });
                 while (existingTest) {
-                    testCode= generateRandomPassword(6);
+                    testCode = generateRandomPassword(6);
                     existingTest = await Test.findOne({ testCode });
                 }
     
-                // Generate a random password
-                const randomPassword = generateRandomPassword(12); // Adjust length as needed
+                const randomPassword = generateRandomPassword(12);
     
-                // Read the Excel or CSV file contents
                 const workbook = xlsx.readFile(req.file.path);
-                const sheetName = workbook.SheetNames[0]; // Assume the first sheet
+                const sheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[sheetName];
                 const data = xlsx.utils.sheet_to_json(worksheet);
     
-                // Process the data from the Excel or CSV file
-                // console.log('Data from file:', data);
-    
-                // Extract questions from file data (assuming data is in the correct format)
                 const questions = data.map((item: any, index: number) => ({
                     s_no: index + 1,
                     question: item.Question,
@@ -134,7 +128,6 @@ export const TeacherController = {
                     ans: item.Ans,
                 }));
     
-                // Create and save the test document
                 const newTest = new Test({
                     title,
                     description,
@@ -144,20 +137,19 @@ export const TeacherController = {
                     startTime: new Date(startTime),
                     loginWindow,
                     testDuration,
-                    password: randomPassword, // Include the random password
+                    isFullScreenEnforced,
+                    isTabSwitchPreventionEnabled,
+                    isCameraAccessRequired,
+                    password: randomPassword,
                 });
     
                 await newTest.save();
-    
-                // Delete the file after processing if not needed anymore
                 fs.unlinkSync(req.file.path);
     
-                // Send a response indicating successful upload and processing
                 return res.status(200).json({ message: 'File uploaded and test created successfully' });
             } catch (error) {
                 console.error('Error processing the request:', error);
     
-                // Delete the file in case of an error
                 if (req.file && req.file.path) {
                     fs.unlinkSync(req.file.path);
                 }
@@ -166,6 +158,7 @@ export const TeacherController = {
             }
         });
     },
+    
     
     profile: async (req: Request, res: Response) => {
         const { email } = req.body;
@@ -208,7 +201,7 @@ export const TeacherController = {
              if (!isTeacherInBatch) {
                  return res.status(403).json({ message: 'Access denied. You are not teaching this batch. Contact admin.' });
              }
-             console.log(isTeacherInBatch);
+            //  console.log(isTeacherInBatch);
             //  Apply the updates if the teacher is in the batch
              Object.keys(updates).forEach((key) => {
                  (existingBatch as any)[key] = updates[key as keyof typeof updates];
@@ -225,7 +218,7 @@ export const TeacherController = {
     },
     viewBatches: async (req: Request, res: Response) => {
         const { teacherEmail } = req.body;
-
+        console.log(teacherEmail);
         try {
             // Retrieve all batches
             const batches = await Batch.find();

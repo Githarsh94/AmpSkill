@@ -9,6 +9,7 @@ import TestCreation from '@/components/Tests';
 import { fetchTeacherProfile } from '../../../Services/teacher';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
+import TeacherBatches from '@/components/Teacher-Batches';
 
 export default function TeacherDashboard() {
     const [activeComponent, setActiveComponent] = useState('Profile');
@@ -41,7 +42,7 @@ export default function TeacherDashboard() {
             case 'Profile':
                 return <Profile />;
             case 'Batches':
-                return <div>Batches</div>;
+                return <div><TeacherBatches/></div>;
             case 'Tests':
                 return <div><TestCreation/></div>;
             case 'Assignments':
