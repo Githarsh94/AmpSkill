@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { handleUpdateBatch } from '@/Services/teacher';
 import styles from '../styles/TeacherBatches.module.css';
+import { auth } from '../lib/firebaseConfig';
 
 interface Student {
   _id: string;
   name: string;
-  rollNumber: string;
+  email: string;
+  createdAt: string;
 }
 
 interface BatchDetailsProps {
@@ -27,13 +29,34 @@ const BatchDetails: React.FC<BatchDetailsProps> = ({ batchName, department, bran
   });
   const [showUpdateForm, setShowUpdateForm] = useState(false); // Toggle for the form
 
+
   useEffect(() => {
     // Fetch students of the batch
     const fetchStudents = async () => {
+      const user = auth.currentUser;
+
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const idToken = await user.getIdToken();
       setLoading(true);
       try {
-        const response = await axios.post('http://localhost:3000/api/teacher//dashboard/batch/getStudents', { batchName, department, branch, year, teacherEmail });
-        setStudents(response.data.students);
+        const response = await fetch('http://localhost:3000/api/teacher/dashboard/batch/getStudents', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ batchName, department, branch, year, teacherEmail }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setStudents(data.students);
       } catch (error) {
         console.error('Error fetching students:', error);
       } finally {
@@ -52,22 +75,6 @@ const BatchDetails: React.FC<BatchDetailsProps> = ({ batchName, department, bran
     });
   };
 
-  const handleUpdateBatch = async () => {
-    try {
-      const response = await axios.put('/api/updateBatch', {
-        batchName,
-        department,
-        branch,
-        year,
-        teacherEmail,
-        updates: batchUpdates,
-      });
-      alert(response.data.message);
-    } catch (error) {
-      console.error('Error updating batch:', error);
-    }
-  };
-
   return (
     <div className={styles['batch-details']}>
       {loading ? (
@@ -75,13 +82,24 @@ const BatchDetails: React.FC<BatchDetailsProps> = ({ batchName, department, bran
       ) : (
         <>
           <h3 className={styles['batch-details__heading']}>Students in {batchName}</h3>
-          <ul className={styles['batch-details__students-list']}>
-            {students.map((student) => (
-              <li key={student._id} className={styles['batch-details__student-item']}>
-                {student.name} ({student.rollNumber})
-              </li>
-            ))}
-          </ul>
+          <table className={styles['batch-details__students-table']}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Joined On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student) => (
+                <tr key={student._id}>
+                  <td>{student.name}</td>
+                  <td>{student.email}</td>
+                  <td>{new Date(student.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </>
       )}
 
@@ -133,7 +151,7 @@ const BatchDetails: React.FC<BatchDetailsProps> = ({ batchName, department, bran
               className={styles['batch-details__input']}
             />
           </div>
-          <button onClick={handleUpdateBatch} className={styles['batch-details__button']}>
+          <button onClick={() => handleUpdateBatch({ batchName, department, branch, year, teacherEmail, batchUpdates })} className={styles['batch-details__button']}>
             Submit Update
           </button>
         </div>

@@ -31,7 +31,7 @@ const storage = multer.diskStorage({
     ): void => {
         callback(null, 'uploads'); // Files will be stored in the 'uploads' directory
     },
-    
+
     filename: (
         _req: CustomRequest,
         file: Express.Multer.File,
@@ -66,7 +66,7 @@ const fileFilter = (
 const upload = multer({ storage: storage, fileFilter: fileFilter }).single('questionsFile');
 
 export const TeacherController = {
-    
+
     uploadTest: async (req: CustomRequest, res: express.Response) => {
         upload(req, res, async (err) => {
             try {
@@ -75,18 +75,18 @@ export const TeacherController = {
                     // console.error('File upload error:', err);
                     return res.status(400).json({ message: err.message }); // Ensure JSON response
                 }
-    
+
                 if (req.fileValidationError) {
                     return res.status(400).json({ message: req.fileValidationError }); // Ensure JSON response
                 }
-    
+
                 if (!req.file) {
                     return res.status(400).json({ message: 'No file selected!' }); // Ensure JSON response
                 }
-    
-                const {title, description, startTime, loginWindow,testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired, batches } = req.body;
+
+                const { title, description, startTime, loginWindow, testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired, batches } = req.body;
                 // console.log(req.body);
-    
+
                 let parsedBatches;
                 try {
                     parsedBatches = JSON.parse(batches);
@@ -94,30 +94,30 @@ export const TeacherController = {
                     // console.error('Error parsing batches:', parseError);
                     return res.status(400).json({ message: 'Invalid batches format' });
                 }
-    
+
                 for (const batch of parsedBatches) {
                     const { batchName, department, branch, year } = batch;
                     const foundBatch = await Batch.findOne({ batchName, department, branch, year });
-    
+
                     if (!foundBatch) {
                         return res.status(404).json({ message: `Batch ${batchName} ${department} ${branch} ${year} not found.` });
                     }
                 }
-    
+
                 let testCode = generateRandomPassword(6);
                 let existingTest = await Test.findOne({ testCode });
                 while (existingTest) {
                     testCode = generateRandomPassword(6);
                     existingTest = await Test.findOne({ testCode });
                 }
-    
+
                 const randomPassword = generateRandomPassword(12);
-    
+
                 const workbook = xlsx.readFile(req.file.path);
                 const sheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[sheetName];
                 const data = xlsx.utils.sheet_to_json(worksheet);
-    
+
                 const questions = data.map((item: any, index: number) => ({
                     s_no: index + 1,
                     question: item.Question,
@@ -127,7 +127,7 @@ export const TeacherController = {
                     op4: item.Op4,
                     ans: item.Ans,
                 }));
-    
+
                 const newTest = new Test({
                     title,
                     description,
@@ -142,24 +142,24 @@ export const TeacherController = {
                     isCameraAccessRequired,
                     password: randomPassword,
                 });
-    
+
                 await newTest.save();
                 fs.unlinkSync(req.file.path);
-    
+
                 return res.status(200).json({ message: 'File uploaded and test created successfully' });
             } catch (error) {
                 console.error('Error processing the request:', error);
-    
+
                 if (req.file && req.file.path) {
                     fs.unlinkSync(req.file.path);
                 }
-    
+
                 return res.status(500).json({ message: 'Error processing the request.' });
             }
         });
     },
-    
-    
+
+
     profile: async (req: Request, res: Response) => {
         const { email } = req.body;
         try {
@@ -171,7 +171,7 @@ export const TeacherController = {
             res.status(500).json({ message: (error as Error).message });
         }
     },
-    updateBatch: async (req: Request, res: Response)=>{
+    updateBatch: async (req: Request, res: Response) => {
         const { batchName, department, branch, year, teacherEmail, updates } = req.body as {
             batchName: string;
             department: string;
@@ -187,32 +187,32 @@ export const TeacherController = {
                 teachers: { teacher: string; subject: string }[];
             }>;
         };
-        try{
-             // Retrieve the batch
-             const existingBatch = await Batch.findOne({ batchName, department, branch, year });
+        try {
+            // Retrieve the batch
+            const existingBatch = await Batch.findOne({ batchName, department, branch, year });
 
-             if (!existingBatch) {
-                 return res.status(404).json({ message: 'Batch does not exist or access denied. Contact admin.' });
-             }
- 
-             // Check if the teacher is in the batch's teachers array
-             const isTeacherInBatch = existingBatch.teachers.some(teacherRecord => teacherRecord.teacher === teacherEmail);
- 
-             if (!isTeacherInBatch) {
-                 return res.status(403).json({ message: 'Access denied. You are not teaching this batch. Contact admin.' });
-             }
+            if (!existingBatch) {
+                return res.status(404).json({ message: 'Batch does not exist or access denied. Contact admin.' });
+            }
+
+            // Check if the teacher is in the batch's teachers array
+            const isTeacherInBatch = existingBatch.teachers.some(teacherRecord => teacherRecord.teacher === teacherEmail);
+
+            if (!isTeacherInBatch) {
+                return res.status(403).json({ message: 'Access denied. You are not teaching this batch. Contact admin.' });
+            }
             //  console.log(isTeacherInBatch);
             //  Apply the updates if the teacher is in the batch
-             Object.keys(updates).forEach((key) => {
-                 (existingBatch as any)[key] = updates[key as keyof typeof updates];
-             });
- 
+            Object.keys(updates).forEach((key) => {
+                (existingBatch as any)[key] = updates[key as keyof typeof updates];
+            });
+
             //  Save the updated batch
-             await existingBatch.save();
+            await existingBatch.save();
             res.status(200).json({ message: 'Batch updated successfully', batch: existingBatch });
 
         }
-        catch(err){
+        catch (err) {
             res.status(500).json({ message: (err as Error).message });
         }
     },
@@ -228,7 +228,7 @@ export const TeacherController = {
             }
 
             // Filter the batches to include only those where the teacher teaches
-            const teacherBatches = batches.filter(batch => 
+            const teacherBatches = batches.filter(batch =>
                 batch.teachers.some(teacherRecord => teacherRecord.teacher === teacherEmail)
             );
 
@@ -241,7 +241,7 @@ export const TeacherController = {
             return res.status(500).json({ message: (err as Error).message });
         }
     },
-    getStudentsOfBatch: async (req: Request, res: Response)=>{
+    getStudentsOfBatch: async (req: Request, res: Response) => {
         const { batchName, department, branch, year, teacherEmail } = req.body;
 
         try {
@@ -260,27 +260,33 @@ export const TeacherController = {
             }
 
             // If the teacher has access, return the students of the batch
-            return res.status(200).json({ students: existingBatch.students });
+            // Find the students in the User model based on the emails in the batch
+            const students = await User.find({
+                email: { $in: existingBatch.students },
+                role: 'student'
+            });
+
+            return res.status(200).json({ students });
         } catch (err) {
             return res.status(500).json({ message: (err as Error).message });
         }
     },
     addSingleQues: async (req: Request, res: Response) => {
         const { testId, question, op1, op2, op3, op4, ans } = req.body;
-    
+
         try {
             // Find the test document by testCode
             const test = await Test.findOne({ testCode: testId });
-    
+
             if (!test) {
                 return res.status(404).json({ message: 'Test not found' });
             }
-    
+
             // Calculate the next s_no
-            const nextSNo = test.questions.length > 0 
-                ? test.questions[test.questions.length - 1].s_no + 1 
+            const nextSNo = test.questions.length > 0
+                ? test.questions[test.questions.length - 1].s_no + 1
                 : 1;
-    
+
             // Create a new question object
             const newQuestion = {
                 s_no: nextSNo,
@@ -291,13 +297,13 @@ export const TeacherController = {
                 op4,
                 ans
             };
-    
+
             // Add the new question to the questions array
             test.questions.push(newQuestion);
-    
+
             // Save the updated test document
             await test.save();
-    
+
             return res.status(200).json({ message: 'Question added successfully' });
         } catch (err) {
             return res.status(500).json({ message: (err as Error).message });
@@ -305,23 +311,23 @@ export const TeacherController = {
     },
 
     updateSingleQues: async (req: Request, res: Response) => {
-        const { testId, question, newQuestion,op1, op2, op3, op4, ans } = req.body;
-    
+        const { testId, question, newQuestion, op1, op2, op3, op4, ans } = req.body;
+
         try {
             // Find the test document by testCode
             const test = await Test.findOne({ testCode: testId });
-    
+
             if (!test) {
                 return res.status(404).json({ message: 'Test not found' });
             }
-    
+
             // Find the question by its s_no
             const questionToUpdate = test.questions.find(q => q.question === question);
-    
+
             if (!questionToUpdate) {
                 return res.status(404).json({ message: `Question not found` });
             }
-    
+
             // Update the question details
             if (newQuestion) questionToUpdate.question = newQuestion;
             if (op1) questionToUpdate.op1 = op1;
@@ -329,14 +335,14 @@ export const TeacherController = {
             if (op3) questionToUpdate.op3 = op3;
             if (op4) questionToUpdate.op4 = op4;
             if (ans) questionToUpdate.ans = ans;
-    
+
             // Save the updated test document
             await test.save();
-    
+
             return res.status(200).json({ message: 'Question updated successfully', test });
         } catch (err) {
             return res.status(500).json({ message: (err as Error).message });
-        }   
+        }
     },
-    
+
 };

@@ -42,9 +42,9 @@ export default function TeacherDashboard() {
             case 'Profile':
                 return <Profile />;
             case 'Batches':
-                return <div><TeacherBatches/></div>;
+                return <div><TeacherBatches /></div>;
             case 'Tests':
-                return <div><TestCreation/></div>;
+                return <div><TestCreation /></div>;
             case 'Assignments':
                 return <div>Assignments</div>;
             default:
@@ -95,7 +95,7 @@ export default function TeacherDashboard() {
 
             <div className={styles.mainContent}>
                 <header className={styles.header}>
-                    <h1>AmpSkill Student Dashboard</h1>
+                    <h1>AmpSkill Teacher Dashboard</h1>
                 </header>
                 {renderComponent()}
             </div>

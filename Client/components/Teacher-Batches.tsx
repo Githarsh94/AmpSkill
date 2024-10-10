@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import BatchDetails from './Teacher_BatchDetails';
 import { useUserStore } from '../store/user';
 import styles from '../styles/TeacherBatches.module.css';
+import { auth } from '../lib/firebaseConfig';
+
 
 interface Batch {
   _id: string;
@@ -20,11 +21,29 @@ const TeacherBatches = () => {
   useEffect(() => {
     // Fetch the batches assigned to the teacher
     const fetchBatches = async () => {
+      const user = auth.currentUser;
+
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const idToken = await user.getIdToken();
       try {
-        const response = await axios.post('http://localhost:3000/api/teacher/dashboard/batch/view', { teacherEmail });
-        if (response.status === 200) {
-          console.log(response.data.batches);
-          setBatches(response.data.batches);
+        const response = await fetch('http://localhost:3000/api/teacher/dashboard/batch/view', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ teacherEmail }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data.batches);
+          setBatches(data.batches);
+        } else {
+          console.error('Error fetching batches:', response.statusText);
         }
       } catch (error) {
         console.error('Error fetching batches:', error);
