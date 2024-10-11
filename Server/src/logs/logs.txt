@@ -631,3 +631,5 @@
 [2024-10-10T14:57:17.479Z] OPTIONS /api/teacher/dashboard/profile
 [2024-10-10T14:57:17.487Z] POST /api/teacher/dashboard/profile
 [2024-10-10T14:57:17.520Z] POST /api/teacher/dashboard/profile
+[2024-10-11T09:35:36.096Z] GET /
+[2024-10-11T09:35:36.166Z] GET /favicon.ico

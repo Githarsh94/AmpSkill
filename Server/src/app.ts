@@ -22,6 +22,10 @@ app.use(cors(
 
 app.use(express.json());
 // Serve static files from uploads directory
+
+app.get('/', (req, res) => {
+    res.send('API is Up and Running');
+});
 app.use('/uploads', express.static('uploads'));
 app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
