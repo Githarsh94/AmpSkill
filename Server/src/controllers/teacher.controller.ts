@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import { Test } from '../models/test.model';
 import { User } from '../models/user.model';
 import { Batch } from '../models/batch.model';
-import xlsx from 'xlsx';
-import multer, { FileFilterCallback } from 'multer';
+// import xlsx from 'xlsx';
+// import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import express from 'express';
 import fs from 'fs';
@@ -16,148 +16,148 @@ const generateRandomPassword = (length: number): string => {
 };
 
 // Define the custom interface for the request
-interface CustomRequest extends express.Request {
-    fileValidationError?: string;
-}
-type DestinationCallback = (error: Error | null, destination: string) => void;
-type FileNameCallback = (error: Error | null, filename: string) => void;
+// interface CustomRequest extends express.Request {
+//     fileValidationError?: string;
+// }
+// type DestinationCallback = (error: Error | null, destination: string) => void;
+// type FileNameCallback = (error: Error | null, filename: string) => void;
 
-// Multer storage configuration
-const storage = multer.diskStorage({
-    destination: (
-        _req: CustomRequest,
-        _file: Express.Multer.File,
-        callback: DestinationCallback
-    ): void => {
-        callback(null, 'uploads'); // Files will be stored in the 'uploads' directory
-    },
+// // Multer storage configuration
+// const storage = multer.diskStorage({
+//     destination: (
+//         _req: CustomRequest,
+//         _file: Express.Multer.File,
+//         callback: DestinationCallback
+//     ): void => {
+//         callback(null, 'uploads'); // Files will be stored in the 'uploads' directory
+//     },
 
-    filename: (
-        _req: CustomRequest,
-        file: Express.Multer.File,
-        callback: FileNameCallback
-    ): void => {
-        const extname = path.extname(file.originalname);
-        const basename = path.basename(file.originalname, extname);
-        callback(null, `${basename}-${Date.now()}${extname}`); // e.g., filename-1234567890.xlsx
-    }
-});
+//     filename: (
+//         _req: CustomRequest,
+//         file: Express.Multer.File,
+//         callback: FileNameCallback
+//     ): void => {
+//         const extname = path.extname(file.originalname);
+//         const basename = path.basename(file.originalname, extname);
+//         callback(null, `${basename}-${Date.now()}${extname}`); // e.g., filename-1234567890.xlsx
+//     }
+// });
 
-// File filter function to validate file types
-const fileFilter = (
-    req: CustomRequest, // Use CustomRequest here
-    file: Express.Multer.File,
-    callback: FileFilterCallback
-): void => {
-    const allowedTypes = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-        'text/csv' // .csv
-    ];
+// // File filter function to validate file types
+// const fileFilter = (
+//     req: CustomRequest, // Use CustomRequest here
+//     file: Express.Multer.File,
+//     callback: FileFilterCallback
+// ): void => {
+//     const allowedTypes = [
+//         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+//         'text/csv' // .csv
+//     ];
 
-    if (allowedTypes.includes(file.mimetype)) {
-        callback(null, true); // No error, accept the file
-    } else {
-        req.fileValidationError = 'Invalid file type. Only Excel and CSV files are allowed.';
-        callback(null, false); // No error, but reject the file
-    }
-};
+//     if (allowedTypes.includes(file.mimetype)) {
+//         callback(null, true); // No error, accept the file
+//     } else {
+//         req.fileValidationError = 'Invalid file type. Only Excel and CSV files are allowed.';
+//         callback(null, false); // No error, but reject the file
+//     }
+// };
 
-// Initialize multer with storage and file filter
-const upload = multer({ storage: storage, fileFilter: fileFilter }).single('questionsFile');
+// // Initialize multer with storage and file filter
+// const upload = multer({ storage: storage, fileFilter: fileFilter }).single('questionsFile');
 
 export const TeacherController = {
 
-    uploadTest: async (req: CustomRequest, res: express.Response) => {
-        upload(req, res, async (err) => {
-            try {
-                // console.log(req.body);
-                if (err) {
-                    // console.error('File upload error:', err);
-                    return res.status(400).json({ message: err.message }); // Ensure JSON response
-                }
+    // uploadTest: async (req: CustomRequest, res: express.Response) => {
+    //     upload(req, res, async (err) => {
+    //         try {
+    //             // console.log(req.body);
+    //             if (err) {
+    //                 // console.error('File upload error:', err);
+    //                 return res.status(400).json({ message: err.message }); // Ensure JSON response
+    //             }
 
-                if (req.fileValidationError) {
-                    return res.status(400).json({ message: req.fileValidationError }); // Ensure JSON response
-                }
+    //             if (req.fileValidationError) {
+    //                 return res.status(400).json({ message: req.fileValidationError }); // Ensure JSON response
+    //             }
 
-                if (!req.file) {
-                    return res.status(400).json({ message: 'No file selected!' }); // Ensure JSON response
-                }
+    //             if (!req.file) {
+    //                 return res.status(400).json({ message: 'No file selected!' }); // Ensure JSON response
+    //             }
 
-                const { title, description, startTime, loginWindow, testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired, batches } = req.body;
-                // console.log(req.body);
+    //             const { title, description, startTime, loginWindow, testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired, batches } = req.body;
+    //             // console.log(req.body);
 
-                let parsedBatches;
-                try {
-                    parsedBatches = JSON.parse(batches);
-                } catch (parseError) {
-                    // console.error('Error parsing batches:', parseError);
-                    return res.status(400).json({ message: 'Invalid batches format' });
-                }
+    //             let parsedBatches;
+    //             try {
+    //                 parsedBatches = JSON.parse(batches);
+    //             } catch (parseError) {
+    //                 // console.error('Error parsing batches:', parseError);
+    //                 return res.status(400).json({ message: 'Invalid batches format' });
+    //             }
 
-                for (const batch of parsedBatches) {
-                    const { batchName, department, branch, year } = batch;
-                    const foundBatch = await Batch.findOne({ batchName, department, branch, year });
+    //             for (const batch of parsedBatches) {
+    //                 const { batchName, department, branch, year } = batch;
+    //                 const foundBatch = await Batch.findOne({ batchName, department, branch, year });
 
-                    if (!foundBatch) {
-                        return res.status(404).json({ message: `Batch ${batchName} ${department} ${branch} ${year} not found.` });
-                    }
-                }
+    //                 if (!foundBatch) {
+    //                     return res.status(404).json({ message: `Batch ${batchName} ${department} ${branch} ${year} not found.` });
+    //                 }
+    //             }
 
-                let testCode = generateRandomPassword(6);
-                let existingTest = await Test.findOne({ testCode });
-                while (existingTest) {
-                    testCode = generateRandomPassword(6);
-                    existingTest = await Test.findOne({ testCode });
-                }
+    //             let testCode = generateRandomPassword(6);
+    //             let existingTest = await Test.findOne({ testCode });
+    //             while (existingTest) {
+    //                 testCode = generateRandomPassword(6);
+    //                 existingTest = await Test.findOne({ testCode });
+    //             }
 
-                const randomPassword = generateRandomPassword(12);
+    //             const randomPassword = generateRandomPassword(12);
 
-                const workbook = xlsx.readFile(req.file.path);
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const data = xlsx.utils.sheet_to_json(worksheet);
+    //             const workbook = xlsx.readFile(req.file.path);
+    //             const sheetName = workbook.SheetNames[0];
+    //             const worksheet = workbook.Sheets[sheetName];
+    //             const data = xlsx.utils.sheet_to_json(worksheet);
 
-                const questions = data.map((item: any, index: number) => ({
-                    s_no: index + 1,
-                    question: item.Question,
-                    op1: item.Op1,
-                    op2: item.Op2,
-                    op3: item.Op3,
-                    op4: item.Op4,
-                    ans: item.Ans,
-                }));
+    //             const questions = data.map((item: any, index: number) => ({
+    //                 s_no: index + 1,
+    //                 question: item.Question,
+    //                 op1: item.Op1,
+    //                 op2: item.Op2,
+    //                 op3: item.Op3,
+    //                 op4: item.Op4,
+    //                 ans: item.Ans,
+    //             }));
 
-                const newTest = new Test({
-                    title,
-                    description,
-                    questions,
-                    batches: parsedBatches,
-                    testCode,
-                    startTime: new Date(startTime),
-                    loginWindow,
-                    testDuration,
-                    isFullScreenEnforced,
-                    isTabSwitchPreventionEnabled,
-                    isCameraAccessRequired,
-                    password: randomPassword,
-                });
+    //             const newTest = new Test({
+    //                 title,
+    //                 description,
+    //                 questions,
+    //                 batches: parsedBatches,
+    //                 testCode,
+    //                 startTime: new Date(startTime),
+    //                 loginWindow,
+    //                 testDuration,
+    //                 isFullScreenEnforced,
+    //                 isTabSwitchPreventionEnabled,
+    //                 isCameraAccessRequired,
+    //                 password: randomPassword,
+    //             });
 
-                await newTest.save();
-                fs.unlinkSync(req.file.path);
+    //             await newTest.save();
+    //             fs.unlinkSync(req.file.path);
 
-                return res.status(200).json({ message: 'File uploaded and test created successfully' });
-            } catch (error) {
-                console.error('Error processing the request:', error);
+    //             return res.status(200).json({ message: 'File uploaded and test created successfully' });
+    //         } catch (error) {
+    //             console.error('Error processing the request:', error);
 
-                if (req.file && req.file.path) {
-                    fs.unlinkSync(req.file.path);
-                }
+    //             if (req.file && req.file.path) {
+    //                 fs.unlinkSync(req.file.path);
+    //             }
 
-                return res.status(500).json({ message: 'Error processing the request.' });
-            }
-        });
-    },
+    //             return res.status(500).json({ message: 'Error processing the request.' });
+    //         }
+    //     });
+    // },
 
 
     profile: async (req: Request, res: Response) => {
