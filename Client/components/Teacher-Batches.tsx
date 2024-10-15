@@ -29,7 +29,7 @@ const TeacherBatches = () => {
 
       const idToken = await user.getIdToken();
       try {
-        const response = await fetch('http://localhost:3000/api/teacher/dashboard/batch/view', {
+        const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/batch/view', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

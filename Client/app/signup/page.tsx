@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignUp() {
     const [email, setEmail] = useState<string>("");
-    const [name,setName]=useState<string>("");
+    const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
 
@@ -19,7 +19,7 @@ export default function SignUp() {
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
 
-            const response = await fetch('http://localhost:3000/api/auth/google-signup', {
+            const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/google-signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,12 +47,12 @@ export default function SignUp() {
         }
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/signup', {
+            const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name,email, password, role }),
+                body: JSON.stringify({ name, email, password, role }),
             });
 
             const data = await response.json();
@@ -73,11 +73,11 @@ export default function SignUp() {
                 <h1 className={styles.title}>AmpSkill</h1>
                 <div className={styles.formContainer}>
                     <input
-                            placeholder="Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className={styles.input}
-                        />
+                        placeholder="Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={styles.input}
+                    />
                     <input
                         type="email"
                         placeholder="Email"

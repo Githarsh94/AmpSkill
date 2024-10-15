@@ -36,7 +36,7 @@ export const fetchAdminProfile = async (email: string): Promise<UserProfile> => 
 
     const idToken = await user.getIdToken();
 
-    const response = await fetch('http://localhost:3000/api/admin/dashboard/profile', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/admin/dashboard/profile', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export const assignTeachers = async (payload: IAssignTeachersPayload): Promise<v
     }
 
     const idToken = await user.getIdToken();
-    const response = await fetch('http://localhost:3000/api/admin/dashboard/assignTeachers', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/admin/dashboard/assignTeachers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export const unassignTeachers = async (payload: IAssignTeachersPayload): Promise
     }
 
     const idToken = await user.getIdToken();
-    const response = await fetch('http://localhost:3000/api/admin/dashboard/unassignTeachers', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/admin/dashboard/unassignTeachers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export const fetchBatches = async () => {
         throw new Error('User not authenticated');
     }
     const idToken = await user.getIdToken();
-    const response = await fetch('http://localhost:3000/api/admin/dashboard/getBatches', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/admin/dashboard/getBatches', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ export const deleteBatch = async (batchName: string, department: string, branch:
     }
 
     const idToken = await user.getIdToken();
-    const response = await fetch('http://localhost:3000/api/admin/dashboard/deleteBatch', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/admin/dashboard/deleteBatch', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ export const addBatch = async (batchData: AddBatchPayload) => {
     if (batchData.teachers.some(teacher => !teacher.teacher || !teacher.subject)) {
         throw new Error('Number of teachers and Students must be equal');
     }
-    const response = await fetch('http://localhost:3000/api/admin/dashboard/addBatch', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/admin/dashboard/addBatch', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

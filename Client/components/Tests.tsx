@@ -105,20 +105,20 @@ const TestCreation: React.FC = () => {
 
     try {
       // Make the API request to upload the test
-      const response = await fetch('http://localhost:3000/api/teacher/dashboard/test/uploadTest', {
-        method: 'POST',
-        body: formData,
-      });
+      // const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/test/uploadTest', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error uploading test:', errorData.message);
-        alert(`Error: ${errorData.message}`);
-        return;
-      }
+      // if (!response.ok) {
+      //   const errorData = await response.json();
+      //   console.error('Error uploading test:', errorData.message);
+      //   alert(`Error: ${errorData.message}`);
+      //   return;
+      // }
 
       // If successful, notify the user
-      const responseData = await response.json();
+      // const responseData = await response.json();
       alert('Test created successfully!');
     } catch (error) {
       console.error('Error saving test:', error);
@@ -230,38 +230,38 @@ const TestCreation: React.FC = () => {
           <label className={styles.testLabel}>
             Enter Batch Manually
           </label>
-            <div>
-              <input
-                type="text"
-                className={styles.testInputText}
-                placeholder="Batch Name"
-                value={batchInput.batchName}
-                onChange={(e) => setBatchInput({ ...batchInput, batchName: e.target.value })}
-              />
-              <input
-                type="text"
-                className={styles.testInputText}
-                placeholder="Department"
-                value={batchInput.department}
-                onChange={(e) => setBatchInput({ ...batchInput, department: e.target.value })}
-              />
-              <input
-                type="text"
-                className={styles.testInputText}
-                placeholder="Branch"
-                value={batchInput.branch}
-                onChange={(e) => setBatchInput({ ...batchInput, branch: e.target.value })}
-              />
-              <input
-                type="text"
-                className={styles.testInputText}
-                placeholder="Year"
-                value={batchInput.year}
-                onChange={(e) => setBatchInput({ ...batchInput, year: e.target.value })}
-              />
-              <button className={styles.testButton} onClick={handleAddBatch}>Add Another Batch</button>
-              {error && <p className={styles.errorText}>{error}</p>} {/* Display error if present */}
-            </div>
+          <div>
+            <input
+              type="text"
+              className={styles.testInputText}
+              placeholder="Batch Name"
+              value={batchInput.batchName}
+              onChange={(e) => setBatchInput({ ...batchInput, batchName: e.target.value })}
+            />
+            <input
+              type="text"
+              className={styles.testInputText}
+              placeholder="Department"
+              value={batchInput.department}
+              onChange={(e) => setBatchInput({ ...batchInput, department: e.target.value })}
+            />
+            <input
+              type="text"
+              className={styles.testInputText}
+              placeholder="Branch"
+              value={batchInput.branch}
+              onChange={(e) => setBatchInput({ ...batchInput, branch: e.target.value })}
+            />
+            <input
+              type="text"
+              className={styles.testInputText}
+              placeholder="Year"
+              value={batchInput.year}
+              onChange={(e) => setBatchInput({ ...batchInput, year: e.target.value })}
+            />
+            <button className={styles.testButton} onClick={handleAddBatch}>Add Another Batch</button>
+            {error && <p className={styles.errorText}>{error}</p>} {/* Display error if present */}
+          </div>
 
           <button className={styles.testButton} onClick={handlePrevious}>Back</button>
           <button className={styles.testButton} onClick={handleNext}>Next</button>

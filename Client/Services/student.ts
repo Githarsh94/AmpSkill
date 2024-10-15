@@ -17,7 +17,7 @@ export const fetchStudentProfile = async (email: string): Promise<UserProfile> =
 
     const idToken = await user.getIdToken();
 
-    const response = await fetch('http://localhost:3000/api/teacher/dashboard/profile', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/profile', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

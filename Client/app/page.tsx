@@ -11,14 +11,33 @@ export default function Home() {
   const setEmail = useUserStore((state) => state.setEmail);
   const Router = useRouter();
   const handleLogIn = () => {
-    setTimeout(() => {
-      const checkSession = async () => {
-        const sessionId = localStorage.getItem('sessionId');
-        const role = localStorage.getItem('Role');
-        const email = localStorage.getItem('Email');
-        if (sessionId && role) {
-          try {
-            const response = await fetch('http://localhost:3000/api/auth/google-login', {
+    const checkSession = async () => {
+      const sessionId = localStorage.getItem('sessionId');
+      const role = localStorage.getItem('Role');
+      const email = localStorage.getItem('Email');
+      if (sessionId && role) {
+        try {
+          const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/google-login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ idToken: sessionId, role }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            setEmail(email!);
+            Router.push(`/dashboard/${role}`);
+          } else {
+            console.error('Error during session verification:', data.message);
+            localStorage.removeItem('sessionId');
+            localStorage.removeItem('Role');
+            localStorage.removeItem('Email');
+
+            // Try verifying session on the login route
+            const loginResponse = await fetch('https://amp-skill-backend.vercel.app/api/auth/login', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -26,50 +45,32 @@ export default function Home() {
               body: JSON.stringify({ idToken: sessionId, role }),
             });
 
-            const data = await response.json();
+            const loginData = await loginResponse.json();
 
-            if (response.ok) {
-              setEmail(email!);
+            if (loginResponse.ok) {
+              await setEmail(email!);
               Router.push(`/dashboard/${role}`);
             } else {
-              console.error('Error during session verification:', data.message);
+              console.error('Error during session verification on login route:', loginData.message);
               localStorage.removeItem('sessionId');
               localStorage.removeItem('Role');
               localStorage.removeItem('Email');
-
-              // Try verifying session on the login route
-              const loginResponse = await fetch('http://localhost:3000/api/auth/login', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ idToken: sessionId, role }),
-              });
-
-              const loginData = await loginResponse.json();
-
-              if (loginResponse.ok) {
-                setEmail(email!);
-                Router.push(`/dashboard/${role}`);
-              } else {
-                console.error('Error during session verification on login route:', loginData.message);
-                localStorage.removeItem('sessionId');
-                localStorage.removeItem('Role');
-                localStorage.removeItem('Email');
-              }
+              Router.push('/login');
             }
-          } catch (error: any) {
-            console.error('Error during session verification:', error);
-            localStorage.removeItem('sessionId');
-            localStorage.removeItem('Role');
-            localStorage.removeItem('Email');
           }
+        } catch (error: any) {
+          console.error('Error during session verification:', error);
+          localStorage.removeItem('sessionId');
+          localStorage.removeItem('Role');
+          localStorage.removeItem('Email');
+          Router.push('/login');
         }
-      };
+      } else {
+        Router.push('/login');
+      }
+    };
 
-      checkSession();
-    }, 300);
-    Router.push('/login');
+    checkSession();
   };
   return (
     <>

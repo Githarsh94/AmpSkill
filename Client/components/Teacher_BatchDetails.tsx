@@ -42,7 +42,7 @@ const BatchDetails: React.FC<BatchDetailsProps> = ({ batchName, department, bran
       const idToken = await user.getIdToken();
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:3000/api/teacher/dashboard/batch/getStudents', {
+        const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/batch/getStudents', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

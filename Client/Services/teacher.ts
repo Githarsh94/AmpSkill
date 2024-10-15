@@ -31,7 +31,7 @@ export const fetchTeacherProfile = async (email: string): Promise<UserProfile> =
 
     const idToken = await user.getIdToken();
 
-    const response = await fetch('http://localhost:3000/api/teacher/dashboard/profile', {
+    const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/profile', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export const fetchTeacherProfile = async (email: string): Promise<UserProfile> =
         },
         body: JSON.stringify({ email }),
     });
-    console.log(response)
+
     if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message || 'Failed to fetch profile');
@@ -58,7 +58,7 @@ export const handleUpdateBatch = async (updatedData: updatedDataPayload) => {
 
         const idToken = await user.getIdToken();
 
-        const response = await fetch('http://localhost:3000/api/teacher/dashboard/batch/update', {
+        const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/batch/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
