@@ -2,16 +2,18 @@
 
 import { useState } from 'react';
 import { auth } from '../../lib/firebaseConfig';
-import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import styles from '../../styles/signup.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
     const [email, setEmail] = useState<string>("");
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
+    const router = useRouter();
 
     const handleGoogleSignUp = async (role: string) => {
         const provider = new GoogleAuthProvider();
@@ -19,7 +21,7 @@ export default function SignUp() {
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
 
-            const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/google-signup', {
+            const response = await fetch('/auth/google-signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,7 +35,10 @@ export default function SignUp() {
                 throw new Error(data.message);
             }
             toast.success(data.message);
-            // Optionally redirect to login page
+            setTimeout(() => {
+                router.push('/login');
+            }, 3000);
+
         } catch (error: any) {
             console.error('Error during Google sign-up:', error);
             toast.error(error.message);
@@ -47,7 +52,7 @@ export default function SignUp() {
         }
 
         try {
-            const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/signup', {
+            const response = await fetch('/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +65,10 @@ export default function SignUp() {
                 console.error(data.message);
                 throw new Error(data.message);
             }
-            toast.success('Account created successfully. Please log in.');
+            toast.success(data.message);
+            setTimeout(() => {
+                router.push('/login');
+            }, 3000);
         } catch (error: any) {
             console.error('Error during manual sign-up:', error);
             toast.error(error.message);

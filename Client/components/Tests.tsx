@@ -105,7 +105,7 @@ const TestCreation: React.FC = () => {
 
     try {
       // Make the API request to upload the test
-      // const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/test/uploadTest', {
+      // const response = await fetch('/teacher/dashboard/test/uploadTest', {
       //   method: 'POST',
       //   body: formData,
       // });

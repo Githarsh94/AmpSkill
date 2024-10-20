@@ -31,7 +31,7 @@ export const fetchTeacherProfile = async (email: string): Promise<UserProfile> =
 
     const idToken = await user.getIdToken();
 
-    const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/profile', {
+    const response = await fetch(`/teacher/dashboard/profile`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const handleUpdateBatch = async (updatedData: updatedDataPayload) => {
 
         const idToken = await user.getIdToken();
 
-        const response = await fetch('https://amp-skill-backend.vercel.app/api/teacher/dashboard/batch/update', {
+        const response = await fetch(`/teacher/dashboard/batch/update`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

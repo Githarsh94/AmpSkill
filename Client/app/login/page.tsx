@@ -23,7 +23,7 @@ export default function Login() {
             const idToken = await result.user.getIdToken();
             const userEmail = result.user.email; // Get the email
 
-            const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/google-login', {
+            const response = await fetch(`/auth/google-login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,10 +40,10 @@ export default function Login() {
 
             setEmail(userEmail!); // Store the email in context
             toast.success(data.message);
+            localStorage.setItem('sessionId', idToken);  // Store the session ID in localStorage
+            localStorage.setItem('Role', role); // Store the role in localStorage
+            localStorage.setItem('Email', userEmail!); // Store the email in localStorage
             setTimeout(() => {
-                localStorage.setItem('sessionId', idToken);  // Store the session ID in localStorage
-                localStorage.setItem('Role', role); // Store the role in localStorage
-                localStorage.setItem('Email', userEmail!); // Store the email in localStorage
                 Router.push(`/dashboard/${role}`);
             }, 2000);
         } catch (error: any) {
@@ -59,7 +59,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/login', {
+            const response = await fetch(`/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,11 +71,11 @@ export default function Login() {
 
             if (response.ok) {
                 setEmail(formEmail);
-                toast.success('Login Successful');
+                toast.success(data.message);
+                localStorage.setItem('sessionId', data.sessionId); // Store the session ID in localStorage
+                localStorage.setItem('Role', role); // Store the role in localStorage
+                localStorage.setItem('Email', formEmail); // Store the email in localStorage
                 setTimeout(() => {
-                    localStorage.setItem('sessionId', data.sessionId); // Store the session ID in localStorage
-                    localStorage.setItem('Role', role); // Store the role in localStorage
-                    localStorage.setItem('Email', formEmail); // Store the email in localStorage
                     Router.push(`/dashboard/${role}`);
                 }, 2000);
             } else {

@@ -17,7 +17,7 @@ export default function Home() {
       const email = localStorage.getItem('Email');
       if (sessionId && role) {
         try {
-          const response = await fetch('https://amp-skill-backend.vercel.app/api/auth/google-login', {
+          const response = await fetch('/auth/google-login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export default function Home() {
             localStorage.removeItem('Email');
 
             // Try verifying session on the login route
-            const loginResponse = await fetch('https://amp-skill-backend.vercel.app/api/auth/login', {
+            const loginResponse = await fetch('/auth/login', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
