@@ -35,7 +35,7 @@ export const useUserStore = create<UserStore>()(
         }),
         {
             name: 'user-store', // unique name
-            partialize: (state) => ({ user: { email: state.user.email } }), // persist only the email
+            partialize: (state) => ({ user: state.user }), // persist the whole user object
         }
     )
 );

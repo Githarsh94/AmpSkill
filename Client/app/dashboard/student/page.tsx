@@ -17,6 +17,7 @@ export default function StudentDashboard() {
     const router = useRouter();
 
     useEffect(() => {
+        if (!email) return;
         const loadProfile = async () => {
             setIsLoading(true);
             try {
@@ -31,7 +32,7 @@ export default function StudentDashboard() {
         };
 
         loadProfile();
-    }, [email, setUser]);
+    }, [email]);
 
     const renderComponent = () => {
         switch (activeComponent) {

@@ -19,6 +19,8 @@ export default function TeacherDashboard() {
     const router = useRouter();
 
     useEffect(() => {
+        if (!email) return;
+
         const loadProfile = async () => {
             setIsLoading(true);
             try {
@@ -33,7 +35,7 @@ export default function TeacherDashboard() {
         };
 
         loadProfile();
-    }, [email, setUser]);
+    }, [email]);
 
     const renderComponent = () => {
         switch (activeComponent) {
