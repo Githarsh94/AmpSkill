@@ -11,7 +11,7 @@ import loggerMiddleware from './middlewares/logger.middleware';
 
 const app = express();
 
-app.use(loggerMiddleware);
+// app.use(loggerMiddleware);
 app.use(cors(
     {
         origin: '*',

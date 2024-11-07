@@ -31,11 +31,7 @@ export default function Home() {
             setEmail(email!);
             Router.push(`/dashboard/${role}`);
           } else {
-            console.error('Error during session verification:', data.message);
-            localStorage.removeItem('sessionId');
-            localStorage.removeItem('Role');
-            localStorage.removeItem('Email');
-
+            console.error('Error during google-session verification:', data.message);
             // Try verifying session on the login route
             const loginResponse = await fetch('/auth/login', {
               method: 'POST',
@@ -48,10 +44,10 @@ export default function Home() {
             const loginData = await loginResponse.json();
 
             if (loginResponse.ok) {
-              await setEmail(email!);
+              setEmail(email!);
               Router.push(`/dashboard/${role}`);
             } else {
-              console.error('Error during session verification on login route:', loginData.message);
+              console.error('Error during firebase-session verification:', loginData.message);
               localStorage.removeItem('sessionId');
               localStorage.removeItem('Role');
               localStorage.removeItem('Email');

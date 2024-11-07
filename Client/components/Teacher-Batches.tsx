@@ -21,13 +21,17 @@ const TeacherBatches = () => {
   useEffect(() => {
     // Fetch the batches assigned to the teacher
     const fetchBatches = async () => {
-      const user = auth.currentUser;
+      let idToken = localStorage.getItem('sessionId');
 
-      if (!user) {
-        throw new Error('User not authenticated');
+      if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
       }
-
-      const idToken = await user.getIdToken();
       try {
         const response = await fetch('/teacher/dashboard/batch/view', {
           method: 'POST',

@@ -9,13 +9,17 @@ interface UserProfile {
 }
 
 export const fetchStudentProfile = async (email: string): Promise<UserProfile> => {
-    const user = auth.currentUser;
+    let idToken = localStorage.getItem('sessionId');
 
-    if (!user) {
-        throw new Error('User not authenticated');
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
     }
-
-    const idToken = await user.getIdToken();
 
     const response = await fetch('/teacher/dashboard/profile', {
         method: 'POST',

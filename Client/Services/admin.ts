@@ -28,13 +28,17 @@ export interface IAssignTeachersPayload {
 
 
 export const fetchAdminProfile = async (email: string): Promise<UserProfile> => {
-    const user = auth.currentUser;
+    let idToken = localStorage.getItem('sessionId');
 
-    if (!user) {
-        throw new Error('User not authenticated');
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
     }
-
-    const idToken = await user.getIdToken();
 
     const response = await fetch('/admin/dashboard/profile', {
         method: 'POST',
@@ -54,13 +58,17 @@ export const fetchAdminProfile = async (email: string): Promise<UserProfile> => 
 };
 
 export const assignTeachers = async (payload: IAssignTeachersPayload): Promise<void> => {
-    const user = auth.currentUser;
+    let idToken = localStorage.getItem('sessionId');
 
-    if (!user) {
-        throw new Error('User not authenticated');
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
     }
-
-    const idToken = await user.getIdToken();
     const response = await fetch('/admin/dashboard/assignTeachers', {
         method: 'POST',
         headers: {
@@ -77,13 +85,17 @@ export const assignTeachers = async (payload: IAssignTeachersPayload): Promise<v
 };
 
 export const unassignTeachers = async (payload: IAssignTeachersPayload): Promise<void> => {
-    const user = auth.currentUser;
+    let idToken = localStorage.getItem('sessionId');
 
-    if (!user) {
-        throw new Error('User not authenticated');
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
     }
-
-    const idToken = await user.getIdToken();
     const response = await fetch('/admin/dashboard/unassignTeachers', {
         method: 'POST',
         headers: {
@@ -100,11 +112,17 @@ export const unassignTeachers = async (payload: IAssignTeachersPayload): Promise
 };
 
 export const fetchBatches = async () => {
-    const user = auth.currentUser;
-    if (!user) {
-        throw new Error('User not authenticated');
+    let idToken = localStorage.getItem('sessionId');
+
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
     }
-    const idToken = await user.getIdToken();
     const response = await fetch('/admin/dashboard/getBatches', {
         method: 'POST',
         headers: {
@@ -122,13 +140,17 @@ export const fetchBatches = async () => {
 };
 
 export const deleteBatch = async (batchName: string, department: string, branch: string, year: number) => {
-    const user = auth.currentUser;
+    let idToken = localStorage.getItem('sessionId');
 
-    if (!user) {
-        throw new Error('User not authenticated');
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
     }
-
-    const idToken = await user.getIdToken();
     const response = await fetch('/admin/dashboard/deleteBatch', {
         method: 'POST',
         headers: {
@@ -146,13 +168,17 @@ export const deleteBatch = async (batchName: string, department: string, branch:
 }
 
 export const addBatch = async (batchData: AddBatchPayload) => {
-    const user = auth.currentUser;
+    let idToken = localStorage.getItem('sessionId');
 
-    if (!user) {
-        throw new Error('User not authenticated');
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
     }
-
-    const idToken = await user.getIdToken();
     if (batchData.teachers.some(teacher => !teacher.teacher || !teacher.subject)) {
         throw new Error('Number of teachers and Students must be equal');
     }

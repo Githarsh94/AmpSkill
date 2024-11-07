@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface User {
     name: string;
@@ -14,19 +15,27 @@ interface UserStore {
     setEmail: (email: string) => void;
 }
 
-export const useUserStore = create<UserStore>((set) => ({
-    user: {
-        name: '',
-        email: '',
-        role: '',
-        createdAt: '',
-        picture: '',
-    },
-    setUser: (user: User) => set(() => ({ user })),
-    setEmail: (email: string) => set((state) => ({
-        user: {
-            ...state.user,
-            email,
-        },
-    })),
-}));
+export const useUserStore = create<UserStore>()(
+    persist(
+        (set) => ({
+            user: {
+                name: '',
+                email: '',
+                role: '',
+                createdAt: '',
+                picture: '',
+            },
+            setUser: (user: User) => set(() => ({ user })),
+            setEmail: (email: string) => set((state) => ({
+                user: {
+                    ...state.user,
+                    email,
+                },
+            })),
+        }),
+        {
+            name: 'user-store', // unique name
+            partialize: (state) => ({ user: { email: state.user.email } }), // persist only the email
+        }
+    )
+);

@@ -33,13 +33,17 @@ const BatchDetails: React.FC<BatchDetailsProps> = ({ batchName, department, bran
   useEffect(() => {
     // Fetch students of the batch
     const fetchStudents = async () => {
-      const user = auth.currentUser;
+      let idToken = localStorage.getItem('sessionId');
 
-      if (!user) {
-        throw new Error('User not authenticated');
+      if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
       }
-
-      const idToken = await user.getIdToken();
       setLoading(true);
       try {
         const response = await fetch('/teacher/dashboard/batch/getStudents', {
