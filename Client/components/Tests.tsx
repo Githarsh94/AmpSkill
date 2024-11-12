@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 import styles from '../styles/test.module.css';
-
+import { auth } from '../lib/firebaseConfig';
 type BatchDetails = {
   batchName: string;
   department: string;
   branch: string;
   year: string;
+};
+
+type Que = {
+  question: string;
+  option1: string;
+  option2: string;
+  option3: string;
+  option4: string;
+  correctOption: string;
 };
 
 type TestDetails = {
@@ -17,22 +27,20 @@ type TestDetails = {
   isFullScreenEnforced: boolean;
   isTabSwitchPreventionEnabled: boolean;
   isCameraAccessRequired: boolean;
-  questionsFile: File | null;
-  batchesFile: File | null;
+  questions: Que[];
   batchDetails: BatchDetails[];
 };
 
 const TestCreation: React.FC = () => {
   const [step, setStep] = useState<number>(1);
-  const [manualBatchEntry, setManualBatchEntry] = useState<boolean>(false);
+  const [questionsFile, setQuestionsFile] = useState<File | null>(null);
   const [batchInput, setBatchInput] = useState<BatchDetails>({
     batchName: '',
     department: '',
     branch: '',
     year: '',
   });
-  const [error, setError] = useState<string>(''); // Add error state
-
+  const [error, setError] = useState<string>('');
   const [testDetails, setTestDetails] = useState<TestDetails>({
     title: '',
     description: '',
@@ -42,46 +50,50 @@ const TestCreation: React.FC = () => {
     isFullScreenEnforced: false,
     isTabSwitchPreventionEnabled: false,
     isCameraAccessRequired: false,
-    questionsFile: null,
-    batchesFile: null,
+    questions: [],
     batchDetails: [],
   });
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handlePrevious = () => setStep((prev) => prev - 1);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setTestDetails({ ...testDetails, questionsFile: e.target.files[0] });
+      const file = e.target.files[0];
+      setQuestionsFile(file);
+
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData: Que[] = XLSX.utils.sheet_to_json(worksheet);
+
+      const chunkSize = 100;
+      const questionsArray: Que[] = [];
+
+      for (let i = 0; i < jsonData.length; i += chunkSize) {
+        const chunk = jsonData.slice(i, i + chunkSize);
+        questionsArray.push(...chunk);
+      }
+      setTestDetails((prevDetails) => ({ ...prevDetails, questions: questionsArray }));
     }
   };
-
-  const handleBatchFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setTestDetails({ ...testDetails, batchesFile: e.target.files[0] });
-    }
-  };
-
-  // Update the handleAddBatch function to check for empty fields and set an error message if needed
+ 
   const handleAddBatch = () => {
     if (!batchInput.batchName || !batchInput.department || !batchInput.branch || !batchInput.year) {
       setError('All batch fields must be filled out before adding.');
-      return; // Do not add the batch if any field is empty
+      return;
     }
 
-    // If all fields are valid, add the batch and clear the input fields and error
     setTestDetails({
       ...testDetails,
       batchDetails: [...testDetails.batchDetails, batchInput],
     });
     setBatchInput({ batchName: '', department: '', branch: '', year: '' });
-    setError(''); // Clear the error message if the batch is successfully added
+    setError('');
   };
 
   const handleSaveTest = async () => {
     const formData = new FormData();
-
-    // Add non-file fields to formData
     formData.append('title', testDetails.title);
     formData.append('description', testDetails.description);
     formData.append('startTime', testDetails.startTime);
@@ -90,42 +102,53 @@ const TestCreation: React.FC = () => {
     formData.append('isFullScreenEnforced', String(testDetails.isFullScreenEnforced));
     formData.append('isTabSwitchPreventionEnabled', String(testDetails.isTabSwitchPreventionEnabled));
     formData.append('isCameraAccessRequired', String(testDetails.isCameraAccessRequired));
-
-    // Add files (if present) to formData
-    if (testDetails.questionsFile) {
-      formData.append('questionsFile', testDetails.questionsFile);
-    }
-
-    if (testDetails.batchesFile) {
-      formData.append('batchesFile', testDetails.batchesFile);
-    }
-
-    // Add the batch details as a JSON string
     formData.append('batches', JSON.stringify(testDetails.batchDetails));
+    console.log("testDetails:", testDetails);
 
+    
     try {
-      // Make the API request to upload the test
-      // const response = await fetch('/teacher/dashboard/test/uploadTest', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
+      // Uncomment and configure this part in production
+      let idToken = localStorage.getItem('sessionId');
 
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   console.error('Error uploading test:', errorData.message);
-      //   alert(`Error: ${errorData.message}`);
-      //   return;
-      // }
-
-      // If successful, notify the user
-      // const responseData = await response.json();
-      alert('Test created successfully!');
+      if (!idToken) {
+          const user = auth.currentUser;
+  
+          if (!user) {
+              throw new Error('User not authenticated');
+          }
+  
+          idToken = await user.getIdToken();
+      }
+      const response = await fetch('/teacher/dashboard/test/uploadTest', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: testDetails.title,
+          description: testDetails.description,
+          startTime: testDetails.startTime,
+          loginWindow: testDetails.loginWindow,
+          testDuration: testDetails.testDuration,
+          isFullScreenEnforced: testDetails.isFullScreenEnforced,
+          isTabSwitchPreventionEnabled: testDetails.isTabSwitchPreventionEnabled,
+          isCameraAccessRequired: testDetails.isCameraAccessRequired,
+          batches: testDetails.batchDetails,
+          questions: testDetails.questions,
+        }),
+      });
+      const data = await response.json();
+      console.log("response: ", data.test);
+      alert(data.message); 
     } catch (error) {
       console.error('Error saving test:', error);
       alert('Error saving test. Please try again.');
     }
   };
-
+  useEffect(() => {
+    console.log("Updated testDetails.questions:", testDetails.questions);
+  }, [testDetails.questions]);
   return (
     <div className={styles.testCreationContainer}>
       {step === 1 && (
@@ -160,7 +183,7 @@ const TestCreation: React.FC = () => {
           <input
             type="number"
             className={styles.testInputNumber}
-            placeholder="test Duration (minutes)"
+            placeholder="Test Duration (minutes)"
             value={testDetails.testDuration}
             onChange={(e) => setTestDetails({ ...testDetails, testDuration: e.target.value })}
           />
@@ -202,29 +225,22 @@ const TestCreation: React.FC = () => {
             />
             Camera Access Required
           </label>
-
-          {/* Add file upload for questions */}
-          <div>
-            <label className={styles.testLabel}>Upload Questions File</label>
-            <input
-              type="file"
-              className={styles.testFileInput}
-              accept=".csv, .xlsx"
-              onChange={handleFileUpload}
-            />
-            {testDetails.questionsFile && (
-              <p className={styles.fileInfo}>
-                Selected File: {testDetails.questionsFile.name}
-              </p>
-            )}
-          </div>
-
+          <label className={styles.testLabel}>Upload Questions File</label>
+          <input
+            type="file"
+            className={styles.testFileInput}
+            accept=".xlsx, .xls"
+            onChange={handleFileUpload}
+          />
+          {questionsFile && (
+            <p className={styles.fileInfo}>Selected File: {questionsFile.name}</p>
+          )}
           <button className={styles.testButton} onClick={handlePrevious}>Back</button>
           <button className={styles.testButton} onClick={handleNext}>Next</button>
         </div>
       )}
 
-      {step === 3 && (
+{step === 3 && (
         <div>
           <h2 className={styles.testHeading}>Step 3: Batch Entry</h2>
           <label className={styles.testLabel}>
@@ -267,7 +283,6 @@ const TestCreation: React.FC = () => {
           <button className={styles.testButton} onClick={handleNext}>Next</button>
         </div>
       )}
-
       {step === 4 && (
         <div className={styles.reviewSection}>
           <h2 className={styles.testHeading}>Step 4: Review and Assign</h2>
