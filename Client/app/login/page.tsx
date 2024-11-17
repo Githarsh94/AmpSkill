@@ -14,6 +14,7 @@ export default function Login() {
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
     const [formEmail, setFormEmail] = useState<string>("");
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const Router = useRouter();
 
     const handleGoogleLogin = async (role: string) => {
@@ -92,20 +93,42 @@ export default function Login() {
             <div className={styles.signupBox}>
                 <h1 className={styles.title}>AmpSkill</h1>
                 <div className={styles.formContainer}>
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={formEmail}
-                        onChange={(e) => setFormEmail(e.target.value.toLowerCase())}
-                        className={styles.input}
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className={styles.input}
-                    />
+                    <div className='flex min-w-[350px] '>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={formEmail}
+                            onChange={(e) => setFormEmail(e.target.value.toLowerCase())}
+                            className={styles.input}
+                        />
+                        <img className='invisible '
+                            src="https://fonts.gstatic.com/s/i/materialicons/visibility/v6/24px.svg"
+                            onClick={() => setShowPassword(false)}
+                            alt="Show Password"
+                        />
+                    </div>
+                    <div className="flex min-w-[350px]">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={styles.input}
+                        />
+                        {showPassword ? (
+                            <img className='cursor-pointer'
+                                src="https://fonts.gstatic.com/s/i/materialicons/visibility/v6/24px.svg"
+                                onClick={() => setShowPassword(false)}
+                                alt="Show Password"
+                            />
+                        ) : (
+                            <img className='cursor-pointer'
+                                src="https://fonts.gstatic.com/s/i/materialicons/visibility_off/v6/24px.svg"
+                                onClick={() => setShowPassword(true)}
+                                alt="Hide Password"
+                            />
+                        )}
+                    </div>
                     <div className={styles.roleSelection}>
                         <label>
                             <input
@@ -154,7 +177,13 @@ export default function Login() {
                 </div>
             </div>
             <div className={styles.imageContainer}>
-                <img src="/images/signup-look.jpg" alt="Illustration" className={styles.signupImage} />
+                <div className={styles.imageContainerUpper}>
+                    <img src="/images/Analysis-bro.png" alt="Illustration" className={styles.signupImage} />
+                    <img src="/images/learning-bro.png" alt="Illustration" className={styles.signupImage} />
+                </div >
+                <div className={styles.imageContainerLower}>
+                    <img src="/images/Onlinetest-amico.png" alt="Illustration" className={styles.signupImage} />
+                </div>
             </div>
             <ToastContainer
                 position="top-center"
@@ -168,6 +197,11 @@ export default function Login() {
                 pauseOnHover
                 theme="colored"
             />
+            {/* <style jsx>{
+                `*{
+                    border: black 1px solid;
+                }`
+            }</style> */}
         </div>
     );
 }

@@ -25,7 +25,7 @@ export const TeacherController = {
             isCameraAccessRequired,
         } = req.body;
 
-        console.log(title, description, questions,batches, startTime, loginWindow, testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired);
+        // console.log(title, description, questions,batches, startTime, loginWindow, testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired);
         try {
             // Generate a random password for the test if it's not provided
             const password = req.body.password || generateRandomPassword(8);

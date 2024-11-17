@@ -8,23 +8,37 @@
 }
 
 .sidebar {
-    flex: 1;
-    background-color: #ffffff;
+    background-color: #ead2ef;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     border-right: 1px solid #e5e5e5;
-    border-radius: 15px;
-    margin: 20px;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar.expanded {
+    width: 250px;
+    /* Expanded width */
+}
+
+.sidebar.collapsed {
+    width: 100px;
+    /* Collapsed width */
 }
 
 .sidebarButton {
-    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
     font-size: 16px;
     font-weight: 500;
-    background-color: #007BFF;
-    color: white;
+    /* background-color: #007BFF; */
+    background: none;
+    color: black;
     border: none;
     cursor: pointer;
     text-align: left;
@@ -33,15 +47,31 @@
 }
 
 .sidebarButton:hover {
-    background-color: #0056b3;
+    background-color: #e29af1;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+}
+
+.hamburgerButton {
+    position: absolute;
+
+    top: 2%;
+    left: 2.4%;
+    border: none;
+    font-size: 25px;
+    cursor: pointer;
+    text-align: center;
 }
 
 .mainContent {
-    flex: 3;
+    flex: 1;
     padding: 20px;
     background-color: #ffffff;
     border-radius: 15px;
-    margin: 20px;
+    /* margin: 20px; */
     display: flex;
     flex-direction: column;
 }
@@ -183,4 +213,141 @@
     border-radius: 5px;
     cursor: pointer;
     padding: 5px;
+}
+
+.teachersContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.teachersContainer h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.teacherItem {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.teacherItem:last-child {
+    border-bottom: none;
+}
+
+.checkbox {
+    height: 20px;
+    width: 20px;
+    margin-right: 10px;
+}
+
+.teacherLabel {
+    font-size: 1em;
+    color: #555;
+}
+/* Overall Container */
+.profileContainer {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Upper Section: User Info and Profile Image */
+.profileContentUpper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+/* Profile Info Section */
+.profileInfo {
+    flex: 1;
+}
+
+.profileUsername {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.profileEmail,
+.profileJoined {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.editButton {
+    background-color: #e29af1;
+    color: black;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.editButton:hover {
+    background-color: #e279f6;
+}
+
+/* Profile Image Section */
+.profileImageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.profileImage {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+}
+
+/* Stats Section */
+.profileStats {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 10px 0;
+    background-color: #eef3f7;
+    border-radius: 8px;
+}
+
+.profileStats p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Illustration Section */
+.profileIllustration {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.illustrationImage {
+    width: 400px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
 }

@@ -81,12 +81,37 @@ export const AdminController = {
         }
     },
     profile: async (req: Request, res: Response) => {
-        const { email } = req.body;
+        console.log(req.body);
+        const { email } = req.body.email;
         try {
             const user = await User.findOne({ email });
+            const batches = await Batch.find();
+            const teachers = await User.find({ role: 'teacher' });
+            const students = await User.find({ role: 'student' });
+            const no_of_batches = batches.length;
+            const no_of_teachers = teachers.length;
+            const no_of_students = students.length;
+            const obj={no_of_batches,no_of_teachers,no_of_students};
             if (!user) res.status(404).json({ message: 'User does not exist.' });
-            else res.status(200).json(user);
+            else res.status(200).json({user,userDetails: obj});
         } catch (error) {
+            return res.status(500).json({ message: (error as Error).message });
+        }
+    },
+    editProfile: async (req: Request, res: Response)=>{
+        //provided access to change the name of the user only as part of the edit profile feature
+        const {email,name} =req.body;
+        console.log(email,name);
+        try{
+            const user = await User.findOne({email});
+            if(!user) res.status(404).json({message: 'User does not exist.'});
+            else{
+                user.name = name;
+                user.save();
+                res.status(200).json({message: 'User profile updated successfully'});
+            }
+        }
+        catch(error){
             return res.status(500).json({ message: (error as Error).message });
         }
     },

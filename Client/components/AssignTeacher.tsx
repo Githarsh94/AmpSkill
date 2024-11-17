@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import styles from '../styles/dashboard.module.css';
-import { assignTeachers, unassignTeachers } from '../Services/admin';
+import { assignTeachers, unassignTeachers, getAllTeachers } from '../Services/admin';
 
 const AssignTeachers = () => {
     const [batchName, setBatchName] = useState('');
@@ -14,6 +14,21 @@ const AssignTeachers = () => {
     const [subjectNames, setSubjectNames] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isUnassigning, setIsUnassigning] = useState(false);
+    const [teachers, setTeachers] = useState<{ email: string, name: string }[]>([]);
+
+    useEffect(() => {
+        const fetchTeachers = async () => {
+            try {
+                const response = await getAllTeachers();
+                setTeachers(response.teachers);
+            } catch (error) {
+                console.error('Failed to fetch teachers:', error);
+                toast.error('Failed to fetch teachers');
+            }
+        };
+
+        fetchTeachers();
+    }, []);
 
     const handleUnassignTeachers = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -62,15 +77,13 @@ const AssignTeachers = () => {
         setSubjectNames([]);
     };
 
-    const addTeacher = () => {
-        const teacherInput = (document.getElementById("teachers") as HTMLInputElement).value;
-        if (!teacherInput) {
-            toast.error('Please enter a teacher email');
-            return;
-        }
-        setTeacherEmails([...teacherEmails, teacherInput]);
-        (document.getElementById("teachers") as HTMLInputElement).value = ''; // Clear input after adding
-    }
+    const handleTeacherCheckboxChange = (email: string) => {
+        setTeacherEmails(prevEmails =>
+            prevEmails.includes(email)
+                ? prevEmails.filter(e => e !== email)
+                : [...prevEmails, email]
+        );
+    };
 
     const addSubject = () => {
         const subjectInput = (document.getElementById("subjects") as HTMLInputElement).value;
@@ -114,31 +127,24 @@ const AssignTeachers = () => {
                     onChange={(e) => setYear(Number(e.target.value))}
                     required
                 />
-                <input
-                    id='teachers'
-                    type="text"
-                    placeholder="Teacher Email"
-                />
-                <label>{teacherEmails.join(', ')}</label>
-                <div className={styles.buttonsContainer}>
-                    <button
-                        className={styles.addButtons}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            addTeacher();
-                        }}
-                    >
-                        Add Teacher
-                    </button>
-                    <button
-                        className={styles.addButtons}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setTeacherEmails([]);
-                        }}
-                    >
-                        Clear Teachers
-                    </button>
+                <div className={styles.teachersContainer}>
+                    <h3>Select Teachers</h3>
+                    <div className='flex'>
+                        {teachers.map(teacher => (
+                            <div key={teacher.email} className={styles.teacherItem}>
+                                <input
+                                    type="checkbox"
+                                    id={teacher.email}
+                                    checked={teacherEmails.includes(teacher.email)}
+                                    onChange={() => handleTeacherCheckboxChange(teacher.email)}
+                                    className={styles.checkbox}
+                                />
+                                <label htmlFor={teacher.email} className={styles.teacherLabel}>
+                                    {teacher.name} ({teacher.email})
+                                </label>
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <input
                     id='subjects'

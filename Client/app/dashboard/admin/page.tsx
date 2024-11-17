@@ -12,19 +12,27 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 
 export default function AdminDashboard() {
+    
     const [activeComponent, setActiveComponent] = useState('Profile');
-    const email = useUserStore((state) => state.user.email);
+    const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+    const email = useUserStore((state) => {
+        state.user.email
+    });
     const setUser = useUserStore((state) => state.setUser);
+    const setUserDetails = useUserStore((state) => state.setUserDetails);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        if (!email) return;
+        // if (!email) return;
         const loadProfile = async () => {
             setIsLoading(true);
             try {
+                console.log(email);
                 const userProfile = await fetchAdminProfile(email!);
-                setUser(userProfile);
+                console.log(userProfile);
+                setUser(userProfile.userProfile);
+                setUserDetails(userProfile.userDetails);
             } catch (error) {
                 console.error(error);
                 toast.error((error as Error).message);
@@ -51,35 +59,66 @@ export default function AdminDashboard() {
 
     return (
         <div className={styles.container}>
-            <div className={styles.sidebar}>
+            <div
+                className={`${styles.sidebar} ${isSidebarExpanded ? styles.expanded : styles.collapsed
+                    }`}
+            >
                 <button
-                    className={styles.sidebarButton}
+                    className={styles.hamburgerButton}
+                    onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
+                >
+                    &#9776; {/* Hamburger icon */}
+                </button>
+                <button
+                    className={`${styles.sidebarButton} mt-10`}
                     onClick={() => setActiveComponent('Profile')}
                     disabled={isLoading}
                 >
-                    {isLoading ? 'Fetching...' : 'Profile'}
+                    <img
+                        src="/images/user.png"
+                        alt="Profile"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Profile</span>}
                 </button>
                 <button
                     className={styles.sidebarButton}
                     onClick={() => setActiveComponent('Batches')}
                 >
-                    Batches
+                    <img
+                        src="/images/batch-processing.png"
+                        alt="Batches"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Batches</span>}
                 </button>
                 <button
                     className={styles.sidebarButton}
                     onClick={() => setActiveComponent('AssignTeacher')}
                     disabled={isLoading}
                 >
-                    Assign Teachers
+                    <img
+                        src="/images/add-group.png"
+                        alt="Assign Teachers"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Assign Teachers</span>}
                 </button>
-                <button className={styles.sidebarButton} onClick={() => {
-                    localStorage.removeItem('sessionId');
-                    localStorage.removeItem('Role');
-                    localStorage.removeItem('Email');
-                    router.push('/login')
-                }
-                }>
-                    Logout
+                <button
+                    className={styles.sidebarButton}
+                    onClick={() => {
+                        localStorage.removeItem('sessionId');
+                        localStorage.removeItem('Role');
+                        localStorage.removeItem('Email');
+                        router.push('/login');
+                    }}
+                >
+                    <img
+                        src="/images/logout.png"
+                        alt="Logout"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Logout</span>}
                 </button>
             </div>
 

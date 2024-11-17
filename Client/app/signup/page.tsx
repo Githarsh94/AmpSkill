@@ -148,7 +148,13 @@ export default function SignUp() {
                 </div>
             </div>
             <div className={styles.imageContainer}>
-                <img src="/images/signup-look.jpg" alt="Illustration" className={styles.signupImage} />
+                <div className={styles.imageContainerUpper}>
+                    <img src="/images/Progress indicator-rafiki.png" alt="Illustration" className={styles.signupImage} />
+                    <img src="/images/Shared goals-bro.png" alt="Illustration" className={styles.signupImage} />
+                </div >
+                <div className={styles.imageContainerLower}>
+                    <img src="/images/Team goals-bro.png" alt="Illustration" className={styles.signupImage} />
+                </div>
             </div>
             <ToastContainer
                 position="top-center"

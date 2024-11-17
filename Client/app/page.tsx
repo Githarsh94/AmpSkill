@@ -74,7 +74,7 @@ export default function Home() {
         <title>AmpSkill - Assess, Train, and Develop Your Organization</title>
         <meta name="description" content="Build and deliver assessments, measure and improve skills." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* <link rel="icon" href="/favicon.ico" /> */}
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <header className={styles.header}>
