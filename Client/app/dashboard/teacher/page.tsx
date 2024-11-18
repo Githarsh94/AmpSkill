@@ -13,7 +13,7 @@ import TeacherBatches from '@/components/Teacher-Batches';
 
 export default function TeacherDashboard() {
     const [activeComponent, setActiveComponent] = useState('Profile');
-    const email = useUserStore((state) => state.user.email);
+    const email = useUserStore((state) => state.profile.user.email);
     const setUser = useUserStore((state) => state.setUser);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();

@@ -22,6 +22,8 @@ interface profileRequirements {
 
 interface UserStore {
     profile: profileRequirements;
+    setUser: (user: User) => void;
+    setUserDetails: (userDetails: Userdetails) => void;
     setUserAndDetails: (reqs: profileRequirements) => void;
     setEmail: (email: string) => void;
 }
@@ -43,6 +45,18 @@ export const useUserStore = create<UserStore>()(
                     no_of_students: 0,
                 },
             },
+            setUser: (user: User) => set((state) => ({
+                profile: {
+                    ...state.profile,
+                    user,
+                },
+            })),
+            setUserDetails: (userDetails: Userdetails) => set((state) => ({
+                profile: {
+                    ...state.profile,
+                    userDetails,
+                },
+            })),
             setUserAndDetails: (req: profileRequirements) => set(() => ({ profile: req })),
             setEmail: (email: string) => set((state) => ({
                 profile: {

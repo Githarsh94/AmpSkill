@@ -11,7 +11,7 @@ import { useUserStore } from '@/store/user';
 
 export default function StudentDashboard() {
     const [activeComponent, setActiveComponent] = useState('Profile');
-    const email = useUserStore((state) => state.user.email);
+    const email = useUserStore((state) => state.profile.user.email);
     const setUser = useUserStore((state) => state.setUser);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();

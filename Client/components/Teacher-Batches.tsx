@@ -16,7 +16,7 @@ interface Batch {
 const TeacherBatches = () => {
   const [batches, setBatches] = useState<Batch[]>([]);
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
-  const teacherEmail = useUserStore((state) => state.user.email);
+  const teacherEmail = useUserStore((state) => state.profile.user.email);
 
   useEffect(() => {
     // Fetch the batches assigned to the teacher
