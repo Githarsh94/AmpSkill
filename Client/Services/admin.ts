@@ -9,14 +9,14 @@ interface UserProfile {
     createdAt: string;
     picture: string;
 }
-interface UserDetails{
+interface UserDetails {
     no_of_batches: number;
     no_of_teachers: number;
     no_of_students: number;
 }
 
-interface profileRequirements{
-    userProfile: UserProfile;
+interface profileRequirements {
+    user: UserProfile;
     userDetails: UserDetails;
 }
 interface AddBatchPayload {
@@ -38,7 +38,6 @@ export interface IAssignTeachersPayload {
 
 
 export const fetchAdminProfile = async (email: string): Promise<profileRequirements> => {
-    console.log(`I AM IN fetchAdminProfile` + email);
     let idToken = localStorage.getItem('sessionId');
 
     if (!idToken) {
@@ -64,7 +63,6 @@ export const fetchAdminProfile = async (email: string): Promise<profileRequireme
         const data = await response.json();
         throw new Error(data.message || 'Failed to fetch profile');
     }
-    console.log(response.json());
     return response.json();
 };
 
@@ -235,11 +233,11 @@ export const getAllTeachers = async () => {
     return data;
 }
 //create a function to edit the profile ...specifically the name of the user
-export const editProfile = async (email: string,name: string) => {
+export const editProfile = async (email: string, name: string) => {
     let idToken = localStorage.getItem('sessionId');
-    if(!idToken){
+    if (!idToken) {
         const user = auth.currentUser;
-        if(!user){
+        if (!user) {
             throw new Error('User not authenticated');
         }
         idToken = await user.getIdToken();
@@ -250,7 +248,7 @@ export const editProfile = async (email: string,name: string) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`
         },
-        body: JSON.stringify({email,name})
+        body: JSON.stringify({ email, name })
     });
     const data = await response.json();
     if (!response.ok) {

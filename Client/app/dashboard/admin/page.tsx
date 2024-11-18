@@ -12,27 +12,21 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 
 export default function AdminDashboard() {
-    
+
     const [activeComponent, setActiveComponent] = useState('Profile');
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
-    const email = useUserStore((state) => {
-        state.user.email
-    });
-    const setUser = useUserStore((state) => state.setUser);
-    const setUserDetails = useUserStore((state) => state.setUserDetails);
+    const email = useUserStore((state) => state.profile.user.email);
+    const setUserAndDetails = useUserStore((state) => state.setUserAndDetails);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        // if (!email) return;
+        if (!email) return;
         const loadProfile = async () => {
             setIsLoading(true);
             try {
-                console.log(email);
                 const userProfile = await fetchAdminProfile(email!);
-                console.log(userProfile);
-                setUser(userProfile.userProfile);
-                setUserDetails(userProfile.userDetails);
+                setUserAndDetails(userProfile);
             } catch (error) {
                 console.error(error);
                 toast.error((error as Error).message);

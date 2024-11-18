@@ -9,46 +9,54 @@ interface User {
     picture: string;
 }
 
-interface Userdetails{
+interface Userdetails {
     no_of_batches: number;
     no_of_teachers: number;
     no_of_students: number;
 }
-interface UserStore {
+
+interface profileRequirements {
     user: User;
     userDetails: Userdetails;
-    setUserDetails: (userDetails: Userdetails) => void;
-    setUser: (user: User) => void;
+}
+
+interface UserStore {
+    profile: profileRequirements;
+    setUserAndDetails: (reqs: profileRequirements) => void;
     setEmail: (email: string) => void;
 }
 
 export const useUserStore = create<UserStore>()(
     persist(
         (set) => ({
-            user: {
-                name: '',
-                email: '',
-                role: '',
-                createdAt: '',
-                picture: '',
-            },
-            userDetails: {
-                no_of_batches: 0,
-                no_of_teachers: 0,
-                no_of_students: 0,
-            },
-            setUserDetails: (userDetails: Userdetails) => set(() => ({ userDetails })),
-            setUser: (user: User) => set(() => ({ user })),
-            setEmail: (email: string) => set((state) => ({
+            profile: {
                 user: {
-                    ...state.user,
-                    email,
+                    name: '',
+                    email: '',
+                    role: '',
+                    createdAt: '',
+                    picture: '',
+                },
+                userDetails: {
+                    no_of_batches: 0,
+                    no_of_teachers: 0,
+                    no_of_students: 0,
+                },
+            },
+            setUserAndDetails: (req: profileRequirements) => set(() => ({ profile: req })),
+            setEmail: (email: string) => set((state) => ({
+                profile: {
+                    ...state.profile,
+                    user: {
+                        ...state.profile.user,
+                        email,
+                    },
                 },
             })),
         }),
         {
             name: 'user-store', // unique name
-            partialize: (state) => ({ user: state.user, userDetails: state.userDetails }), // persist the whole user object
+            partialize: (state) => ({ profile: state.profile }), // persist the whole profile object
         }
     )
 );
