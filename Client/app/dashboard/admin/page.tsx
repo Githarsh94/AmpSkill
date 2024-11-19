@@ -28,7 +28,7 @@ export default function AdminDashboard() {
                 const userProfile = await fetchAdminProfile(email!);
                 setUserAndDetails(userProfile);
             } catch (error) {
-                console.error(error);
+              //  console.error(error);
                 toast.error((error as Error).message);
             } finally {
                 setIsLoading(false);

@@ -6,7 +6,10 @@ import { AuthMiddleware } from '../middlewares/auth.middleware';
 const router = Router();
 
 router.use(AuthMiddleware);
-
-router.post('/enter-test', StudentController.enterTest);
 router.post('/dashboard/profile', StudentController.profile);
+router.post('/dashboard/available-tests', StudentController.availableTests);
+router.post('/dashboard/startTest', StudentController.startTest);
+router.post('/dashboard/submitTest', StudentController.submitTest);
+router.post('/dashboard/getTestDuration', StudentController.getTestDuration);
+router.post('/dashboard/markTheAnswer', StudentController.markTheAnswer);
 export default router;

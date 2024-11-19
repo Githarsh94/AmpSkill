@@ -7,7 +7,7 @@ import teacherRoutes from './routes/teacher.routes';
 import studentRoutes from './routes/student.routes';
 import authRoutes from './routes/auth.routes';
 import cors from 'cors';
-import loggerMiddleware from './middlewares/logger.middleware';
+// import loggerMiddleware from './middlewares/logger.middleware';
 
 const app = express();
 
@@ -26,7 +26,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('API is Up and Running');
 });
-// app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('uploads'));
 app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/student', studentRoutes);

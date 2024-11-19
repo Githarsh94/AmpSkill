@@ -11,6 +11,7 @@ import { useUserStore } from '@/store/user';
 
 export default function StudentDashboard() {
     const [activeComponent, setActiveComponent] = useState('Profile');
+    const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const email = useUserStore((state) => state.profile.user.email);
     const setUser = useUserStore((state) => state.setUser);
     const [isLoading, setIsLoading] = useState(false);
@@ -49,26 +50,49 @@ export default function StudentDashboard() {
 
     return (
         <div className={styles.container}>
-            <div className={styles.sidebar}>
+            <div  className={`${styles.sidebar} ${isSidebarExpanded ? styles.expanded : styles.collapsed
+                    }`}
+            >
                 <button
-                    className={styles.sidebarButton}
+                    className={styles.hamburgerButton}
+                    onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
+                >
+                    &#9776; {/* Hamburger icon */}
+                </button>
+                <button
+                    className={`${styles.sidebarButton} mt-10`}
                     onClick={() => setActiveComponent('Profile')}
                     disabled={isLoading}
                 >
-                    {isLoading ? 'Fetching...' : 'Profile'}
+                    <img
+                        src="/images/user.png"
+                        alt="Profile"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Profile</span>}
                 </button>
                 <button
                     className={styles.sidebarButton}
                     onClick={() => setActiveComponent('Assignments')}
                 >
-                    Assignments
+                     <img
+                        src="/images/Assingments.png"
+                        alt="Assign Teachers"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Assignments</span>}
                 </button>
                 <button
                     className={styles.sidebarButton}
                     onClick={() => setActiveComponent('Tests')}
                     disabled={isLoading}
                 >
-                    Tests
+                     <img
+                        src="/images/tests.png"
+                        alt="Assign Teachers"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Tests</span>}
                 </button>
                 <button className={styles.sidebarButton} onClick={() => {
                     localStorage.removeItem('sessionId');
@@ -77,7 +101,12 @@ export default function StudentDashboard() {
                     router.push('/login')
                 }
                 }>
-                    Logout
+                    <img
+                        src="/images/logout.png"
+                        alt="Logout"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Logout</span>}
                 </button>
             </div>
 
