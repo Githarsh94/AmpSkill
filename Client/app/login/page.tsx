@@ -179,7 +179,7 @@ export default function Login() {
             <div className={styles.imageContainer}>
                 <div className={styles.imageContainerUpper}>
                     <img src="/images/Analysis-bro.png" alt="Illustration" className={styles.signupImage} />
-                    <img src="/images/learning-bro.png" alt="Illustration" className={styles.signupImage} />
+                    <img src="/images/Learning-bro.png" alt="Illustration" className={styles.signupImage} />
                 </div >
                 <div className={styles.imageContainerLower}>
                     <img src="/images/Onlinetest-amico.png" alt="Illustration" className={styles.signupImage} />
