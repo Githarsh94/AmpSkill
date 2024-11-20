@@ -8,6 +8,16 @@ interface UserProfile {
     picture: string;
 }
 
+interface Tests {
+    message: string;
+    activeTests: [];
+    completedTests: [];
+    upcomingTests: [];
+    missedTests: [];
+}
+
+
+
 export const fetchStudentProfile = async (email: string): Promise<UserProfile> => {
     let idToken = localStorage.getItem('sessionId');
 
@@ -36,4 +46,32 @@ export const fetchStudentProfile = async (email: string): Promise<UserProfile> =
     }
 
     return response.json();
+};
+
+export const fetchAllTests = async (email: string): Promise<Tests> => {
+    let idToken = localStorage.getItem('sessionId');
+
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
+    };
+    const response = await fetch('/student/dashboard/getAllTests', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${idToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+    });
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to fetch tests');
+    }
+    return response.json();
+
 };

@@ -12,4 +12,5 @@ router.post('/dashboard/startTest', StudentController.startTest);
 router.post('/dashboard/submitTest', StudentController.submitTest);
 router.post('/dashboard/getTestDuration', StudentController.getTestDuration);
 router.post('/dashboard/markTheAnswer', StudentController.markTheAnswer);
+router.post('/dashboard/getAllTests', StudentController.getAllTests);
 export default router;

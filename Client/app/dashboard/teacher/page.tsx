@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '../../../styles/dashboard.module.css';
 import Profile from '../../../components/Profile';
-import TestCreation from '@/components/Tests';
+import TestCreation from '@/components/Teacher-Tests';
 import { fetchTeacherProfile } from '../../../Services/teacher';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
@@ -56,7 +56,7 @@ export default function TeacherDashboard() {
     return (
         <div className={styles.container}>
             <div className={`${styles.sidebar} ${isSidebarExpanded ? styles.expanded : styles.collapsed
-                    }`}
+                }`}
             >
                 <button
                     className={styles.hamburgerButton}
@@ -92,7 +92,7 @@ export default function TeacherDashboard() {
                     onClick={() => setActiveComponent('Assignments')}
                     disabled={isLoading}
                 >
-                     <img
+                    <img
                         src="/images/Assingments.png"
                         alt="Assign Teachers"
                         className={styles.icon}
@@ -104,7 +104,7 @@ export default function TeacherDashboard() {
                     onClick={() => setActiveComponent('Tests')}
                     disabled={isLoading}
                 >
-                     <img
+                    <img
                         src="/images/tests.png"
                         alt="Assign Teachers"
                         className={styles.icon}

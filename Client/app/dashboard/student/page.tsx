@@ -8,6 +8,7 @@ import Profile from '../../../components/Profile';
 import { fetchStudentProfile } from '../../../Services/student';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
+import StudentTests from '@/components/Student-Tests';
 
 export default function StudentDashboard() {
     const [activeComponent, setActiveComponent] = useState('Profile');
@@ -42,7 +43,9 @@ export default function StudentDashboard() {
             case 'Assignments':
                 return <div>Assignments</div>;
             case 'Tests':
-                return <div>Tests</div>;
+                return <StudentTests />;
+            case 'Reports':
+                return <div>Reports</div>;
             default:
                 return <Profile />;
         }
@@ -50,8 +53,8 @@ export default function StudentDashboard() {
 
     return (
         <div className={styles.container}>
-            <div  className={`${styles.sidebar} ${isSidebarExpanded ? styles.expanded : styles.collapsed
-                    }`}
+            <div className={`${styles.sidebar} ${isSidebarExpanded ? styles.expanded : styles.collapsed
+                }`}
             >
                 <button
                     className={styles.hamburgerButton}
@@ -75,7 +78,7 @@ export default function StudentDashboard() {
                     className={styles.sidebarButton}
                     onClick={() => setActiveComponent('Assignments')}
                 >
-                     <img
+                    <img
                         src="/images/Assingments.png"
                         alt="Assign Teachers"
                         className={styles.icon}
@@ -87,12 +90,24 @@ export default function StudentDashboard() {
                     onClick={() => setActiveComponent('Tests')}
                     disabled={isLoading}
                 >
-                     <img
+                    <img
                         src="/images/tests.png"
                         alt="Assign Teachers"
                         className={styles.icon}
                     />
                     {isSidebarExpanded && <span>Tests</span>}
+                </button>
+                <button
+                    className={styles.sidebarButton}
+                    onClick={() => setActiveComponent('Reports')}
+                    disabled={isLoading}
+                >
+                    <img
+                        src="/images/tests.png"
+                        alt="Assign Teachers"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Reports</span>}
                 </button>
                 <button className={styles.sidebarButton} onClick={() => {
                     localStorage.removeItem('sessionId');

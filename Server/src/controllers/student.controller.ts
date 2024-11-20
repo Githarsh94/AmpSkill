@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { Test } from '../models/test.model';
 import { User } from '../models/user.model';
 import { Batch } from '../models/batch.model';
-import {TestSession} from '../models/testSession.model';
+import { TestSession } from '../models/testSession.model';
 
 export const StudentController = {
     profile: async (req: Request, res: Response) => {
@@ -17,15 +17,15 @@ export const StudentController = {
         }
     },
     availableTests: async (req: Request, res: Response) => {
-        const {email} = req.body;
+        const { email } = req.body;
         try {
             // Step 1: Find the batch of the student
             const batch = await Batch.findOne({ students: email });
-    
+
             if (!batch) {
                 return res.status(404).json({ message: 'Batch not found for the given student email.' });
             }
-    
+
             // Step 2: Retrieve tests for the batch
             const tests = await Test.find({
                 'batches.batchName': batch.batchName,
@@ -33,11 +33,11 @@ export const StudentController = {
                 'batches.branch': batch.branch,
                 'batches.year': batch.year,
             });
-    
+
             if (tests.length === 0) {
                 return res.status(200).json({ message: 'No tests available for your batch at this time.', tests: [] });
             }
-    
+
             // Step 3: Return available tests
             res.status(200).json({ message: 'Available tests retrieved successfully.', tests });
         } catch (error) {
@@ -47,29 +47,29 @@ export const StudentController = {
     },
     startTest: async (req: Request, res: Response) => {
         const { email, testCode } = req.body;
-    
+
         try {
             // Fetch the test details from the database
             const test = await Test.findOne({ testCode });
             if (!test) {
                 return res.status(404).json({ message: 'Test not found.' });
             }
-    
+
             const testDuration = test.testDuration; // Test duration in minutes
             const startTimeofTest = test.startTime; // Scheduled start time of the test
             const loginWindow = test.loginWindow; // Login window duration in minutes
-    
+
             const currentTime = new Date(); // Current time when the student requests to start the test
-    
+
             // Debugging Logs
             // console.log(`Current Time: ${currentTime}`);
             // console.log(`Test Start Time: ${startTimeofTest}`);
             // console.log(`Login Window (minutes): ${loginWindow}`);
-    
+
             // Calculate the end time of the login window
             const loginWindowEndTime = new Date(startTimeofTest.getTime() + loginWindow * 60000);
             // console.log(`Login Window End Time: ${loginWindowEndTime}`);
-    
+
             // Validate that the current time falls within the login window
             if (currentTime < startTimeofTest || currentTime > loginWindowEndTime) {
                 console.log('Validation failed: Current time is outside the login window.');
@@ -77,13 +77,13 @@ export const StudentController = {
                     message: 'Test is not available to start at this time. Please check the schedule and login window.',
                 });
             }
-    
+
             // Calculate the test end time based on the duration
             const endTime = new Date(currentTime.getTime() + testDuration * 60000);
-    
+
             // Debugging Log for End Time
             // console.log(`Calculated Test End Time: ${endTime}`);
-    
+
             // Create a new test session
             const newTestSession = new TestSession({
                 testCode: testCode,
@@ -92,10 +92,10 @@ export const StudentController = {
                 endTime: endTime,
                 totalQuestions: test.questions.length,
             });
-    
+
             // Save the test session to the database
             await newTestSession.save();
-    
+
             res.status(201).json({
                 message: 'Test session started successfully.',
                 testSession: newTestSession,
@@ -104,17 +104,17 @@ export const StudentController = {
             console.error('Error starting test:', error);
             res.status(500).json({ message: 'An error occurred while starting the test.' });
         }
-    },   
-    submitTest: async(req: Request, res: Response)=>{
-        const {email,testCode}=req.body;
-        try{
+    },
+    submitTest: async (req: Request, res: Response) => {
+        const { email, testCode } = req.body;
+        try {
             //find the test session of the student
-            const testSession = await TestSession.findOne({studentEmail: email, testCode: testCode});
+            const testSession = await TestSession.findOne({ studentEmail: email, testCode: testCode });
             if (!testSession) {
                 return res.status(404).json({ message: 'Test session not found.' });
             }
             //check if the test session is already completed
-            if(testSession.isCompleted){
+            if (testSession.isCompleted) {
                 return res.status(200).json({ message: 'Test session already completed.' });
             }
             //mark the test session as completed
@@ -125,22 +125,22 @@ export const StudentController = {
             await testSession.save();
             res.status(200).json({ message: 'Test submitted successfully.', testSession });
         }
-        catch(error){
+        catch (error) {
             console.error('Error submitting test:', error);
             res.status(500).json({ message: 'An error occurred while submitting the test.' });
         }
     },
-    getTestDuration: async(req: Request, res: Response)=>{
-        const {email,testCode}=req.body;
-        try{
+    getTestDuration: async (req: Request, res: Response) => {
+        const { email, testCode } = req.body;
+        try {
             //find the test session of the student
-            const testSession = await TestSession.findOne({studentEmail: email, testCode: testCode});
+            const testSession = await TestSession.findOne({ studentEmail: email, testCode: testCode });
             if (!testSession) {
                 return res.status(404).json({ message: 'Test session not found.' });
             }
             const endTime = testSession.endTime;
             const currentTime = new Date();
-             // Calculate the remaining duration in milliseconds
+            // Calculate the remaining duration in milliseconds
             const durationInMs = endTime.getTime() - currentTime.getTime();
             if (durationInMs <= 0) {
                 return res.status(200).json({ message: 'Test has already ended.', duration: 0 });
@@ -150,48 +150,48 @@ export const StudentController = {
 
             res.status(200).json({ message: 'Test duration retrieved successfully.', duration: durationInMinutes });
         }
-        catch(error){
+        catch (error) {
             console.error('Error getting test duration:', error);
             res.status(500).json({ message: 'An error occurred  while getting the test duration.' });
         }
     },
     markTheAnswer: async (req: Request, res: Response) => {
         const { email, testCode, question_no, answer } = req.body;
-    
+
         try {
             // Find the test session of the student
             const testSession = await TestSession.findOne({ studentEmail: email, testCode: testCode });
             if (!testSession) {
                 return res.status(404).json({ message: 'Test session not found.' });
             }
-    
+
             // Check if the test session is already completed
             if (testSession.isCompleted) {
                 return res.status(400).json({ message: 'Test session is already completed.' });
             }
-    
+
             // Find the question in the test
             const test = await Test.findOne({ testCode });
             if (!test) {
                 return res.status(404).json({ message: 'Test not found.' });
             }
-    
+
             const question = test.questions.find(q => q.s_no === question_no);
             if (!question) {
                 return res.status(404).json({ message: 'Question not found.' });
             }
-    
+
             const correctAnswer = question.ans;
-    
+
             // Check if the question has already been answered
             const existingAnswerIndex = testSession.answers.findIndex(
                 a => a.question_no === question_no
             );
-    
+
             if (existingAnswerIndex !== -1) {
                 // Question already answered, adjust the counts
                 const previousAnswer = testSession.answers[existingAnswerIndex].answer;
-    
+
                 if (previousAnswer === correctAnswer) {
                     // Previous answer was correct, decrease correctAnswers
                     testSession.correctAnswers--;
@@ -199,28 +199,85 @@ export const StudentController = {
                     // Previous answer was incorrect, decrease incorrectAnswers
                     testSession.incorrectAnswers--;
                 }
-    
+
                 // Replace the existing answer with the new one
                 testSession.answers[existingAnswerIndex].answer = answer;
             } else {
                 // New answer, add it to the answers array
                 testSession.answers.push({ question_no, answer });
             }
-    
+
             // Update the counts based on the new answer
             if (answer === correctAnswer) {
                 testSession.correctAnswers++;
             } else {
                 testSession.incorrectAnswers++;
             }
-    
+
             // Save the updated test session to the database
             await testSession.save();
-    
+
             res.status(200).json({ message: 'Answer marked successfully.', testSession });
         } catch (error) {
             console.error('Error marking the answer:', error);
             res.status(500).json({ message: 'An error occurred while marking the answer.' });
         }
-    },    
+    },
+    getAllTests: async (req: Request, res: Response) => {
+        const { email } = req.body;
+        try {
+            // Step 1: Find the batch of the student
+            const batch = await Batch.findOne({ students: email });
+
+            if (!batch) {
+                return res.status(404).json({ message: 'Batch not found for the given student email.' });
+            }
+            // Step 2: Retrieve all tests for the batch
+            const tests = await Test.find({
+                'batches.batchName': batch.batchName,
+                'batches.department': batch.department,
+                'batches.branch': batch.branch,
+                'batches.year': batch.year,
+            });
+            const currentTime = new Date();
+
+            const activeTests = [];
+            const upcomingTests = [];
+            const completedTests = [];
+            const missedTests = [];
+
+            for (const test of tests) {
+                const testSession = await TestSession.findOne({ studentEmail: email, testCode: test.testCode });
+
+                if (testSession) {
+                    if (testSession.isCompleted) {
+                        completedTests.push(test);
+                    } else if (currentTime >= testSession.startTime && currentTime <= testSession.endTime) {
+                        activeTests.push(test);
+                    } else if (currentTime > testSession.endTime) {
+                        missedTests.push(test);
+                    }
+                } else {
+                    if (currentTime < test.startTime) {
+                        upcomingTests.push(test);
+                    } else if (currentTime > test.startTime && currentTime < new Date(test.startTime.getTime() + test.loginWindow * 60000)) {
+                        activeTests.push(test);
+                    } else {
+                        missedTests.push(test);
+                    }
+                }
+            }
+
+            res.status(200).json({
+                message: 'Tests retrieved successfully.',
+                activeTests,
+                upcomingTests,
+                completedTests,
+                missedTests,
+            });
+        } catch (error) {
+            console.error('Error retrieving tests:', error);
+            res.status(500).json({ message: 'An error occurred while retrieving tests.' });
+        }
+    }
 };

@@ -8,13 +8,13 @@
 }
 
 .signupBox {
-    border: rgb(154, 205, 233) 1px solid;
+    border: #d4f9db 1px solid;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 20px;
-    background-color: #d4f9db;
+    background-color: rgb(154, 205, 233);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     max-width: 400px;
@@ -114,7 +114,7 @@
     justify-content: space-around;
     align-items: center;
     flex: 2;
-    background-color: #e6f7ff;
+    background-color: #d4f9db;
     /* Light blue background */
     padding-left: 3%;
     padding-right: 3%;
