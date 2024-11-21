@@ -1,0 +1,50 @@
+.instructionsPage {
+    background-color: #ead2ef;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.instructionsMain {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+}
+
+.instructionsPage h1 {
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.instructions {
+    border-radius: 10px;
+    width: 100%;
+    font-size: large;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    background-color: white;
+    padding: 10px;
+}
+
+.instructionsBottom {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.instructionsBottom button {
+    font-size: larger;
+    padding: 5px;
+    background-color: #cd90d9;
+    border-radius: 5px;
+}

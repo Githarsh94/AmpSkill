@@ -49,7 +49,7 @@ export const fetchStudentProfile = async (email: string): Promise<UserProfile> =
         idToken = await user.getIdToken();
     }
 
-    const response = await fetch('/teacher/dashboard/profile', {
+    const response = await fetch('/student/dashboard/profile', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export const fetchAllTests = async (email: string): Promise<Tests> => {
 };
 
 //retrieve the test when test just started
-export const fetchTest = async (studentEmail: string,testCode: string): Promise<ITest> => {
+export const fetchTest = async (studentEmail: string, testCode: string): Promise<ITest> => {
     let idToken = localStorage.getItem('sessionId');
 
     if (!idToken) {
@@ -145,7 +145,7 @@ export const submitTest = async (studentEmail: string, testCode: string) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`,
         },
-        body: JSON.stringify({ studentEmail, testCode}),
+        body: JSON.stringify({ studentEmail, testCode }),
     });
 
     if (!response.ok) {

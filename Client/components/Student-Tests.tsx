@@ -5,6 +5,7 @@ import styles from '../styles/dashboard.module.css';
 import { useUserStore } from '@/store/user';
 import { fetchAllTests } from '@/Services/student';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -15,6 +16,7 @@ export default function StudentTests() {
     const [upcomingTests, setUpcomingTests] = useState([]);
     const [missedTests, setMissedTests] = useState([]);
     const email = useUserStore((state) => state.profile.user.email);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchTests = async () => {
@@ -32,6 +34,10 @@ export default function StudentTests() {
 
         fetchTests();
     }, [email]);
+
+    const handleOpentest = (testCode: string) => {
+        router.push(`/test?testCode=${testCode}&email=${email}`);
+    }
 
     return (
         <div className={styles.studentTests}>
@@ -60,7 +66,7 @@ export default function StudentTests() {
             <div className={styles.shownTests}>
                 {shownTests === 'Active' && (
                     activeTests.length > 0 ? activeTests.map((test: any) => (
-                        <div key={test._id} className={styles.testCard}>
+                        <div key={test._id} className={styles.testCard} onClick={() => handleOpentest(test.testCode)}>
                             <div className='font-bold'>Title - {test.title}</div>
                             <div>Date - {new Date(test.startTime).toLocaleDateString()}</div>
                             <div>Time - {new Date(test.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ({test.testDuration}) mins</div>
