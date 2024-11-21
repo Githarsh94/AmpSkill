@@ -26,10 +26,11 @@ export default function StudentDashboard() {
             try {
                 const userProfile = await fetchStudentProfile(email!);
                 setUser(userProfile);
+                console.log(userProfile);
             } catch (error) {
                 // console.error(error);
                 toast.error((error as Error).message);
-                router.push('/login');
+               // router.push('/login');
             } finally {
                 setIsLoading(false);
             }

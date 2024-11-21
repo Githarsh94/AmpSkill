@@ -4,6 +4,7 @@ import { Test } from '../models/test.model';
 import { User } from '../models/user.model';
 import { Batch } from '../models/batch.model';
 import { TestSession } from '../models/testSession.model';
+import { title } from 'process';
 
 export const StudentController = {
     profile: async (req: Request, res: Response) => {
@@ -98,7 +99,9 @@ export const StudentController = {
 
             res.status(201).json({
                 message: 'Test session started successfully.',
-                testSession: newTestSession,
+                test: {title: test.title, questions : test.questions,testDuration: testDuration,isFullScreenEnforced: test.isFullScreenEnforced
+                    ,isTabSwitchPreventionEnabled: test.isTabSwitchPreventionEnabled, 
+                    isCameraAccessRequired: test.isCameraAccessRequired}
             });
         } catch (error) {
             console.error('Error starting test:', error);
