@@ -2,10 +2,12 @@
 import { Router } from 'express';
 import { StudentController } from '../controllers/student.controller';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { isStudent } from '../middlewares/isStudent.middleware';
 
 const router = Router();
 
 router.use(AuthMiddleware);
+router.use(isStudent);
 router.post('/dashboard/profile', StudentController.profile);
 router.post('/dashboard/available-tests', StudentController.availableTests);
 router.post('/dashboard/startTest', StudentController.startTest);

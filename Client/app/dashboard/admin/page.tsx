@@ -28,8 +28,9 @@ export default function AdminDashboard() {
                 const userProfile = await fetchAdminProfile(email!);
                 setUserAndDetails(userProfile);
             } catch (error) {
-              //  console.error(error);
+                //  console.error(error);
                 toast.error((error as Error).message);
+                router.push('/login');
             } finally {
                 setIsLoading(false);
             }
@@ -104,6 +105,20 @@ export default function AdminDashboard() {
                         localStorage.removeItem('sessionId');
                         localStorage.removeItem('Role');
                         localStorage.removeItem('Email');
+                        setUserAndDetails({
+                            user: {
+                                name: '',
+                                email: '',
+                                role: '',
+                                createdAt: '',
+                                picture: '',
+                            },
+                            userDetails: {
+                                no_of_batches: 0,
+                                no_of_teachers: 0,
+                                no_of_students: 0,
+                            },
+                        });
                         router.push('/login');
                     }}
                 >

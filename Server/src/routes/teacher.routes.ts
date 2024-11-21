@@ -2,10 +2,12 @@
 import { Router } from 'express';
 import { TeacherController } from '../controllers/teacher.controller';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { isTeacher } from '../middlewares/isTeacher.middleware';
 
 const router = Router();
 
 router.use(AuthMiddleware);
+router.use(isTeacher);
 
 router.post('/dashboard/profile', TeacherController.profile);
 router.post('/dashboard/batch/update', TeacherController.updateBatch);

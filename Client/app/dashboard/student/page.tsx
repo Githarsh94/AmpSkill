@@ -15,6 +15,7 @@ export default function StudentDashboard() {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const email = useUserStore((state) => state.profile.user.email);
     const setUser = useUserStore((state) => state.setUser);
+    const setUserAndDetails = useUserStore((state) => state.setUserAndDetails);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
@@ -26,8 +27,9 @@ export default function StudentDashboard() {
                 const userProfile = await fetchStudentProfile(email!);
                 setUser(userProfile);
             } catch (error) {
-                console.error(error);
+                // console.error(error);
                 toast.error((error as Error).message);
+                router.push('/login');
             } finally {
                 setIsLoading(false);
             }
@@ -113,6 +115,20 @@ export default function StudentDashboard() {
                     localStorage.removeItem('sessionId');
                     localStorage.removeItem('Role');
                     localStorage.removeItem('Email');
+                    setUserAndDetails({
+                        user: {
+                            name: '',
+                            email: '',
+                            role: '',
+                            createdAt: '',
+                            picture: '',
+                        },
+                        userDetails: {
+                            no_of_batches: 0,
+                            no_of_teachers: 0,
+                            no_of_students: 0,
+                        },
+                    });
                     router.push('/login')
                 }
                 }>

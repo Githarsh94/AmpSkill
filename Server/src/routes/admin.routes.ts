@@ -2,10 +2,12 @@
 import { Router } from 'express';
 import { AdminController } from '../controllers/admin.controller';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { isAdmin } from '../middlewares/isAdmin.middleware';
 
 const router = Router();
 
 router.use(AuthMiddleware);
+router.use(isAdmin);
 
 router.post('/dashboard/assignTeachers', AdminController.assignTeachersToBatch);
 router.post('/dashboard/unassignTeachers', AdminController.unassignTeachersFromBatch);
