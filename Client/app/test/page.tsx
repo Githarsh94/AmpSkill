@@ -4,13 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { fetchTest, submitTest, markTheAnswer, getTestDuration } from "../../Services/student";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useSearchParams } from "next/navigation";
 import styles from '../../styles/quiz.module.css';
-
-interface Question {
-    s_no: number;
-    answer: string;
-}
 
 // Interface for the question structure
 interface IQuestion {
@@ -31,14 +25,52 @@ interface ITest {
     isTabSwitchPreventionEnabled: boolean;
     isCameraAccessRequired: boolean;
 }
-const testPage = () => {
-    const searchParams = useSearchParams();
+
+export default function TestPage() {
     const [testFlag, setTestFlag] = useState<ITest | null>(null);
     const [timeLeft, setTimeLeft] = useState(Number.MAX_VALUE);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const testCode = searchParams.get('testCode');
-    const email = searchParams.get('email');
+    const [testCode, setTestCode] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
     const [warningCount, setWarningCount] = useState(0);
+    const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
+    const warningCountRef = useRef(warningCount);
+
+    useEffect(() => {
+        const queryParams = window.location.search;
+        setTestCode(new URLSearchParams(queryParams).get('testCode'));
+        setEmail(new URLSearchParams(queryParams).get('email'));
+    }, []);
+
+    useEffect(() => {
+        if (warningCount >= 5) {
+            toast.error("You have reached the maximum number of warnings. Test will be ended.");
+            setTimeout(() => endTest(), 5000);
+        }
+    }, [warningCount]);
+
+    useEffect(() => {
+        if (testFlag && timeLeft > 0) {
+            const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+            return () => clearInterval(timer);
+        } else if (testFlag && timeLeft === 0) {
+            endTest();
+        }
+    }, [timeLeft, testFlag]);
+
+    // logic to keep on checking for fullscreen and tab switch
+    useEffect(() => {
+        if (testFlag) {
+            document.addEventListener("fullscreenchange", handleFullscreenChange);
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+            return () => {
+                document.removeEventListener("fullscreenchange", handleFullscreenChange);
+                document.removeEventListener("visibilitychange", handleVisibilityChange);
+            };
+        }
+    }, [testFlag]);
+
+
     if (!email) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -69,31 +101,33 @@ const testPage = () => {
             throw new Error('Failed to start test');
         }
     }
-    //logic to submit the test
+
     const endTest = async () => {
         try {
             const response = await submitTest(email as string, testCode as string);
             toast.success(response.message);
             setTestFlag(null);
             document.exitFullscreen();
+            setTimeout(() => window.location.href = '/dashboard/student', 3000);
         }
         catch (err) {
             console.log(err);
             throw new Error('Failed to submit test');
         }
     }
-    //mark the answer
+
     const enterTheAnswer = async (s_no: number, answer: string) => {
         try {
             const response = await markTheAnswer(email as string, testCode as string, s_no, answer);
             toast.success(response.message);
+            setSelectedAnswers((prev) => ({ ...prev, [s_no]: answer }));
         }
         catch (err) {
             console.log(err);
             throw new Error('Failed to mark the answer');
         }
     }
-    //fetch the time left
+
     const fetchTimeLeft = async () => {
         try {
             const response = await getTestDuration(email as string, testCode as string);
@@ -109,8 +143,6 @@ const testPage = () => {
             throw new Error('Failed to fetch time left');
         }
     }
-
-    const warningCountRef = useRef(warningCount);
 
     const handleFullscreenChange = async () => {
         if (!document.fullscreenElement) {
@@ -159,33 +191,6 @@ const testPage = () => {
         }
     };
 
-    useEffect(() => {
-        if (warningCount >= 5) {
-            toast.error("You have reached the maximum number of warnings. Test will be ended.");
-            setTimeout(() => endTest(), 5000);
-        }
-    }, [warningCount]);
-
-    useEffect(() => {
-        if (testFlag && timeLeft > 0) {
-            const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-            return () => clearInterval(timer);
-        } else if (testFlag && timeLeft === 0) {
-            endTest();
-        }
-    }, [timeLeft, testFlag]);
-
-    //logic to keep on checking for fullscreen and tab switch
-    useEffect(() => {
-        if (testFlag) {
-            document.addEventListener("fullscreenchange", handleFullscreenChange);
-            document.addEventListener("visibilitychange", handleVisibilityChange);
-            return () => {
-                document.removeEventListener("fullscreenchange", handleFullscreenChange);
-                document.removeEventListener("visibilitychange", handleVisibilityChange);
-            };
-        }
-    }, [testFlag]);
     if (!testFlag) {
         return (
             <div className={styles.instructionsPage}>
@@ -246,7 +251,7 @@ const testPage = () => {
         );
     }
     return (
-        <div>
+        <div className={styles.quizPage}>
             <div className={styles.quizPageTop}>
                 <h1>{testFlag.title}</h1>
                 <div className={styles.warningCounter}>
@@ -257,23 +262,49 @@ const testPage = () => {
                 </div>
             </div>
             <div className={styles.quizPageMain}>
-                <h1>Question {currentQuestionIndex + 1}</h1>
-                <h2>{testFlag.questions[currentQuestionIndex].question}</h2>
+                <h1>Question {currentQuestionIndex + 1}
+                    <br />
+                    <span>{testFlag.questions[currentQuestionIndex].question}</span>
+                </h1>
                 <div className={styles.options}>
                     <label>
-                        <input type="radio" name="option" value="op1" onChange={() => enterTheAnswer(currentQuestionIndex, 'op1')} />
+                        <input
+                            type="radio"
+                            name="option"
+                            value="Op1"
+                            checked={selectedAnswers[currentQuestionIndex] === 'Op1'}
+                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op1')}
+                        />
                         {testFlag.questions[currentQuestionIndex].op1}
                     </label>
                     <label>
-                        <input type="radio" name="option" value="op2" onChange={() => enterTheAnswer(currentQuestionIndex, 'op2')} />
+                        <input
+                            type="radio"
+                            name="option"
+                            value="Op2"
+                            checked={selectedAnswers[currentQuestionIndex] === 'Op2'}
+                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op2')}
+                        />
                         {testFlag.questions[currentQuestionIndex].op2}
                     </label>
                     <label>
-                        <input type="radio" name="option" value="op3" onChange={() => enterTheAnswer(currentQuestionIndex, 'op3')} />
+                        <input
+                            type="radio"
+                            name="option"
+                            value="Op3"
+                            checked={selectedAnswers[currentQuestionIndex] === 'Op3'}
+                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op3')}
+                        />
                         {testFlag.questions[currentQuestionIndex].op3}
                     </label>
                     <label>
-                        <input type="radio" name="option" value="op4" onChange={() => enterTheAnswer(currentQuestionIndex, 'op4')} />
+                        <input
+                            type="radio"
+                            name="option"
+                            value="Op4"
+                            checked={selectedAnswers[currentQuestionIndex] === 'Op4'}
+                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op4')}
+                        />
                         {testFlag.questions[currentQuestionIndex].op4}
                     </label>
                 </div>
@@ -285,13 +316,13 @@ const testPage = () => {
                 >
                     Back
                 </button>
+                <button onClick={endTest}>Submit</button>
                 <button
                     onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
                     disabled={testFlag && currentQuestionIndex >= testFlag.questions.length - 1}
                 >
                     Next
                 </button>
-                <button onClick={endTest}>Submit</button>
             </div>
             <ToastContainer
                 position="top-center"
@@ -308,5 +339,3 @@ const testPage = () => {
         </div>
     )
 }
-
-export default testPage;

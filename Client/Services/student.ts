@@ -78,7 +78,7 @@ export const fetchAllTests = async (email: string): Promise<Tests> => {
 
         idToken = await user.getIdToken();
     };
-    const response = await fetch('/student/dashboard/getAllTests', {
+    const response = await fetch('/student/test/getAllTests', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${idToken}`,
@@ -108,7 +108,7 @@ export const fetchTest = async (email: string, testCode: string): Promise<ITest>
         idToken = await user.getIdToken();
     }
 
-    const response = await fetch('/student/dashboard/startTest', {
+    const response = await fetch('/student/test/startTest', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ export const fetchTest = async (email: string, testCode: string): Promise<ITest>
     return data.test;
 }
 //submit the test
-export const submitTest = async (studentEmail: string, testCode: string) => {
+export const submitTest = async (email: string, testCode: string) => {
     let idToken = localStorage.getItem('sessionId');
 
     if (!idToken) {
@@ -139,13 +139,13 @@ export const submitTest = async (studentEmail: string, testCode: string) => {
         idToken = await user.getIdToken();
     }
 
-    const response = await fetch('/student/dashboard/submitTest', {
+    const response = await fetch('/student/test/submitTest', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`,
         },
-        body: JSON.stringify({ studentEmail, testCode }),
+        body: JSON.stringify({ email, testCode }),
     });
 
     if (!response.ok) {
@@ -169,7 +169,7 @@ export const markTheAnswer = async (email: string, testCode: string, question_no
         idToken = await user.getIdToken();
     }
 
-    const response = await fetch('/student/dashboard/markTheAnswer', {
+    const response = await fetch('/student/test/markTheAnswer', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -199,7 +199,7 @@ export const getTestDuration = async (email: string, testCode: string) => {
         idToken = await user.getIdToken();
     }
 
-    const response = await fetch('/student/dashboard/getTestDuration', {
+    const response = await fetch('/student/test/getTestDuration', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
