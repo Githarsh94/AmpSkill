@@ -95,7 +95,7 @@ export const fetchAllTests = async (email: string): Promise<Tests> => {
 };
 
 //retrieve the test when test just started
-export const fetchTest = async (studentEmail: string, testCode: string): Promise<ITest> => {
+export const fetchTest = async (email: string, testCode: string): Promise<ITest> => {
     let idToken = localStorage.getItem('sessionId');
 
     if (!idToken) {
@@ -114,7 +114,7 @@ export const fetchTest = async (studentEmail: string, testCode: string): Promise
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`,
         },
-        body: JSON.stringify({ studentEmail, testCode }),
+        body: JSON.stringify({ email, testCode }),
     });
 
     if (!response.ok) {
@@ -156,7 +156,7 @@ export const submitTest = async (studentEmail: string, testCode: string) => {
     return response.json();
 }
 //mark the answer of the test and save it to db
-export const markTheAnswer = async (studentEmail: string, testCode: string, s_no: number, answer: string) => {
+export const markTheAnswer = async (email: string, testCode: string, question_no: number, answer: string) => {
     let idToken = localStorage.getItem('sessionId');
 
     if (!idToken) {
@@ -175,7 +175,7 @@ export const markTheAnswer = async (studentEmail: string, testCode: string, s_no
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`,
         },
-        body: JSON.stringify({ studentEmail, testCode, s_no, answer }),
+        body: JSON.stringify({ email, testCode, question_no: question_no + 1, answer }),
     });
 
     if (!response.ok) {
@@ -186,7 +186,7 @@ export const markTheAnswer = async (studentEmail: string, testCode: string, s_no
     return response.json();
 }
 //get the test duration
-export const getTestDuration = async (studentEmail: string, testCode: string) => {
+export const getTestDuration = async (email: string, testCode: string) => {
     let idToken = localStorage.getItem('sessionId');
 
     if (!idToken) {
@@ -205,7 +205,7 @@ export const getTestDuration = async (studentEmail: string, testCode: string) =>
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`,
         },
-        body: JSON.stringify({ studentEmail, testCode }),
+        body: JSON.stringify({ email, testCode }),
     });
 
     if (!response.ok) {

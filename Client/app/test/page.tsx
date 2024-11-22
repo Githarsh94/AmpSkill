@@ -1,7 +1,9 @@
 'use client';
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { fetchTest, submitTest, markTheAnswer, getTestDuration } from "../../Services/student";
-import toast from 'react-hot-toast';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useSearchParams } from "next/navigation";
 import styles from '../../styles/quiz.module.css';
 
@@ -32,15 +34,24 @@ interface ITest {
 const testPage = () => {
     const searchParams = useSearchParams();
     const [testFlag, setTestFlag] = useState<ITest | null>(null);
-    const [timeLeft, setTimeLeft] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(Number.MAX_VALUE);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const testCode = searchParams.get('testCode');
     const email = searchParams.get('email');
-
-    if (email === "") {
+    const [warningCount, setWarningCount] = useState(0);
+    if (!email) {
         return (
-            <div>
-                Forbidden page
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h1 className="text-4xl font-bold text-red-600 mb-4">403 Forbidden</h1>
+                    <p className="text-lg text-gray-700 mb-6">You do not have permission to access this page.</p>
+                    <button
+                        onClick={() => window.history.back()}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Go Back
+                    </button>
+                </div>
             </div>
         )
     }
@@ -49,7 +60,7 @@ const testPage = () => {
         try {
             const fetchedTest = await fetchTest(email as string, testCode as string);
             setTestFlag(fetchedTest);
-            setCurrentQuestionIndex(fetchedTest.questions[0].s_no);
+            setCurrentQuestionIndex(fetchedTest.questions[0].s_no - 1);
             fetchTimeLeft();
             await document.documentElement.requestFullscreen();
         }
@@ -98,39 +109,83 @@ const testPage = () => {
             throw new Error('Failed to fetch time left');
         }
     }
-    const handleFullscreenChange = () => {
+
+    const warningCountRef = useRef(warningCount);
+
+    const handleFullscreenChange = async () => {
         if (!document.fullscreenElement) {
-            toast.error("You exited fullscreen. Test will be ended.");
-            setTimeout(() => endTest(), 5000);
+            warningCountRef.current += 1;
+            toast.error("You exited fullscreen. This is warning " + warningCountRef.current);
+            setWarningCount(warningCountRef.current);
+
+            const fullscreenButton = document.createElement("button");
+            fullscreenButton.innerText = "You have exited full screen. Please go back to full screen to continue.";
+            fullscreenButton.style.position = "fixed";
+            fullscreenButton.style.top = "50%";
+            fullscreenButton.style.left = "50%";
+            fullscreenButton.style.transform = "translate(-50%, -50%)";
+            fullscreenButton.style.padding = "10px 20px";
+            fullscreenButton.style.backgroundColor = "#007bff";
+            fullscreenButton.style.color = "#fff";
+            fullscreenButton.style.border = "none";
+            fullscreenButton.style.borderRadius = "5px";
+            fullscreenButton.style.zIndex = "1000";
+
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.top = "0";
+            overlay.style.left = "0";
+            overlay.style.width = "100%";
+            overlay.style.height = "100%";
+            overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+            overlay.style.zIndex = "999";
+            overlay.style.backdropFilter = "blur(5px)";
+            overlay.appendChild(fullscreenButton);
+
+            fullscreenButton.onclick = async () => {
+                document.body.removeChild(overlay);
+                await document.documentElement.requestFullscreen();
+            };
+
+            document.body.appendChild(overlay);
         }
     };
 
     const handleVisibilityChange = () => {
         if (document.hidden) {
-            toast.error("You switched tabs. Test will be ended.");
-            setTimeout(() => endTest(), 5000);
+            warningCountRef.current += 1;
+            toast.error("You switched tabs. This is warning " + warningCountRef.current);
+            setWarningCount(warningCountRef.current);
         }
     };
-    if (testFlag) {
-        useEffect(() => {
-            if (timeLeft > 0) {
-                const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-                return () => clearInterval(timer);
-            } else if (timeLeft === 0) {
-                endTest();
-            }
-        }, [timeLeft]);
 
-        //logic to keep on checking for fullscreen and tab switch
-        useEffect(() => {
+    useEffect(() => {
+        if (warningCount >= 5) {
+            toast.error("You have reached the maximum number of warnings. Test will be ended.");
+            setTimeout(() => endTest(), 5000);
+        }
+    }, [warningCount]);
+
+    useEffect(() => {
+        if (testFlag && timeLeft > 0) {
+            const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+            return () => clearInterval(timer);
+        } else if (testFlag && timeLeft === 0) {
+            endTest();
+        }
+    }, [timeLeft, testFlag]);
+
+    //logic to keep on checking for fullscreen and tab switch
+    useEffect(() => {
+        if (testFlag) {
             document.addEventListener("fullscreenchange", handleFullscreenChange);
             document.addEventListener("visibilitychange", handleVisibilityChange);
             return () => {
                 document.removeEventListener("fullscreenchange", handleFullscreenChange);
                 document.removeEventListener("visibilitychange", handleVisibilityChange);
             };
-        }, []);
-    }
+        }
+    }, [testFlag]);
     if (!testFlag) {
         return (
             <div className={styles.instructionsPage}>
@@ -175,6 +230,18 @@ const testPage = () => {
                 <div className={styles.instructionsBottom}>
                     <button onClick={startTest}>Start Test</button>
                 </div>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
+                />
             </div>
         );
     }
@@ -182,6 +249,9 @@ const testPage = () => {
         <div>
             <div className={styles.quizPageTop}>
                 <h1>{testFlag.title}</h1>
+                <div className={styles.warningCounter}>
+                    <h2>Warning Count: {warningCount}</h2>
+                </div>
                 <div className={styles.timer}>
                     <h2>Time Left: {timeLeft}</h2>
                 </div>
@@ -210,7 +280,7 @@ const testPage = () => {
             </div>
             <div className={styles.quizPageBottom}>
                 <button
-                    onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                    onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
                     disabled={testFlag && currentQuestionIndex <= 0}
                 >
                     Back
@@ -223,6 +293,18 @@ const testPage = () => {
                 </button>
                 <button onClick={endTest}>Submit</button>
             </div>
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
         </div>
     )
 }

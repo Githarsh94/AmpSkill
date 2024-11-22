@@ -48,7 +48,6 @@ export const StudentController = {
     },
     startTest: async (req: Request, res: Response) => {
         const { email, testCode } = req.body;
-
         try {
             // Fetch the test details from the database
             const test = await Test.findOne({ testCode });
@@ -84,25 +83,38 @@ export const StudentController = {
 
             // Debugging Log for End Time
             // console.log(`Calculated Test End Time: ${endTime}`);
+            const testSession = await TestSession.findOne({ studentEmail: email, testCode: testCode });
+            if (!testSession) {
+                // Create a new test session
+                const newTestSession = new TestSession({
+                    testCode: testCode,
+                    studentEmail: email,
+                    startTime: currentTime,
+                    endTime: endTime,
+                    totalQuestions: test.questions.length,
+                });
 
-            // Create a new test session
-            const newTestSession = new TestSession({
-                testCode: testCode,
-                studentEmail: email,
-                startTime: currentTime,
-                endTime: endTime,
-                totalQuestions: test.questions.length,
-            });
-
-            // Save the test session to the database
-            await newTestSession.save();
-
+                // Save the test session to the database
+                await newTestSession.save();
+                res.status(201).json({
+                    message: 'Test session started successfully.',
+                    test: {
+                        title: test.title, questions: test.questions, testDuration: testDuration, isFullScreenEnforced: test.isFullScreenEnforced
+                        , isTabSwitchPreventionEnabled: test.isTabSwitchPreventionEnabled,
+                        isCameraAccessRequired: test.isCameraAccessRequired
+                    }
+                });
+                return;
+            }
             res.status(201).json({
-                message: 'Test session started successfully.',
-                test: {title: test.title, questions : test.questions,testDuration: testDuration,isFullScreenEnforced: test.isFullScreenEnforced
-                    ,isTabSwitchPreventionEnabled: test.isTabSwitchPreventionEnabled, 
-                    isCameraAccessRequired: test.isCameraAccessRequired}
+                message: 'Test resumed successfully.',
+                test: {
+                    title: test.title, questions: test.questions, testDuration: testDuration, isFullScreenEnforced: test.isFullScreenEnforced
+                    , isTabSwitchPreventionEnabled: test.isTabSwitchPreventionEnabled,
+                    isCameraAccessRequired: test.isCameraAccessRequired
+                }
             });
+
         } catch (error) {
             console.error('Error starting test:', error);
             res.status(500).json({ message: 'An error occurred while starting the test.' });
@@ -160,7 +172,6 @@ export const StudentController = {
     },
     markTheAnswer: async (req: Request, res: Response) => {
         const { email, testCode, question_no, answer } = req.body;
-
         try {
             // Find the test session of the student
             const testSession = await TestSession.findOne({ studentEmail: email, testCode: testCode });
