@@ -36,12 +36,14 @@ export default function TestPage() {
     const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
     const warningCountRef = useRef(warningCount);
 
+    //fetching the test code and email from the query params
     useEffect(() => {
         const queryParams = window.location.search;
         setTestCode(new URLSearchParams(queryParams).get('testCode'));
         setEmail(new URLSearchParams(queryParams).get('email'));
     }, []);
 
+    //keep checking for warnings
     useEffect(() => {
         if (warningCount >= 5) {
             toast.error("You have reached the maximum number of warnings. Test will be ended.");
@@ -49,6 +51,7 @@ export default function TestPage() {
         }
     }, [warningCount]);
 
+    //logic for timer
     useEffect(() => {
         if (testFlag && timeLeft > 0) {
             const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);

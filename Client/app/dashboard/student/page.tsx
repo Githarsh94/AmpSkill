@@ -9,6 +9,7 @@ import { fetchStudentProfile } from '../../../Services/student';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 import StudentTests from '@/components/Student-Tests';
+import TestsReports from '@/components/TestsReports';
 
 export default function StudentDashboard() {
     const [activeComponent, setActiveComponent] = useState('Profile');
@@ -43,11 +44,11 @@ export default function StudentDashboard() {
             case 'Profile':
                 return <Profile />;
             case 'Assignments':
-                return <div>Assignments</div>;
+                return <div>Assignments</div>
             case 'Tests':
                 return <StudentTests />;
             case 'Reports':
-                return <div>Reports</div>;
+                return <div><TestsReports/></div>;
             default:
                 return <Profile />;
         }
@@ -82,7 +83,7 @@ export default function StudentDashboard() {
                 >
                     <img
                         src="/images/Assingments.png"
-                        alt="Assign Teachers"
+                        alt="Assignments"
                         className={styles.icon}
                     />
                     {isSidebarExpanded && <span>Assignments</span>}
@@ -94,7 +95,7 @@ export default function StudentDashboard() {
                 >
                     <img
                         src="/images/tests.png"
-                        alt="Assign Teachers"
+                        alt="Tests"
                         className={styles.icon}
                     />
                     {isSidebarExpanded && <span>Tests</span>}
@@ -105,8 +106,8 @@ export default function StudentDashboard() {
                     disabled={isLoading}
                 >
                     <img
-                        src="/images/tests.png"
-                        alt="Assign Teachers"
+                        src="/images/report.png"
+                        alt="Reports"
                         className={styles.icon}
                     />
                     {isSidebarExpanded && <span>Reports</span>}

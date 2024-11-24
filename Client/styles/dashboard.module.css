@@ -419,3 +419,171 @@
     height: fit-content;
     cursor: pointer;
 }
+/* TestReports section css */
+.reportsContainer {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background:  #ead2ef;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  }
+
+.reportsNav {
+display: flex;
+justify-content: space-between;
+gap: 15px;
+margin-top: 10px;
+}
+
+/* Navigation Button Wrapper */
+.navButtonWrapper {
+position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.activeNavButtonWrapper {
+color: #5b21b6;
+}
+
+/* Navigation Button */
+.navButton {
+padding: 10px 20px;
+background: #e9d5ff;
+border: none;
+border-radius: 5px;
+font-weight: bold;
+cursor: pointer;
+transition: background 0.3s ease;
+}
+
+.navButton:hover {
+background: #d8b4fe;
+}
+
+/* Active Underline */
+.activeUnderline {
+position: absolute;
+bottom: -5px;
+height: 3px;
+width: 100%;
+background: #7c3aed;
+border-radius: 3px;
+}
+.ScoreCardContainer{
+    padding: 2rem;
+    margin: 1rem;
+    background-color: white;
+    border-radius: 20px;
+}
+.ScoreCardTestCard{
+    background: #ead2ef;
+    padding: 0.5rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+}
+.ScoreCardTestSummary{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    width: 100vh;
+}
+.ScoreCardLine{
+    width: 100%;
+    height: 3px;
+    background-color: #D194DD;
+    margin: 0.5rem 0;
+}
+.ScoreCardStatisticsSection{
+    display: flex;
+    justify-content: space-around;
+}
+.statisticsCard{
+    background: #ead2ef;
+    padding: 0.5rem;
+    border-radius: 20px;
+    width: 40%;
+}
+.statisticsCardTop{
+    display: flex;
+    justify-content: space-evenly;
+}
+.rankCard{
+    display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px; /* Adjust the size as needed */
+  height: 80px;
+  background-color: white; /* Light purple background */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow */
+  font-family: Arial, sans-serif;
+  margin: 1rem;
+}
+.rankNumber{
+    font-size: 20px; /* Larger font for the number */
+    font-weight: bold;
+    color: #000; /* Black text */
+}
+.rankLabel{
+  color: #7c3aed; /* Purple color for the label */
+  /* margin-top: 5px; */
+}
+.statisticsCardMarks{
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.overviewSection {
+    margin: 1rem;
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 20px;
+    border: 2px solid #ead2ef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.overviewTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.overviewTable th, .overviewTable td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.overviewTable th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+}
+
+.overviewTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.PieChart{
+   display: flex;
+   justify-content: space-around;
+   width: 100%;
+}
+.PieChartAccuracy{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.PieChartAccuracy div{
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    justify-content: center;
+}

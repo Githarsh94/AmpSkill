@@ -265,7 +265,13 @@ export const StudentController = {
 
                 if (testSession) {
                     if (testSession.isCompleted) {
-                        completedTests.push(test);
+                        completedTests.push({
+                            ...test.toObject(),
+                            score: testSession.score,
+                            correctAnswers: testSession.correctAnswers,
+                            incorrectAnswers: testSession.incorrectAnswers,
+                            totalQuestions: testSession.totalQuestions
+                        });
                     } else if (currentTime >= testSession.startTime && currentTime <= testSession.endTime) {
                         activeTests.push(test);
                     } else if (currentTime > testSession.endTime) {
