@@ -656,3 +656,8 @@
 [2024-11-19T12:15:13.676Z] POST /api/student/dashboard/available-tests
 [2024-11-19T12:16:02.501Z] POST /api/student/dashboard/available-tests
 [2024-11-19T12:16:04.692Z] POST /api/student/dashboard/available-tests
+[2024-11-25T08:06:26.130Z] POST /api/auth/login - ::1
+[2024-11-25T08:06:29.602Z] POST /api/student/dashboard/profile - ::1
+[2024-11-25T08:06:29.614Z] GET /api/default-profile.png - ::1
+[2024-11-25T08:06:33.876Z] POST /api/student/test/getAllTests - ::1
+[2024-11-25T08:06:36.787Z] POST /api/student/test/getAllTests - ::1
