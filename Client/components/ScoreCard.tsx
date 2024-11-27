@@ -1,9 +1,21 @@
 'use client';
+import { useEffect, useState } from 'react';
 import styles from '../styles/dashboard.module.css';
 import PieChart from '../components/PieChart';
 import { ChartConfig } from './ui/chart';
+import { fetchTestScoreCard } from '../Services/reports';
 
 export default function ScoreCard(){
+    const [data,setData] = useState([]);
+    useEffect(() => {
+        try{
+            const insights = fetchTestScoreCard();
+            // setData(insights);
+        }
+        catch(error){
+            console.error(error);
+        }
+    }, [data]);
     const chartConfig = {
         Analysis: {
         label: "Analysis",

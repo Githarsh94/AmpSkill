@@ -4,7 +4,8 @@ import { Test } from '../models/test.model';
 import { User } from '../models/user.model';
 import { Batch } from '../models/batch.model';
 import { TestSession } from '../models/testSession.model';
-import { title } from 'process';
+import {ScoreCard} from '../models/ScoreCard.model';
+// import { ScoreCard } from '../models/scoreCard.model';
 
 export const StudentController = {
     profile: async (req: Request, res: Response) => {
@@ -136,6 +137,49 @@ export const StudentController = {
             testSession.isCompleted = true;
             //update the marks
             testSession.score = testSession.correctAnswers * 4 - testSession.incorrectAnswers;
+
+            // Create a test ScoreCard
+            const incorrectAns = testSession.incorrectAnswers;
+            const correctAns = testSession.correctAnswers;
+            const totalQuestions = testSession.totalQuestions;
+            const score = testSession.score;
+            const skippedAns = totalQuestions - (correctAns + incorrectAns);
+            const timeTaken = (testSession.endTime.getTime() - testSession.startTime.getTime()) / 60000;
+            const timeTakenPerQue = timeTaken / totalQuestions;
+            const maximumMarks = totalQuestions * 4;
+            const percentage = (score / maximumMarks) * 100;
+            const testSessions = await TestSession.find({ testCode }).sort({ score: -1 });
+            const rank = testSessions.findIndex((session: any) => session.studentEmail === email) + 1;
+            const test = await Test.findOne({testCode});
+            const totalTime = test?.testDuration;
+            // Create a new TestScoreCard document
+            const newTestScoreCard = new ScoreCard({
+                email: email,
+                testCode: testCode,
+                rank: rank,
+                maximumMarks: maximumMarks,
+                score: score,
+                timeTaken: timeTaken,
+                incorrectAnswers: incorrectAns,
+                correctAnswers: correctAns,
+                skippedAnswers: skippedAns,
+                percentage: percentage,
+                avgTimeTakenPerQue: timeTakenPerQue,
+                totalTime: totalTime,
+                totalQuestions: totalQuestions,
+            });
+            console.log(newTestScoreCard);
+            // Save the new TestScoreCard to the database
+            await newTestScoreCard.save();
+            console.log("saved");
+            // Update ranks of all TestScoreCards for the test
+            const testScoreCards = await ScoreCard.find({ testCode }).sort({ score: -1 });
+            for (let i = 0; i < testScoreCards.length; i++) {
+                console.log("ranked");
+                testScoreCards[i].rank = i + 1;
+                await testScoreCards[i].save();
+            }
+            
             //save this test session to db
             await testSession.save();
             res.status(200).json({ message: 'Test submitted successfully.', testSession });

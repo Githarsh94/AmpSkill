@@ -121,9 +121,9 @@ export default function TestPage() {
 
     const enterTheAnswer = async (s_no: number, answer: string) => {
         try {
+            setSelectedAnswers((prev) => ({ ...prev, [s_no]: answer }));
             const response = await markTheAnswer(email as string, testCode as string, s_no, answer);
             toast.success(response.message);
-            setSelectedAnswers((prev) => ({ ...prev, [s_no]: answer }));
         }
         catch (err) {
             console.log(err);

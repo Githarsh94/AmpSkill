@@ -465,14 +465,14 @@ background: #d8b4fe;
 }
 
 /* Active Underline */
-.activeUnderline {
+/* .activeUnderline {
 position: absolute;
 bottom: -5px;
 height: 3px;
 width: 100%;
 background: #7c3aed;
 border-radius: 3px;
-}
+} */
 .ScoreCardContainer{
     padding: 2rem;
     margin: 1rem;
