@@ -261,7 +261,7 @@ export default function TestPage() {
                     <h2>Warning Count: {warningCount}</h2>
                 </div>
                 <div className={styles.timer}>
-                    <h2>Time Left: {timeLeft}</h2>
+                    <h2>Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</h2>
                 </div>
             </div>
             <div className={styles.quizPageMain}>

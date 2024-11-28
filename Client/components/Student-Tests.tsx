@@ -3,10 +3,25 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/dashboard.module.css';
 import { useUserStore } from '@/store/user';
-import { fetchAllTests } from '@/Services/student';
+import { fetchAllTests, fetchTestScoreCard } from '@/Services/student';
 import { useRouter } from 'next/navigation';
 
 
+interface ScoreCard {
+    email: string;
+    testCode: string;
+    rank: number;
+    maximumMarks: number;
+    score: number;
+    timeTaken: number;
+    incorrectAnswers: number;
+    correctAnswers: number;
+    skippedAnswers: number;
+    percentage: number;
+    avgTimeTakenPerQue: number;
+    totalTime: number;
+    totalQuestions: number;
+}
 
 export default function StudentTests() {
     const [shownTests, setShownTests] = useState('Active');
@@ -14,10 +29,13 @@ export default function StudentTests() {
     const [completedTests, setCompletedTests] = useState([]);
     const [upcomingTests, setUpcomingTests] = useState([]);
     const [missedTests, setMissedTests] = useState([]);
+    const [showReport, setShowReport] = useState(false);
+    const [reportData, setReportData] = useState<ScoreCard | null>(null);
     const email = useUserStore((state) => state.profile.user.email);
     const router = useRouter();
 
     useEffect(() => {
+
         const fetchTests = async () => {
             try {
                 const tests = await fetchAllTests(email);
@@ -33,6 +51,18 @@ export default function StudentTests() {
 
         fetchTests();
     }, [email]);
+
+
+
+    const fetchReport = async (testCode: string) => {
+        try {
+            const data = await fetchTestScoreCard(email, testCode);
+            setReportData(data);
+            setShowReport(true);
+        } catch (error) {
+            console.error('Failed to fetch report:', error);
+        }
+    };
 
     const handleOpentest = (testCode: string) => {
         router.push(`/test?testCode=${testCode}&email=${email}`);
@@ -75,16 +105,9 @@ export default function StudentTests() {
                 )}
                 {shownTests === 'Completed' && (
                     completedTests.length > 0 ? completedTests.map((test: any) => {
-                        const totalQuestions = test.totalQuestions;
-                        const rightAnswers = test.correctAnswers;
-                        const wrongAnswers = test.incorrectAnswers;
-                        const skippedAnswers = totalQuestions - rightAnswers - wrongAnswers;
-                        const maxMarks = totalQuestions * 4;
-                        const scoredMarks = test.score;
 
                         return (
                             <div key={test._id} className="bg-white shadow-md rounded-lg p-4">
-                                {/* Title and Date */}
                                 <div className="">
                                     <div className="text-lg font-bold">{test.title}</div>
                                     <div className="text-sm text-gray-500">
@@ -93,34 +116,62 @@ export default function StudentTests() {
                                     </div>
                                 </div>
 
-                                {/* Scores Section */}
                                 <div className="grid grid-cols-3 gap-4 text-center mt-4">
                                     <div>
-                                        <div className="text-2xl font-bold">{maxMarks}</div>
+                                        <div className="text-2xl font-bold">{test.totalQuestions * 4}</div>
                                         <div className="text-sm text-gray-500">Maximum Marks</div>
                                     </div>
                                     <div>
-                                        <div className="text-2xl font-bold">{scoredMarks}</div>
+                                        <div className="text-2xl font-bold">{test.score}</div>
                                         <div className="text-sm text-gray-500">Scored Marks</div>
                                     </div>
                                     <div>
-                                        <div className="text-2xl font-bold">{rightAnswers}</div>
+                                        <div className="text-2xl font-bold">{test.correctAnswers}</div>
                                         <div className="text-sm text-green-500">Right Answers</div>
                                     </div>
                                     <div>
-                                        <div className="text-2xl font-bold">{wrongAnswers}</div>
+                                        <div className="text-2xl font-bold">{test.incorrectAnswers}</div>
                                         <div className="text-sm text-red-500">Wrong Answers</div>
                                     </div>
                                     <div>
-                                        <div className="text-2xl font-bold">{skippedAnswers}</div>
+                                        <div className="text-2xl font-bold">{test.totalQuestions - test.correctAnswers - test.incorrectAnswers}</div>
                                         <div className="text-sm text-orange-500">Skipped</div>
                                     </div>
                                 </div>
                                 <div className="mt-4 text-center">
-                                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
+                                        onClick={() => fetchReport(test.testCode)}
+                                    >
                                         View Report
                                     </button>
                                 </div>
+
+                                {showReport && reportData && (
+                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                                        <div className="bg-[#ead2ef] p-6 rounded-lg shadow-lg relative w-3/4 max-w-2xl">
+                                            <button
+                                                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                                                onClick={() => setShowReport(false)}
+                                            >
+                                                X
+                                            </button>
+                                            <div className="text-lg font-bold mb-4">Test Report</div>
+                                            <div className="grid grid-cols-2 gap-4 p-4">
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Maximum Marks: {reportData.maximumMarks}</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Score: {reportData.score}</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Time Taken: {reportData.timeTaken.toFixed(3)} mins</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Total Time: {reportData.totalTime} mins</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold text-red-500">Incorrect Answers: {reportData.incorrectAnswers}</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold text-green-500">Correct Answers: {reportData.correctAnswers}</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Skipped Answers: {reportData.skippedAnswers}</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Percentage: {reportData.percentage}%</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Avg Time per Question: {reportData.avgTimeTakenPerQue.toFixed(3)} mins</div>
+                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Total Questions: {reportData.totalQuestions}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         );
                     }) : <div className="text-2xl text-center">No Completed Tests Available</div>
@@ -149,4 +200,3 @@ export default function StudentTests() {
         </div>
     );
 }
-

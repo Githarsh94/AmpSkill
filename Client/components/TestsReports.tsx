@@ -6,19 +6,18 @@ import ScoreCard from './ScoreCard';
 export default function TestsReports() {
     const [activeTab, setActiveTab] = useState('Score Card'); // Default active tab
 
-    const navButtons = ['Score Card', 'Solution Report', 'Question Report', 'Compare Yourself'];
+    const navButtons = ['Score Card', 'Solution Report', 'Question Report', 'Compare Yourself', 'Test Summary'];
     return (
         <div className={styles.reportsContainer}>
             {/* Header Section */}
             <div className={styles.reportsHeader}>
                 <h1 className="text-[30px] ">Reports</h1>
                 <div className={styles.reportsNav}>
-                     {navButtons.map((tab) => (
+                    {navButtons.map((tab) => (
                         <div
                             key={tab}
-                            className={`${styles.navButtonWrapper} ${
-                                activeTab === tab ? styles.activeNavButtonWrapper : ''
-                            }`}
+                            className={`${styles.navButtonWrapper} ${activeTab === tab ? styles.activeNavButtonWrapper : ''
+                                }`}
                             onClick={() => setActiveTab(tab)}
                         >
                             <button className={styles.navButton}>{tab}</button>
@@ -29,12 +28,13 @@ export default function TestsReports() {
             </div>
             {/* Conditional Content Based on Active Tab */}
             <div className={styles.tabContent}>
-                {activeTab === 'Score Card' && <div><ScoreCard/></div>}
+                {activeTab === 'Score Card' && <div><ScoreCard /></div>}
                 {activeTab === 'Solution Report' && <div>Solution Report Content</div>}
                 {activeTab === 'Question Report' && <div>Question Report Content</div>}
                 {activeTab === 'Compare Yourself' && <div>Compare Yourself Content</div>}
+                {activeTab === 'Test Summary' && <div>Test Summary Content</div>}
             </div>
-           
+
         </div>
     );
 }

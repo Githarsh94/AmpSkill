@@ -36,6 +36,22 @@ interface ITest {
     isCameraAccessRequired: boolean;
 }
 
+interface ScoreCard {
+    email: string;
+    testCode: string;
+    rank: number;
+    maximumMarks: number;
+    score: number;
+    timeTaken: number;
+    incorrectAnswers: number;
+    correctAnswers: number;
+    skippedAnswers: number;
+    percentage: number;
+    avgTimeTakenPerQue: number;
+    totalTime: number;
+    totalQuestions: number;
+}
+
 export const fetchStudentProfile = async (email: string): Promise<UserProfile> => {
     let idToken = localStorage.getItem('sessionId');
 
@@ -211,6 +227,36 @@ export const getTestDuration = async (email: string, testCode: string) => {
     if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message || 'Failed to fetch test duration');
+    }
+
+    return response.json();
+}
+
+export const fetchTestScoreCard = async (email: string, testCode: string): Promise<ScoreCard> => {
+    let idToken = localStorage.getItem('sessionId');
+
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
+    }
+
+    const response = await fetch('/student/report/getTestScoreCard', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ email, testCode }),
+    });
+
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to fetch score card');
     }
 
     return response.json();

@@ -4,7 +4,7 @@ import { Test } from '../models/test.model';
 import { User } from '../models/user.model';
 import { Batch } from '../models/batch.model';
 import { TestSession } from '../models/testSession.model';
-import {ScoreCard} from '../models/ScoreCard.model';
+import { ScoreCard } from '../models/scoreCard.model';
 // import { ScoreCard } from '../models/scoreCard.model';
 
 export const StudentController = {
@@ -144,13 +144,13 @@ export const StudentController = {
             const totalQuestions = testSession.totalQuestions;
             const score = testSession.score;
             const skippedAns = totalQuestions - (correctAns + incorrectAns);
-            const timeTaken = (testSession.endTime.getTime() - testSession.startTime.getTime()) / 60000;
-            const timeTakenPerQue = timeTaken / totalQuestions;
             const maximumMarks = totalQuestions * 4;
             const percentage = (score / maximumMarks) * 100;
             const testSessions = await TestSession.find({ testCode }).sort({ score: -1 });
+            const timeTaken = (new Date().getTime() - testSession.startTime.getTime()) / 60000;
+            const timeTakenPerQue = timeTaken / totalQuestions;
             const rank = testSessions.findIndex((session: any) => session.studentEmail === email) + 1;
-            const test = await Test.findOne({testCode});
+            const test = await Test.findOne({ testCode });
             const totalTime = test?.testDuration;
             // Create a new TestScoreCard document
             const newTestScoreCard = new ScoreCard({
@@ -179,7 +179,7 @@ export const StudentController = {
                 testScoreCards[i].rank = i + 1;
                 await testScoreCards[i].save();
             }
-            
+
             //save this test session to db
             await testSession.save();
             res.status(200).json({ message: 'Test submitted successfully.', testSession });

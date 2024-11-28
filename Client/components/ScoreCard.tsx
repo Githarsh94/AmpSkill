@@ -3,45 +3,45 @@ import { useEffect, useState } from 'react';
 import styles from '../styles/dashboard.module.css';
 import PieChart from '../components/PieChart';
 import { ChartConfig } from './ui/chart';
-import { fetchTestScoreCard } from '../Services/reports';
+// import { fetchTestScoreCard } from '../Services/student';
 
-export default function ScoreCard(){
-    const [data,setData] = useState([]);
+export default function ScoreCard() {
+    const [data, setData] = useState([]);
     useEffect(() => {
-        try{
-            const insights = fetchTestScoreCard();
+        try {
+            // const insights = fetchTestScoreCard();
             // setData(insights);
         }
-        catch(error){
+        catch (error) {
             console.error(error);
         }
     }, [data]);
     const chartConfig = {
         Analysis: {
-        label: "Analysis",
+            label: "Analysis",
         },
         Correct: {
-        label: "Correct",
-        color: "#28A745",
+            label: "Correct",
+            color: "#28A745",
         },
         Incorrect: {
-        label: "Incorrect",
-        color: "#F44336",
+            label: "Incorrect",
+            color: "#F44336",
         },
         Skipped: {
-        label: "Skipped",
-        color: "#1A73CC",
+            label: "Skipped",
+            color: "#1A73CC",
         },
     } satisfies ChartConfig
     const chartData = [
         { type: "Correct", questions: 71, fill: "var(--color-Correct)" },
         { type: "Incorrect", questions: 6, fill: "var(--color-Incorrect)" },
         { type: "Skipped", questions: 2, fill: "var(--color-Skipped)" },
-      ]
-    return(
+    ]
+    return (
         <div className={styles.ScoreCardContainer}>
-             {/* Test Info Section */}
-             <div className={styles.ScoreCardTestCard}>
+            {/* Test Info Section */}
+            <div className={styles.ScoreCardTestCard}>
                 <div>Test Title</div>
                 <div className={styles.ScoreCardLine}></div>
                 <div className={styles.ScoreCardTestSummary}>
@@ -50,7 +50,7 @@ export default function ScoreCard(){
                     <div className={styles.summaryItem}>Maximum Marks: 300</div>
                     <div className={styles.summaryItem}>Total Time: 180</div>
                 </div>
-             </div>
+            </div>
 
             {/* Candidate Statistics */}
             <div className={styles.ScoreCardStatisticsSection}>
