@@ -1,14 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
 import styles from '../styles/dashboard.module.css';
 import PieChart from '../components/PieChart';
 import { ChartConfig } from './ui/chart';
-import { useUserStore } from '@/store/user';
-import { fetchTestScoreCard } from '../Services/student';
 
 interface ScoreCard{
     email: string;
     testCode: string;
+    subjectName: string;
+    title: string;
     rank: number;
     maximumMarks: number;
     score: number;
@@ -27,22 +26,8 @@ interface CompleteScoreCard{
     topperTimeTaken: number,
     totalCandidates: number
 }
-export default function ScoreCard({ testCode }: { testCode: string }) {
+export default function ScoreCard({ reportData }: { reportData: CompleteScoreCard }) {
     // console.log("testCode " + testCode.testCode);
-    const [reportData, setReportData] = useState<CompleteScoreCard | null>(null);
-    const email = useUserStore((state) => state.profile.user.email);
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await fetchTestScoreCard(email, testCode);
-                setReportData(data);
-                console.log(data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, [testCode]);
     const chartConfig = {
         Analysis: {
             label: "Analysis",
@@ -69,13 +54,13 @@ export default function ScoreCard({ testCode }: { testCode: string }) {
         <div className={styles.ScoreCardContainer}>
             {/* Test Info Section */}
             <div className={styles.ScoreCardTestCard}>
-                <div>Test Title</div>
+                <div>{reportData?.scoreCard.title}</div>
                 <div className={styles.ScoreCardLine}></div>
                 <div className={styles.ScoreCardTestSummary}>
                     <div className={styles.summaryItem}>Total Candidates: {reportData?.totalCandidates}</div>
                     <div className={styles.summaryItem}>Total Questions: {reportData?.scoreCard.totalQuestions}</div>
                     <div className={styles.summaryItem}>Maximum Marks: {reportData?.scoreCard.maximumMarks}</div>
-                    <div className={styles.summaryItem}>Total Time: {reportData?.scoreCard.totalTime}</div>
+                    <div className={styles.summaryItem}>Total Time: {reportData?.scoreCard.totalTime} (Mins)</div>
                 </div>
             </div>
 
@@ -100,17 +85,17 @@ export default function ScoreCard({ testCode }: { testCode: string }) {
                     </div>
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
-                        <p>Right Marks</p>
+                        <p>Correct Question Marks</p>
                         <p>{reportData?.scoreCard.correctAnswers ? reportData?.scoreCard.correctAnswers * 4 : 0}</p>
                     </div>
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
-                        <p>Wrong Marks</p>
+                        <p>Incorrect Question Marks</p>
                         <p>{reportData?.scoreCard.incorrectAnswers ? reportData?.scoreCard.incorrectAnswers * -1: 0}</p>
                     </div>
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
-                        <p>Left Question Marks</p>
+                        <p>Skipped Question Marks</p>
                         <p>{reportData?.scoreCard.skippedAnswers ? reportData?.scoreCard.skippedAnswers * 4 : 0}</p>
                     </div>
                 </div>
@@ -137,12 +122,14 @@ export default function ScoreCard({ testCode }: { testCode: string }) {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Physics</td>
+                            <td>{reportData?.scoreCard.subjectName}</td>
                             <td>{(reportData?.scoreCard.correctAnswers ?? 0) + (reportData?.scoreCard.incorrectAnswers ?? 0)}</td>
                             <td>{reportData?.scoreCard.incorrectAnswers}</td>
                             <td>{reportData?.scoreCard.percentage.toFixed(2)}</td>
-                            <td>{reportData?.scoreCard.score} / {reportData?.scoreCard.timeTaken}</td>
-                            <td>{reportData?.topperScore} / {reportData?.topperTimeTaken}</td>
+                            <td>{reportData?.scoreCard.score} / 
+                                ({Math.floor((reportData?.scoreCard.timeTaken ?? 0) / 60)}h:{Math.floor((reportData?.scoreCard.timeTaken ?? 0) % 60)}m:{Math.floor(((reportData?.scoreCard.timeTaken ?? 0) % 1) * 60)}s)</td>
+                            <td>{reportData?.topperScore} / 
+                            ({Math.floor((reportData?.topperTimeTaken ?? 0) / 60)}h:{Math.floor((reportData?.topperTimeTaken ?? 0) % 60)}m:{Math.floor(((reportData?.topperTimeTaken ?? 0) % 1) * 60)}s)</td>
                         </tr>
                     </tbody>
                 </table>

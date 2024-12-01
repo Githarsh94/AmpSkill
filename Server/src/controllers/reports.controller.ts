@@ -42,6 +42,8 @@ export const ReportsController = {
                 scoreCard: {
                     email: scoreCard?.email,
                     testCode: scoreCard?.testCode,
+                    subjectName: scoreCard?.subjectName,
+                    title: scoreCard?.title,
                     rank: scoreCard?.rank,
                     maximumMarks: scoreCard?.maximumMarks,
                     score: scoreCard?.score,
@@ -62,6 +64,40 @@ export const ReportsController = {
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
-    }
+    },
+    fetchSolutionReportOfTest: async (req: Request, res: Response) => {
+        const {email,testCode} = req.body;
+        try{
+            const test = await Test.findOne({ testCode });
+            if (!test) {
+                return res.status(404).json({ message: 'Test not found' });
+            }
 
+            const batch = await Batch.findOne({ students: [email] });
+            if (!batch) {
+                return res.status(404).json({ message: 'You have not been assigned to any batch yet.' });
+            }
+
+            const assignedTest = test.batches.some(batchItem => batchItem.batchName === batch.batchName);
+            if (!assignedTest) {
+                return res.status(404).json({ message: 'This test has not been assigned to your batch.' });
+            }
+
+            const testSession = await TestSession.findOne({ studentEmail: email, testCode });
+            if (!testSession) {
+                return res.status(404).json({ message: 'You have not attempted this test.' });
+            }
+
+            const questions= test.questions;
+            const userMarkedAnswers = testSession.answers;
+            const data={
+                questions,
+                userMarkedAnswers
+            }
+            return res.status(200).json(data);
+        }
+        catch(error){
+            res.status(500).json({ message: 'Internal Server error', error });
+        }
+    }
 }

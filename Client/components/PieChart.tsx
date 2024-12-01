@@ -24,8 +24,6 @@ export default function Component(data: any) {
   // console.log(chartData)
   const chartData = data.chartData;
   const chartConfig = data.chartConfig;
-  console.log(chartData);
-  console.log(chartConfig);
   const totalQuestions = React.useMemo(() => {
     return chartData.reduce((acc:any, curr:any) => acc + curr.questions, 0)
   }, [chartData])

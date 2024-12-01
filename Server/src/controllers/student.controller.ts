@@ -65,11 +65,6 @@ export const StudentController = {
             const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
             const currentTime = new Date(utcDate.getTime() + istOffset);// Current time when the student requests to start the test
 
-            // Debugging Logs
-            // console.log(`Current Time: ${currentTime}`);
-            // console.log(`Test Start Time: ${startTimeofTest}`);
-            // console.log(`Login Window (minutes): ${loginWindow}`);
-
             // Calculate the end time of the login window
             const loginWindowEndTime = new Date(startTimeofTest.getTime() + loginWindow * 60000);
             // console.log(`Login Window End Time: ${loginWindowEndTime}`);
@@ -159,10 +154,14 @@ export const StudentController = {
             const rank = testSessions.findIndex((session: any) => session.studentEmail === email) + 1;
             const test = await Test.findOne({ testCode });
             const totalTime = test?.testDuration;
+            const subjectName = test?.subjectName;
+            const title = test?.title;
             // Create a new TestScoreCard document
             const newTestScoreCard = new ScoreCard({
                 email: email,
                 testCode: testCode,
+                subjectName: subjectName,
+                title: title,
                 rank: rank,
                 maximumMarks: maximumMarks,
                 score: score,
@@ -175,14 +174,13 @@ export const StudentController = {
                 totalTime: totalTime,
                 totalQuestions: totalQuestions,
             });
-            console.log(newTestScoreCard);
+            
             // Save the new TestScoreCard to the database
             await newTestScoreCard.save();
-            console.log("saved");
+            
             // Update ranks of all TestScoreCards for the test
             const testScoreCards = await ScoreCard.find({ testCode }).sort({ score: -1 });
             for (let i = 0; i < testScoreCards.length; i++) {
-                console.log("ranked");
                 testScoreCards[i].rank = i + 1;
                 await testScoreCards[i].save();
             }

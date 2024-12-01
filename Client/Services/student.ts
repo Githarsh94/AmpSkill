@@ -39,6 +39,8 @@ interface ITest {
 interface ScoreCard {
     email: string;
     testCode: string;
+    subjectName: string;
+    title: string;
     rank: number;
     maximumMarks: number;
     score: number;
@@ -56,6 +58,15 @@ interface CompleteScoreCard{
     topperScore: number,
     topperTimeTaken: number,
     totalCandidates: number
+}
+
+interface markedAnswer{
+    question_no: number;
+    answer: string;
+}
+interface SolutionReport{
+    questions: IQuestion[];
+    userMarkedAnswers: markedAnswer[];
 }
 export const fetchStudentProfile = async (email: string): Promise<UserProfile> => {
     let idToken = localStorage.getItem('sessionId');
@@ -268,3 +279,33 @@ export const fetchTestScoreCard = async (email: string, testCode: string): Promi
     // console.log(data);
     return data;
 }
+export const fetchSolutionReport= async(email: string, testCode: string): Promise<SolutionReport> => {
+    let idToken = localStorage.getItem('sessionId');
+
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
+    }
+
+    const response = await fetch('/student/report/getSolutionReport', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ email, testCode }),
+    });
+
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to fetch solution report');
+    }
+
+    const data = await response.json();
+    return data;
+};

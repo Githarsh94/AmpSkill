@@ -8,9 +8,13 @@ import { Schema, model, Document } from 'mongoose';
 //SkippedQue
 //Percentage
 //AvgTimeTakenPerQue
+//subjectName
+//title
 interface IScoreCard extends Document {
     email: string;
     testCode: string;
+    subjectName: string;
+    title: string;
     rank: number;
     maximumMarks: number;
     score: number;
@@ -27,6 +31,8 @@ interface IScoreCard extends Document {
 const ScoreCardSchema = new Schema<IScoreCard>({
     email: { type: String, required: true },
     testCode: { type: String, required: true },
+    subjectName: { type: String, required: true },
+    title: { type: String, required: true },
     rank: { type: Number, required: true },
     maximumMarks: { type: Number, required: true },
     score: { type: Number, required: true },
