@@ -24,6 +24,7 @@ type TestDetails = {
   startTime: string;
   loginWindow: string;
   testDuration: string;
+  subjectName: string;
   isFullScreenEnforced: boolean;
   isTabSwitchPreventionEnabled: boolean;
   isCameraAccessRequired: boolean;
@@ -47,6 +48,7 @@ const TestCreation: React.FC = () => {
     startTime: '',
     loginWindow: '',
     testDuration: '',
+    subjectName: '',
     isFullScreenEnforced: false,
     isTabSwitchPreventionEnabled: false,
     isCameraAccessRequired: false,
@@ -99,6 +101,7 @@ const TestCreation: React.FC = () => {
     formData.append('startTime', testDetails.startTime);
     formData.append('loginWindow', testDetails.loginWindow);
     formData.append('testDuration', testDetails.testDuration);
+    formData.append('subjectName', testDetails.subjectName);
     formData.append('isFullScreenEnforced', String(testDetails.isFullScreenEnforced));
     formData.append('isTabSwitchPreventionEnabled', String(testDetails.isTabSwitchPreventionEnabled));
     formData.append('isCameraAccessRequired', String(testDetails.isCameraAccessRequired));
@@ -131,6 +134,7 @@ const TestCreation: React.FC = () => {
           startTime: testDetails.startTime,
           loginWindow: testDetails.loginWindow,
           testDuration: testDetails.testDuration,
+          subjectName: testDetails.subjectName,
           isFullScreenEnforced: testDetails.isFullScreenEnforced,
           isTabSwitchPreventionEnabled: testDetails.isTabSwitchPreventionEnabled,
           isCameraAccessRequired: testDetails.isCameraAccessRequired,
@@ -160,6 +164,13 @@ const TestCreation: React.FC = () => {
             placeholder="Test Title"
             value={testDetails.title}
             onChange={(e) => setTestDetails({ ...testDetails, title: e.target.value })}
+          />
+          <input
+            type="text"
+            className={styles.testInputText}
+            placeholder="Subject Name"
+            value={testDetails.subjectName}
+            onChange={(e) => setTestDetails({ ...testDetails, subjectName: e.target.value })}
           />
           <textarea
             className={styles.testTextarea}

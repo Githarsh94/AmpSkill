@@ -3,19 +3,46 @@ import { useEffect, useState } from 'react';
 import styles from '../styles/dashboard.module.css';
 import PieChart from '../components/PieChart';
 import { ChartConfig } from './ui/chart';
-// import { fetchTestScoreCard } from '../Services/student';
+import { useUserStore } from '@/store/user';
+import { fetchTestScoreCard } from '../Services/student';
 
-export default function ScoreCard() {
-    const [data, setData] = useState([]);
+interface ScoreCard{
+    email: string;
+    testCode: string;
+    rank: number;
+    maximumMarks: number;
+    score: number;
+    timeTaken: number;
+    incorrectAnswers: number;
+    correctAnswers: number;
+    skippedAnswers: number;
+    percentage: number;
+    avgTimeTakenPerQue: number;
+    totalTime: number;
+    totalQuestions: number;
+}
+interface CompleteScoreCard{
+    scoreCard: ScoreCard,
+    topperScore: number,
+    topperTimeTaken: number,
+    totalCandidates: number
+}
+export default function ScoreCard({ testCode }: { testCode: string }) {
+    // console.log("testCode " + testCode.testCode);
+    const [reportData, setReportData] = useState<CompleteScoreCard | null>(null);
+    const email = useUserStore((state) => state.profile.user.email);
     useEffect(() => {
-        try {
-            // const insights = fetchTestScoreCard();
-            // setData(insights);
-        }
-        catch (error) {
-            console.error(error);
-        }
-    }, [data]);
+        const fetchData = async () => {
+            try {
+                const data = await fetchTestScoreCard(email, testCode);
+                setReportData(data);
+                console.log(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, [testCode]);
     const chartConfig = {
         Analysis: {
             label: "Analysis",
@@ -34,9 +61,9 @@ export default function ScoreCard() {
         },
     } satisfies ChartConfig
     const chartData = [
-        { type: "Correct", questions: 71, fill: "var(--color-Correct)" },
-        { type: "Incorrect", questions: 6, fill: "var(--color-Incorrect)" },
-        { type: "Skipped", questions: 2, fill: "var(--color-Skipped)" },
+        { type: "Correct", questions: reportData?.scoreCard.correctAnswers, fill: "var(--color-Correct)" },
+        { type: "Incorrect", questions: reportData?.scoreCard.incorrectAnswers, fill: "var(--color-Incorrect)" },
+        { type: "Skipped", questions: reportData?.scoreCard.skippedAnswers, fill: "var(--color-Skipped)" },
     ]
     return (
         <div className={styles.ScoreCardContainer}>
@@ -45,10 +72,10 @@ export default function ScoreCard() {
                 <div>Test Title</div>
                 <div className={styles.ScoreCardLine}></div>
                 <div className={styles.ScoreCardTestSummary}>
-                    <div className={styles.summaryItem}>Total Candidates: 120</div>
-                    <div className={styles.summaryItem}>Total Questions: 75</div>
-                    <div className={styles.summaryItem}>Maximum Marks: 300</div>
-                    <div className={styles.summaryItem}>Total Time: 180</div>
+                    <div className={styles.summaryItem}>Total Candidates: {reportData?.totalCandidates}</div>
+                    <div className={styles.summaryItem}>Total Questions: {reportData?.scoreCard.totalQuestions}</div>
+                    <div className={styles.summaryItem}>Maximum Marks: {reportData?.scoreCard.maximumMarks}</div>
+                    <div className={styles.summaryItem}>Total Time: {reportData?.scoreCard.totalTime}</div>
                 </div>
             </div>
 
@@ -59,32 +86,32 @@ export default function ScoreCard() {
                     <h2 className={`${styles.statisticsTitle} text-2xl`}>Candidate Statistics</h2>
                     <div className={styles.statisticsCardTop}>
                         <div className={styles.rankCard}>
-                            <div className={styles.rankNumber}>6</div>
+                            <div className={styles.rankNumber}>{reportData?.scoreCard.rank}</div>
                             <div className={styles.rankLabel}>My Rank</div>
                         </div>
                         <div className={styles.rankCard}>
-                            <div className={styles.rankNumber}>262</div>
+                            <div className={styles.rankNumber}>{reportData?.scoreCard.score}</div>
                             <div className={styles.rankLabel}>My Marks</div>
                         </div>
                         <div className={styles.rankCard}>
-                            <div className={styles.rankNumber}>96.12</div>
-                            <div className={styles.rankLabel}>My Percentile</div>
+                            <div className={styles.rankNumber}>{reportData?.scoreCard.percentage.toFixed(2)}</div>
+                            <div className={styles.rankLabel}>My Percentage</div>
                         </div>
                     </div>
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
                         <p>Right Marks</p>
-                        <p>268</p>
+                        <p>{reportData?.scoreCard.correctAnswers ? reportData?.scoreCard.correctAnswers * 4 : 0}</p>
                     </div>
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
                         <p>Wrong Marks</p>
-                        <p>6</p>
+                        <p>{reportData?.scoreCard.incorrectAnswers ? reportData?.scoreCard.incorrectAnswers * -1: 0}</p>
                     </div>
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
                         <p>Left Question Marks</p>
-                        <p>0</p>
+                        <p>{reportData?.scoreCard.skippedAnswers ? reportData?.scoreCard.skippedAnswers * 4 : 0}</p>
                     </div>
                 </div>
 
@@ -111,11 +138,11 @@ export default function ScoreCard() {
                     <tbody>
                         <tr>
                             <td>Physics</td>
-                            <td>73</td>
-                            <td>2</td>
-                            <td>82.00</td>
-                            <td>262.00 / 00:06:53</td>
-                            <td>300.00 / 00:56:55</td>
+                            <td>{(reportData?.scoreCard.correctAnswers ?? 0) + (reportData?.scoreCard.incorrectAnswers ?? 0)}</td>
+                            <td>{reportData?.scoreCard.incorrectAnswers}</td>
+                            <td>{reportData?.scoreCard.percentage.toFixed(2)}</td>
+                            <td>{reportData?.scoreCard.score} / {reportData?.scoreCard.timeTaken}</td>
+                            <td>{reportData?.topperScore} / {reportData?.topperTimeTaken}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -60,7 +60,10 @@ export const StudentController = {
             const startTimeofTest = test.startTime; // Scheduled start time of the test
             const loginWindow = test.loginWindow; // Login window duration in minutes
 
-            const currentTime = new Date(); // Current time when the student requests to start the test
+            const currentTimeUTC = new Date();
+            const utcDate = new Date(currentTimeUTC);
+            const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+            const currentTime = new Date(utcDate.getTime() + istOffset);// Current time when the student requests to start the test
 
             // Debugging Logs
             // console.log(`Current Time: ${currentTime}`);
@@ -147,7 +150,11 @@ export const StudentController = {
             const maximumMarks = totalQuestions * 4;
             const percentage = (score / maximumMarks) * 100;
             const testSessions = await TestSession.find({ testCode }).sort({ score: -1 });
-            const timeTaken = (new Date().getTime() - testSession.startTime.getTime()) / 60000;
+            const currentTimeUTC = new Date();
+            const utcDate = new Date(currentTimeUTC);
+            const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+            const currentTime = new Date(utcDate.getTime() + istOffset);// Current time when the student requests to start the test
+            const timeTaken = (currentTime.getTime() - testSession.startTime.getTime()) / 60000;
             const timeTakenPerQue = timeTaken / totalQuestions;
             const rank = testSessions.findIndex((session: any) => session.studentEmail === email) + 1;
             const test = await Test.findOne({ testCode });
@@ -198,7 +205,10 @@ export const StudentController = {
                 return res.status(404).json({ message: 'Test session not found.' });
             }
             const endTime = testSession.endTime;
-            const currentTime = new Date();
+            const currentTimeUTC = new Date();
+            const utcDate = new Date(currentTimeUTC);
+            const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+            const currentTime = new Date(utcDate.getTime() + istOffset);
             // Calculate the remaining duration in milliseconds
             const durationInMs = endTime.getTime() - currentTime.getTime();
             if (durationInMs <= 0) {
@@ -297,7 +307,11 @@ export const StudentController = {
                 'batches.branch': batch.branch,
                 'batches.year': batch.year,
             });
-            const currentTime = new Date();
+            const currentTimeUTC = new Date();
+            const utcDate = new Date(currentTimeUTC);
+            const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+            const currentTime = new Date(utcDate.getTime() + istOffset);
+
 
             const activeTests = [];
             const upcomingTests = [];

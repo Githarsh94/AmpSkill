@@ -93,6 +93,7 @@ export default function TestPage() {
     //write the logic to start the Test and setting up the test data into the state
     const startTest = async () => {
         try {
+            console.log(email, testCode);
             const fetchedTest = await fetchTest(email as string, testCode as string);
             setTestFlag(fetchedTest);
             setCurrentQuestionIndex(fetchedTest.questions[0].s_no - 1);

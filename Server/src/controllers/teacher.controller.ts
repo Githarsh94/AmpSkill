@@ -11,7 +11,7 @@ const generateRandomPassword = (length: number): string => {
 
 export const TeacherController = {
     uploadTest: async (req: Request, res: Response) => {
-        console.log(req.body);
+        // console.log(req.body);
         const {
             title,
             description,
@@ -23,6 +23,7 @@ export const TeacherController = {
             isFullScreenEnforced,
             isTabSwitchPreventionEnabled,
             isCameraAccessRequired,
+            subjectName,
         } = req.body;
 
         // console.log(title, description, questions,batches, startTime, loginWindow, testDuration, isFullScreenEnforced, isTabSwitchPreventionEnabled, isCameraAccessRequired);
@@ -32,7 +33,7 @@ export const TeacherController = {
             const testCode = generateRandomPassword(6);
 
             // Validate required fields
-            if (!title || !description || !questions || !startTime || !loginWindow || !testDuration) {
+            if (!title || !description || !questions || !startTime || !loginWindow || !testDuration || !subjectName) {
                 return res.status(400).json({ message: "Missing required test fields" });
             }
 
@@ -60,6 +61,17 @@ export const TeacherController = {
                 year: batch.year,
             })) : [];
 
+            const startTimeUTC = new Date(startTime) // Example UTC time
+
+            // Convert to IST by adding 5 hours and 30 minutes
+            const utcDate = new Date(startTimeUTC);
+            const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+            const istDate = new Date(utcDate.getTime() + istOffset);
+
+            // Store `istDate` in the database
+            const store_startTime = istDate; // Assign IST-adjusted time
+            console.log("IST Date to Store:", store_startTime);
+
             // Create the test document
             const newTest = new Test({
                 title,
@@ -68,12 +80,13 @@ export const TeacherController = {
                 batches: formattedBatches,
                 testCode,
                 password,
-                startTime: new Date(startTime),
+                startTime: store_startTime,
                 loginWindow: parseInt(loginWindow, 10),
                 testDuration: parseInt(testDuration, 10),
                 isFullScreenEnforced: Boolean(isFullScreenEnforced),
                 isTabSwitchPreventionEnabled: Boolean(isTabSwitchPreventionEnabled),
                 isCameraAccessRequired: Boolean(isCameraAccessRequired),
+                subjectName,
             });
 
             // Save the test to the database

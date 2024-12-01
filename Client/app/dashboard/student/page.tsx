@@ -18,6 +18,7 @@ export default function StudentDashboard() {
     const setUser = useUserStore((state) => state.setUser);
     const setUserAndDetails = useUserStore((state) => state.setUserAndDetails);
     const [isLoading, setIsLoading] = useState(false);
+    const [testCode, setTestCode] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -44,11 +45,11 @@ export default function StudentDashboard() {
             case 'Profile':
                 return <Profile />;
             case 'Assignments':
-                return <div>Assignments</div>
+                return <div>Assignments</div>;
             case 'Tests':
-                return <StudentTests />;
+                return <StudentTests setActiveComponent={setActiveComponent} setTestCode={setTestCode} />;
             case 'Reports':
-                return <div><TestsReports/></div>;
+                return <div><TestsReports testCode={testCode} /></div>;
             default:
                 return <Profile />;
         }

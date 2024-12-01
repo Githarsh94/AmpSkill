@@ -23,7 +23,12 @@ interface ScoreCard {
     totalQuestions: number;
 }
 
-export default function StudentTests() {
+interface StudentTestsProps {
+    setActiveComponent: (component: string) => void;
+    setTestCode: (testCode: string) => void;
+}
+
+export default function StudentTests({ setActiveComponent, setTestCode }: StudentTestsProps) {
     const [shownTests, setShownTests] = useState('Active');
     const [activeTests, setActiveTests] = useState([]);
     const [completedTests, setCompletedTests] = useState([]);
@@ -53,15 +58,9 @@ export default function StudentTests() {
     }, [email]);
 
 
-
     const fetchReport = async (testCode: string) => {
-        try {
-            const data = await fetchTestScoreCard(email, testCode);
-            setReportData(data);
-            setShowReport(true);
-        } catch (error) {
-            console.error('Failed to fetch report:', error);
-        }
+        setTestCode(testCode);
+        setActiveComponent('Reports');
     };
 
     const handleOpentest = (testCode: string) => {
@@ -98,7 +97,9 @@ export default function StudentTests() {
                         <div key={test._id} className={styles.testCard} onClick={() => handleOpentest(test.testCode)}>
                             <div className='font-bold'>Title - {test.title}</div>
                             <div>Date - {new Date(test.startTime).toLocaleDateString()}</div>
-                            <div>Time - {new Date(test.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ({test.testDuration}) mins</div>
+                            <div>
+                                Time - {test.startTime.split('T')[1].split('.')[0]} ({test.testDuration}) mins
+                            </div>
                             <div>Maximum Marks :- {test.questions.length * 4}</div>
                         </div>
                     )) : <div className='text-[20px]'>No Active tests available</div>

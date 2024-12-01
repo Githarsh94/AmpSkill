@@ -3,10 +3,11 @@ import { useState } from 'react';
 import styles from '../styles/dashboard.module.css';
 import ScoreCard from './ScoreCard';
 
-export default function TestsReports() {
+export default function TestsReports(testCode: any) {
+    // console.log("testCode "+ testCode.testCode);
     const [activeTab, setActiveTab] = useState('Score Card'); // Default active tab
 
-    const navButtons = ['Score Card', 'Solution Report', 'Question Report', 'Compare Yourself', 'Test Summary'];
+    const navButtons = ['Score Card', 'Solution Report', 'Question Report', 'Compare Yourself'];
     return (
         <div className={styles.reportsContainer}>
             {/* Header Section */}
@@ -28,11 +29,10 @@ export default function TestsReports() {
             </div>
             {/* Conditional Content Based on Active Tab */}
             <div className={styles.tabContent}>
-                {activeTab === 'Score Card' && <div><ScoreCard /></div>}
+                {activeTab === 'Score Card' && <div><ScoreCard testCode={testCode.testCode}/></div>}
                 {activeTab === 'Solution Report' && <div>Solution Report Content</div>}
                 {activeTab === 'Question Report' && <div>Question Report Content</div>}
                 {activeTab === 'Compare Yourself' && <div>Compare Yourself Content</div>}
-                {activeTab === 'Test Summary' && <div>Test Summary Content</div>}
             </div>
 
         </div>

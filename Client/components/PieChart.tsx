@@ -28,7 +28,7 @@ export default function Component(data: any) {
   console.log(chartConfig);
   const totalQuestions = React.useMemo(() => {
     return chartData.reduce((acc:any, curr:any) => acc + curr.questions, 0)
-  }, [])
+  }, [chartData])
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -67,7 +67,7 @@ export default function Component(data: any) {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {totalQuestions.toLocaleString()}
+                          {totalQuestions}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
@@ -87,24 +87,12 @@ export default function Component(data: any) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className={styles.PieChart}>
-          <div className={styles.PieChartAccuracy}>
-            <div >91.78</div>
-            <div >Accuracy</div>
+          {chartData.map((item: any) => (
+          <div key={item.type} className={styles.PieChartItem}>
+            <div className={styles.PieChartItemValue}>{item.questions}</div>
+            <div className={styles.PieChartItemLabel}>{item.type} Questions</div>
           </div>
-          <div className={styles.PieChartAccuracy}>
-            <div >71</div>
-            <div>Correct Questions</div>
-          </div>
-        </div>
-        <div className={styles.PieChart}>
-          <div className={styles.PieChartAccuracy}>
-            <div >3</div>
-            <div>Incorrect Questions</div>
-          </div>
-          <div className={styles.PieChartAccuracy}>
-            <div >2</div>
-            <div>Skipped Questions</div>
-          </div>
+          ))}
         </div>
       </CardFooter>
     </Card>

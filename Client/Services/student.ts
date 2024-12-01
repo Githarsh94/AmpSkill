@@ -51,7 +51,12 @@ interface ScoreCard {
     totalTime: number;
     totalQuestions: number;
 }
-
+interface CompleteScoreCard{
+    scoreCard: ScoreCard,
+    topperScore: number,
+    topperTimeTaken: number,
+    totalCandidates: number
+}
 export const fetchStudentProfile = async (email: string): Promise<UserProfile> => {
     let idToken = localStorage.getItem('sessionId');
 
@@ -232,7 +237,7 @@ export const getTestDuration = async (email: string, testCode: string) => {
     return response.json();
 }
 
-export const fetchTestScoreCard = async (email: string, testCode: string): Promise<ScoreCard> => {
+export const fetchTestScoreCard = async (email: string, testCode: string): Promise<CompleteScoreCard> => {
     let idToken = localStorage.getItem('sessionId');
 
     if (!idToken) {
@@ -258,6 +263,8 @@ export const fetchTestScoreCard = async (email: string, testCode: string): Promi
         const data = await response.json();
         throw new Error(data.message || 'Failed to fetch score card');
     }
-
-    return response.json();
+    // console.log("I am in scorecard service");
+    const data = await response.json();
+    // console.log(data);
+    return data;
 }

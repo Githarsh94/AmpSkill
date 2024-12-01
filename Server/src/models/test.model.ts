@@ -24,6 +24,7 @@ interface ITest extends Document {
     isFullScreenEnforced: boolean;
     isTabSwitchPreventionEnabled: boolean;
     isCameraAccessRequired: boolean;
+    subjectName: string;
 }
 
 // Define the schema for the question structure
@@ -67,6 +68,7 @@ const testSchema = new Schema<ITest>({
     isFullScreenEnforced: { type: Boolean, default: false },
     isTabSwitchPreventionEnabled: { type: Boolean, default: false },
     isCameraAccessRequired: { type: Boolean, default: false },
+    subjectName: { type: String, required: true },
 });
 
 // Export the model
