@@ -81,7 +81,7 @@ export default function QuestionReports({ questionReport, headerData }: { questi
                         const userAnswer = questionReport.userMarkedAnswers.find(answer => answer.question_no === question.s_no)?.answer || '';
                         const topperAnswer = questionReport.topperMarkedAnswers.find(answer => answer.question_no === question.s_no)?.answer || '';
                         const status = getQuestionStatus(userAnswer, question.ans);
-                        const userMarks = status === 'Tick' ? 4 : status === 'Cross' ? -1 : 0; // 4 marks for correct, -1 for incorrect, 0 for skipped
+                        const userMarks = status === '✔️' ? 4 : status === '❌' ? -1 : 0; // 4 marks for correct, -1 for incorrect, 0 for skipped
                         const topperMarks = topperAnswer === question.ans ? 4 : topperAnswer === '' ? 0 : -1; // Verify topper's answer
 
                         return (
