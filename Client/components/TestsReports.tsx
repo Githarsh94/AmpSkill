@@ -1,12 +1,14 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useUserStore } from '@/store/user';
-import { fetchQuestionReport, fetchTestScoreCard,fetchSolutionReport } from '../Services/student';
+import { fetchQuestionReport, fetchTestScoreCard,fetchSolutionReport, fetchTopperList } from '../Services/student';
 
 import styles from '../styles/dashboard.module.css';
 import ScoreCard from './ScoreCard';
 import SolutionReports from './Solution-Reports';
 import QuestionReports from './Question-Reports';
+import test from 'node:test';
+import CompareYourself from './Compare-Yourself';
 
 //Score Card Interface
 interface ScoreCard{
@@ -76,7 +78,7 @@ export default function TestsReports(testCode: any) {
     const email = useUserStore((state) => state.profile.user.email);
     const [solutionReport, setSolutionReport] = useState<SolutionReport | null>(null);
     const[questionReport, setQuestionReport] = useState<QuestionReport | null>(null);
-
+    const [topperList,setTopperList] = useState<any>(null);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -97,12 +99,17 @@ export default function TestsReports(testCode: any) {
                 if (get_data) {
                     setQuestionReport(get_data);
                 }
+                const topper_data = await fetchTopperList(testCode.testCode);
+                if(topper_data){
+                    setTopperList(topper_data);
+                }
+                // console.log(topperList);
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
-    }, [reportData]);
+    }, [testCode.testCode]);
 
     const navButtons = ['Score Card', 'Solution Report', 'Question Report', 'Compare Yourself'];
     return (
@@ -129,7 +136,7 @@ export default function TestsReports(testCode: any) {
                 {activeTab === 'Score Card' && reportData && <div><ScoreCard reportData={reportData}/></div>}
                 {activeTab === 'Solution Report' && headerData && solutionReport && <div><SolutionReports solutionReport={solutionReport} headerData={headerData} /></div>}
                 {activeTab === 'Question Report' && headerData && questionReport && <div><QuestionReports questionReport={questionReport} headerData={headerData}/></div>}
-                {activeTab === 'Compare Yourself' && <div>Compare Yourself Content</div>}
+                {activeTab === 'Compare Yourself' && headerData && topperList &&  <div><CompareYourself topperList={topperList} headerData={headerData}/></div>}
             </div>
 
         </div>

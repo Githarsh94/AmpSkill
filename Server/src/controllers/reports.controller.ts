@@ -146,5 +146,23 @@ export const ReportsController = {
         catch(error){
             res.status(500).json({ message: 'Internal Server error', error });
         }
+    },
+    fetchTopperList: async(req: Request, res: Response)=>{
+        const {testCode} = req.body;
+        try{
+            const top10Toppers = await ScoreCard.find({ testCode }).sort({ rank: 1 }).limit(10);
+            const data = top10Toppers.map(topper => ({
+                email: topper.email,
+                score: topper.score,
+                timeTaken: topper.timeTaken,
+                rank: topper.rank,
+                avgSpeedPerQue: topper.avgTimeTakenPerQue,
+                percentage: topper.percentage
+            }));
+            return res.status(200).json(data);
+        }
+        catch(error){
+            res.status(500).json({ message: 'Internal Server error', error });
+        }
     }
 }

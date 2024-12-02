@@ -64,7 +64,7 @@ export default function QuestionReports({ questionReport, headerData }: { questi
                     <div className={styles.summaryItem}>Total Time: {headerData?.totalTime} (Mins)</div>
                 </div>
             </div>
-            <table className={styles.ScoreCardTable}>
+            <table className={styles.topperTable}>
                 <thead>
                     <tr>
                         <th>Question No</th>

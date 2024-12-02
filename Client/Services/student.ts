@@ -345,3 +345,32 @@ export const fetchQuestionReport = async(email: string, testCode: string): Promi
     const data = await response.json();
     return data;
 };
+export const fetchTopperList = async (testCode: string) => {
+    let idToken = localStorage.getItem('sessionId');
+
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
+    }
+
+    const response = await fetch('/student/report/getTopperList', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ testCode }),
+    });
+
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to fetch topper list');
+    }
+
+    return response.json();
+};
