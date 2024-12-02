@@ -1,4 +1,3 @@
-'use client';
 import styles from '../styles/dashboard.module.css';
 import PieChart from '../components/PieChart';
 import { ChartConfig } from './ui/chart';

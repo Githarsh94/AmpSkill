@@ -18,4 +18,5 @@ router.post('/test/markTheAnswer', StudentController.markTheAnswer);
 router.post('/test/getAllTests', StudentController.getAllTests);
 router.post('/report/getTestScoreCard', ReportsController.fetchTestScoreCard);
 router.post('/report/getSolutionReport', ReportsController.fetchSolutionReportOfTest);
+router.post('/report/getQuestionReport', ReportsController.fetchQuestionReportOfTest);
 export default router;

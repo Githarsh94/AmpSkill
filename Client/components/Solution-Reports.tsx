@@ -1,8 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
 import styles from '../styles/dashboard.module.css';
-import { fetchSolutionReport } from '../Services/student';
-import { useUserStore } from '@/store/user';
 
 interface HeaderOfAllTabs {
     title: string;
@@ -11,7 +8,6 @@ interface HeaderOfAllTabs {
     maximumMarks: number;
     totalTime: number;
 }
-
 interface IQuestion {
     s_no: number;
     question: string;
@@ -21,7 +17,6 @@ interface IQuestion {
     op4: string;
     ans: string; // Correct answer (e.g., 'Op1', 'Op2', 'Op3', 'Op4')
 }
-
 interface MarkedAnswer {
     question_no: number;
     answer: string; // User's selected option (e.g., 'Op1', 'Op2', 'Op3', 'Op4')
@@ -31,24 +26,7 @@ interface SolutionReport {
     questions: IQuestion[];
     userMarkedAnswers: MarkedAnswer[];
 }
-
-export default function SolutionReports({ testCode, headerData }: { testCode: string; headerData: HeaderOfAllTabs }) {
-    const [solutionReport, setSolutionReport] = useState<SolutionReport | null>(null);
-    const email = useUserStore((state) => state.profile.user.email);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await fetchSolutionReport(email, testCode);
-                if (data) {
-                    setSolutionReport(data);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, [testCode]);
+export default function SolutionReports({ solutionReport, headerData }: { solutionReport: SolutionReport; headerData: HeaderOfAllTabs }) {
 
     const getOptionStyle = (
         optionKey: string,

@@ -99,5 +99,52 @@ export const ReportsController = {
         catch(error){
             res.status(500).json({ message: 'Internal Server error', error });
         }
+    },
+    fetchQuestionReportOfTest: async(req: Request, res: Response)=>{
+        const {email,testCode} = req.body;
+        try{
+            const test = await Test.findOne({ testCode });
+            if (!test) {
+                return res.status(404).json({ message: 'Test not found' });
+            }
+            const noOfQuestions = test.questions.length;
+            const questions = test.questions;
+            const batch = await Batch.findOne({ students: [email] });
+            if (!batch) {
+                return res.status(404).json({ message: 'You have not been assigned to any batch yet.' });
+            }
+
+            const assignedTest = test.batches.some(batchItem => batchItem.batchName === batch.batchName);
+            if (!assignedTest) {
+                return res.status(404).json({ message: 'This test has not been assigned to your batch.' });
+            }
+
+            const testSession = await TestSession.findOne({ studentEmail: email, testCode });
+            if (!testSession) {
+                return res.status(404).json({ message: 'You have not attempted this test.' });
+            }
+
+            const userMarkedAnswers = testSession.answers;
+            const topper = await ScoreCard.findOne({ testCode ,rank: 1 });
+            if(!topper){
+                return res.status(404).json({ message: 'Topper not found' });
+            }
+            const topperEmail = topper.email;
+            const topperSession = await TestSession.findOne({ studentEmail: topperEmail, testCode });
+            if (!topperSession) {
+                return res.status(404).json({ message: 'Topper has not attempted this test.' });
+            }
+            const topperMarkedAnswers = topperSession.answers;
+            const data ={
+                userMarkedAnswers,
+                topperMarkedAnswers,
+                questions,
+                noOfQuestions
+            }
+            return res.status(200).json(data);
+        }
+        catch(error){
+            res.status(500).json({ message: 'Internal Server error', error });
+        }
     }
 }

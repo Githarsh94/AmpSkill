@@ -68,6 +68,12 @@ interface SolutionReport{
     questions: IQuestion[];
     userMarkedAnswers: markedAnswer[];
 }
+interface QuestionReport{
+    userMarkedAnswers: markedAnswer[];
+    topperMarkedAnswers: markedAnswer[];
+    noOfQuestions: number;
+    questions: IQuestion[];
+}
 export const fetchStudentProfile = async (email: string): Promise<UserProfile> => {
     let idToken = localStorage.getItem('sessionId');
 
@@ -304,6 +310,36 @@ export const fetchSolutionReport= async(email: string, testCode: string): Promis
     if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message || 'Failed to fetch solution report');
+    }
+
+    const data = await response.json();
+    return data;
+};
+export const fetchQuestionReport = async(email: string, testCode: string): Promise<QuestionReport> => {
+    let idToken = localStorage.getItem('sessionId');
+
+    if (!idToken) {
+        const user = auth.currentUser;
+
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
+    }
+
+    const response = await fetch('/student/report/getQuestionReport', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ email, testCode }),
+    });
+
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to fetch question report');
     }
 
     const data = await response.json();

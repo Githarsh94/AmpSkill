@@ -1,12 +1,14 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useUserStore } from '@/store/user';
-import { fetchTestScoreCard } from '../Services/student';
+import { fetchQuestionReport, fetchTestScoreCard,fetchSolutionReport } from '../Services/student';
 
 import styles from '../styles/dashboard.module.css';
 import ScoreCard from './ScoreCard';
 import SolutionReports from './Solution-Reports';
+import QuestionReports from './Question-Reports';
 
+//Score Card Interface
 interface ScoreCard{
     email: string;
     testCode: string;
@@ -38,12 +40,43 @@ interface HeaderOfAllTabs{
     maximumMarks: number;
     totalTime: number;
 }
+
+//Interfacse for Solution Reports
+
+interface IQuestion {
+    s_no: number;
+    question: string;
+    op1: string;
+    op2: string;
+    op3: string;
+    op4: string;
+    ans: string; // Correct answer (e.g., 'Op1', 'Op2', 'Op3', 'Op4')
+}
+
+interface markedAnswer {
+    question_no: number;
+    answer: string; // User's selected option (e.g., 'Op1', 'Op2', 'Op3', 'Op4')
+}
+
+interface SolutionReport {
+    questions: IQuestion[];
+    userMarkedAnswers: markedAnswer[];
+}
+interface QuestionReport{
+    userMarkedAnswers: markedAnswer[];
+    topperMarkedAnswers: markedAnswer[];
+    noOfQuestions: number;
+    questions: IQuestion[];
+}
 export default function TestsReports(testCode: any) {
     // console.log("testCode "+ testCode.testCode);
     const [activeTab, setActiveTab] = useState('Score Card'); // Default active tab
     const [reportData, setReportData] = useState<CompleteScoreCard | null>(null);
     const [headerData, setHeaderData] = useState<HeaderOfAllTabs | null>(null);
     const email = useUserStore((state) => state.profile.user.email);
+    const [solutionReport, setSolutionReport] = useState<SolutionReport | null>(null);
+    const[questionReport, setQuestionReport] = useState<QuestionReport | null>(null);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -56,7 +89,14 @@ export default function TestsReports(testCode: any) {
                     maximumMarks: data.scoreCard.maximumMarks,
                     totalTime: data.scoreCard.totalTime
                 });
-                // console.log(data);
+                const retrive_data = await fetchSolutionReport(email, testCode.testCode);
+                if (retrive_data) {
+                    setSolutionReport(retrive_data);
+                }
+                const get_data = await fetchQuestionReport(email, testCode.testCode);
+                if (get_data) {
+                    setQuestionReport(get_data);
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -87,8 +127,8 @@ export default function TestsReports(testCode: any) {
             {/* Conditional Content Based on Active Tab */}
             <div className={styles.tabContent}>
                 {activeTab === 'Score Card' && reportData && <div><ScoreCard reportData={reportData}/></div>}
-                {activeTab === 'Solution Report' && headerData && <div><SolutionReports testCode={testCode.testCode} headerData ={headerData}/></div>}
-                {activeTab === 'Question Report' && <div>Question Report Content</div>}
+                {activeTab === 'Solution Report' && headerData && solutionReport && <div><SolutionReports solutionReport={solutionReport} headerData={headerData} /></div>}
+                {activeTab === 'Question Report' && headerData && questionReport && <div><QuestionReports questionReport={questionReport} headerData={headerData}/></div>}
                 {activeTab === 'Compare Yourself' && <div>Compare Yourself Content</div>}
             </div>
 
