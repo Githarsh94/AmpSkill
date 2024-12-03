@@ -7,7 +7,6 @@ import styles from '../styles/dashboard.module.css';
 import ScoreCard from './ScoreCard';
 import SolutionReports from './Solution-Reports';
 import QuestionReports from './Question-Reports';
-import test from 'node:test';
 import CompareYourself from './Compare-Yourself';
 
 //Score Card Interface

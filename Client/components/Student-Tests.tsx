@@ -3,25 +3,48 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/dashboard.module.css';
 import { useUserStore } from '@/store/user';
-import { fetchAllTests, fetchTestScoreCard } from '@/Services/student';
+import { useTestStore } from '@/store/tests';
+import { fetchAllTests } from '@/Services/student';
 import { useRouter } from 'next/navigation';
 
-
-interface ScoreCard {
-    email: string;
+interface IQuestion {
+    s_no: number;
+    question: string;
+    op1: string;
+    op2: string;
+    op3: string;
+    op4: string;
+    ans: string;
+}
+interface IBatch {
+    batchName: string;
+    department: string;
+    branch: string;
+    year: string;
+}
+interface Test  {
+    title: string;
+    description: string;
+    questions: IQuestion[]; // Array of questions
+    batches: IBatch[]; // Array of batch objects
     testCode: string;
-    rank: number;
-    maximumMarks: number;
+    password: string;
+    startTime: Date; // Start time of the test
+    loginWindow: number; // Login window duration in minutes
+    testDuration: number; // Test duration in minutes
+    isFullScreenEnforced: boolean;
+    isTabSwitchPreventionEnabled: boolean;
+    isCameraAccessRequired: boolean;
+    subjectName: string;
+}
+interface ArrayContent{
+    test: Test;
     score: number;
-    timeTaken: number;
-    incorrectAnswers: number;
     correctAnswers: number;
-    skippedAnswers: number;
-    percentage: number;
-    avgTimeTakenPerQue: number;
-    totalTime: number;
+    incorrectAnswers: number;
     totalQuestions: number;
 }
+
 
 interface StudentTestsProps {
     setActiveComponent: (component: string) => void;
@@ -30,27 +53,45 @@ interface StudentTestsProps {
 
 export default function StudentTests({ setActiveComponent, setTestCode }: StudentTestsProps) {
     const [shownTests, setShownTests] = useState('Active');
-    const [activeTests, setActiveTests] = useState([]);
-    const [completedTests, setCompletedTests] = useState([]);
-    const [upcomingTests, setUpcomingTests] = useState([]);
-    const [missedTests, setMissedTests] = useState([]);
-    const [showReport, setShowReport] = useState(false);
-    const [reportData, setReportData] = useState<ScoreCard | null>(null);
+    const activeTests = useTestStore((state) => state.activeTests);
+    const completedTests = useTestStore((state) => state.completedTests);
+    const upcomingTests = useTestStore((state) => state.upcomingTests);
+    const missedTests = useTestStore((state) => state.missedTests);
+    const setActiveTests = useTestStore((state) => state.setActiveTests);
+    const setCompletedTests = useTestStore((state) => state.setCompletedTests);
+    const setUpcomingTests = useTestStore((state) => state.setUpcomingTests);
+    const setMissedTests = useTestStore((state) => state.setMissedTests);
+
     const email = useUserStore((state) => state.profile.user.email);
     const router = useRouter();
-
     useEffect(() => {
 
         const fetchTests = async () => {
             try {
-                const tests = await fetchAllTests(email);
-                // toast.success(tests.message);
+            const tests = await fetchAllTests(email);
+            // toast.success(tests.message);
+
+            if (JSON.stringify(tests.activeTests) !== JSON.stringify(activeTests)) {
+                setActiveTests([]);
                 setActiveTests(tests.activeTests);
+            }
+
+            if (JSON.stringify(tests.completedTests) !== JSON.stringify(completedTests)) {
+                setCompletedTests([]);
                 setCompletedTests(tests.completedTests);
+            }
+
+            if (JSON.stringify(tests.upcomingTests) !== JSON.stringify(upcomingTests)) {
+                setUpcomingTests([]);
                 setUpcomingTests(tests.upcomingTests);
+            }
+
+            if (JSON.stringify(tests.missedTests) !== JSON.stringify(missedTests)) {
+                setMissedTests([]);
                 setMissedTests(tests.missedTests);
+            }
             } catch (error) {
-                console.error('Failed to fetch tests:', error);
+            console.error('Failed to fetch tests:', error);
             }
         };
 
@@ -143,36 +184,9 @@ export default function StudentTests({ setActiveComponent, setTestCode }: Studen
                                     <button
                                         className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
                                         onClick={() => fetchReport(test.testCode)}
-                                    >
-                                        View Report
+                                    >View Report
                                     </button>
                                 </div>
-
-                                {showReport && reportData && (
-                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                                        <div className="bg-[#ead2ef] p-6 rounded-lg shadow-lg relative w-3/4 max-w-2xl">
-                                            <button
-                                                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                                                onClick={() => setShowReport(false)}
-                                            >
-                                                X
-                                            </button>
-                                            <div className="text-lg font-bold mb-4">Test Report</div>
-                                            <div className="grid grid-cols-2 gap-4 p-4">
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Maximum Marks: {reportData.maximumMarks}</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Score: {reportData.score}</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Time Taken: {reportData.timeTaken.toFixed(3)} mins</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Total Time: {reportData.totalTime} mins</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold text-red-500">Incorrect Answers: {reportData.incorrectAnswers}</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold text-green-500">Correct Answers: {reportData.correctAnswers}</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Skipped Answers: {reportData.skippedAnswers}</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Percentage: {reportData.percentage}%</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Avg Time per Question: {reportData.avgTimeTakenPerQue.toFixed(3)} mins</div>
-                                                <div className="bg-white rounded-lg p-2 text-center font-bold">Total Questions: {reportData.totalQuestions}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         );
                     }) : <div className="text-2xl text-center">No Completed Tests Available</div>
