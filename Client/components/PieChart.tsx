@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import styles from "../styles/dashboard.module.css"
-import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
 
 import {
@@ -25,7 +24,7 @@ export default function Component(data: any) {
   const chartData = data.chartData;
   const chartConfig = data.chartConfig;
   const totalQuestions = React.useMemo(() => {
-    return chartData.reduce((acc:any, curr:any) => acc + curr.questions, 0)
+    return chartData.reduce((acc: any, curr: any) => acc + curr.questions, 0)
   }, [chartData])
   return (
     <Card className="flex flex-col">
@@ -86,10 +85,10 @@ export default function Component(data: any) {
       <CardFooter className="flex-col gap-2 text-sm">
         <div className={styles.PieChart}>
           {chartData.map((item: any) => (
-          <div key={item.type} className={styles.PieChartItem}>
-            <div className={styles.PieChartItemValue}>{item.questions}</div>
-            <div className={styles.PieChartItemLabel}>{item.type} Questions</div>
-          </div>
+            <div key={item.type} className={styles.PieChartItem}>
+              <div className={styles.PieChartItemValue}>{item.questions}</div>
+              <div className={styles.PieChartItemLabel}>{item.type} Questions</div>
+            </div>
           ))}
         </div>
       </CardFooter>

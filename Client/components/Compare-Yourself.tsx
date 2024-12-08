@@ -17,7 +17,7 @@ export default function CompareYourself({ topperList, headerData }: CompareYours
     return (
         <div className={styles.ScoreCardContainer}>
             <div className={styles.ScoreCardTestCard}>
-                <div>{headerData?.title}</div>
+                <div className={`text-4xl`}>{headerData?.title}</div>
                 <div className={styles.ScoreCardLine}></div>
                 <div className={styles.ScoreCardTestSummary}>
                     <div className={styles.summaryItem}>Total Candidates: {headerData?.totalCandidates}</div>
@@ -26,7 +26,7 @@ export default function CompareYourself({ topperList, headerData }: CompareYours
                     <div className={styles.summaryItem}>Total Time: {headerData?.totalTime} (Mins)</div>
                 </div>
             </div>
-            
+
             <div className={styles.ScoreCardTopperList}>
                 <table className={styles.topperTable}>
                     <thead>
@@ -43,11 +43,11 @@ export default function CompareYourself({ topperList, headerData }: CompareYours
                         {topperList.map((topper: any, index: number) => (
                             <tr key={index}>
                                 <td>{topper.email}</td>
-                                <td>{topper.score.toFixed(3)}</td>
-                                <td>{topper.timeTaken.toFixed(3)}</td>
+                                <td>{topper.score.toFixed(2)}</td>
+                                <td>{topper.timeTaken.toFixed(2)}</td>
                                 <td>{topper.rank}</td>
-                                <td>{topper.avgSpeedPerQue.toFixed(3)}</td>
-                                <td>{topper.percentage.toFixed(3)}</td>
+                                <td>{topper.avgSpeedPerQue.toFixed(2)}</td>
+                                <td>{topper.percentage.toFixed(2)}%</td>
                             </tr>
                         ))}
                     </tbody>

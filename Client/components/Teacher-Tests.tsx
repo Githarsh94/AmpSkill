@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import styles from '../styles/test.module.css';
 import { auth } from '../lib/firebaseConfig';
+import { toast } from 'react-toastify';
 type BatchDetails = {
   batchName: string;
   department: string;
@@ -79,7 +80,7 @@ const TestCreation: React.FC = () => {
       setTestDetails((prevDetails) => ({ ...prevDetails, questions: questionsArray }));
     }
   };
- 
+
   const handleAddBatch = () => {
     if (!batchInput.batchName || !batchInput.department || !batchInput.branch || !batchInput.year) {
       setError('All batch fields must be filled out before adding.');
@@ -108,19 +109,19 @@ const TestCreation: React.FC = () => {
     formData.append('batches', JSON.stringify(testDetails.batchDetails));
     console.log("testDetails:", testDetails);
 
-    
+
     try {
       // Uncomment and configure this part in production
       let idToken = localStorage.getItem('sessionId');
 
       if (!idToken) {
-          const user = auth.currentUser;
-  
-          if (!user) {
-              throw new Error('User not authenticated');
-          }
-  
-          idToken = await user.getIdToken();
+        const user = auth.currentUser;
+
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+
+        idToken = await user.getIdToken();
       }
       const response = await fetch('/teacher/dashboard/test/uploadTest', {
         method: 'POST',
@@ -137,17 +138,16 @@ const TestCreation: React.FC = () => {
           subjectName: testDetails.subjectName,
           isFullScreenEnforced: testDetails.isFullScreenEnforced,
           isTabSwitchPreventionEnabled: testDetails.isTabSwitchPreventionEnabled,
-          isCameraAccessRequired: testDetails.isCameraAccessRequired,
           batches: testDetails.batchDetails,
           questions: testDetails.questions,
         }),
       });
       const data = await response.json();
-      console.log("response: ", data.test);
-      alert(data.message); 
+      toast.success(data.message);
+      setTimeout(() => window.location.reload(), 2000);
     } catch (error) {
       console.error('Error saving test:', error);
-      alert('Error saving test. Please try again.');
+      toast.error('Error saving test');
     }
   };
   useEffect(() => {
@@ -225,17 +225,6 @@ const TestCreation: React.FC = () => {
             />
             Tab Switch Prevention Enabled
           </label>
-          <label className={styles.testLabel}>
-            <input
-              type="checkbox"
-              className={styles.testCheckbox}
-              checked={testDetails.isCameraAccessRequired}
-              onChange={(e) =>
-                setTestDetails({ ...testDetails, isCameraAccessRequired: e.target.checked })
-              }
-            />
-            Camera Access Required
-          </label>
           <label className={styles.testLabel}>Upload Questions File</label>
           <input
             type="file"
@@ -251,7 +240,7 @@ const TestCreation: React.FC = () => {
         </div>
       )}
 
-{step === 3 && (
+      {step === 3 && (
         <div>
           <h2 className={styles.testHeading}>Step 3: Batch Entry</h2>
           <label className={styles.testLabel}>

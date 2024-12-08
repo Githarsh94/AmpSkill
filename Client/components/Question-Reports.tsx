@@ -31,7 +31,7 @@ interface QuestionReport {
 }
 
 function getQuestionStatus(userAnswer: string, correctAnswer: string): string {
-    if (userAnswer === correctAnswer) return  '✔️';
+    if (userAnswer === correctAnswer) return '✔️';
     if (userAnswer === '') return '➖';
     return '❌';
 }
@@ -55,7 +55,7 @@ export default function QuestionReports({ questionReport, headerData }: { questi
     return (
         <div className={styles.ScoreCardContainer}>
             <div className={styles.ScoreCardTestCard}>
-                <div>{headerData?.title}</div>
+                <div className={`text-4xl`}>{headerData?.title}</div>
                 <div className={styles.ScoreCardLine}></div>
                 <div className={styles.ScoreCardTestSummary}>
                     <div className={styles.summaryItem}>Total Candidates: {headerData?.totalCandidates}</div>

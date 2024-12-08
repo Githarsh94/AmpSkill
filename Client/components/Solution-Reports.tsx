@@ -44,7 +44,7 @@ export default function SolutionReports({ solutionReport, headerData }: { soluti
     return (
         <div className={styles.ScoreCardContainer}>
             <div className={styles.ScoreCardTestCard}>
-                <div>{headerData?.title}</div>
+                <div className={`text-4xl`}>{headerData?.title}</div>
                 <div className={styles.ScoreCardLine}></div>
                 <div className={styles.ScoreCardTestSummary}>
                     <div className={styles.summaryItem}>Total Candidates: {headerData?.totalCandidates}</div>

@@ -44,8 +44,6 @@ export default function StudentDashboard() {
         switch (activeComponent) {
             case 'Profile':
                 return <Profile />;
-            case 'Assignments':
-                return <div>Assignments</div>;
             case 'Tests':
                 return <StudentTests setActiveComponent={setActiveComponent} setTestCode={setTestCode} />;
             case 'Reports':
@@ -77,17 +75,6 @@ export default function StudentDashboard() {
                         className={styles.icon}
                     />
                     {isSidebarExpanded && <span>Profile</span>}
-                </button>
-                <button
-                    className={styles.sidebarButton}
-                    onClick={() => setActiveComponent('Assignments')}
-                >
-                    <img
-                        src="/images/Assingments.png"
-                        alt="Assignments"
-                        className={styles.icon}
-                    />
-                    {isSidebarExpanded && <span>Assignments</span>}
                 </button>
                 <button
                     className={styles.sidebarButton}

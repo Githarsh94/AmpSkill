@@ -2,7 +2,7 @@ import styles from '../styles/dashboard.module.css';
 import PieChart from '../components/PieChart';
 import { ChartConfig } from './ui/chart';
 
-interface ScoreCard{
+interface ScoreCard {
     email: string;
     testCode: string;
     subjectName: string;
@@ -19,7 +19,7 @@ interface ScoreCard{
     totalTime: number;
     totalQuestions: number;
 }
-interface CompleteScoreCard{
+interface CompleteScoreCard {
     scoreCard: ScoreCard,
     topperScore: number,
     topperTimeTaken: number,
@@ -53,7 +53,7 @@ export default function ScoreCard({ reportData }: { reportData: CompleteScoreCar
         <div className={styles.ScoreCardContainer}>
             {/* Test Info Section */}
             <div className={styles.ScoreCardTestCard}>
-                <div>{reportData?.scoreCard.title}</div>
+                <div className={`text-4xl`}>{reportData?.scoreCard.title}</div>
                 <div className={styles.ScoreCardLine}></div>
                 <div className={styles.ScoreCardTestSummary}>
                     <div className={styles.summaryItem}>Total Candidates: {reportData?.totalCandidates}</div>
@@ -67,7 +67,7 @@ export default function ScoreCard({ reportData }: { reportData: CompleteScoreCar
             <div className={styles.ScoreCardStatisticsSection}>
                 {/* Left Panel */}
                 <div className={styles.statisticsCard}>
-                    <h2 className={`${styles.statisticsTitle} text-2xl`}>Candidate Statistics</h2>
+                    <h2 className={`${styles.statisticsTitle} text-2xl text-center`}>Candidate Statistics</h2>
                     <div className={styles.statisticsCardTop}>
                         <div className={styles.rankCard}>
                             <div className={styles.rankNumber}>{reportData?.scoreCard.rank}</div>
@@ -90,7 +90,7 @@ export default function ScoreCard({ reportData }: { reportData: CompleteScoreCar
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
                         <p>Incorrect Question Marks</p>
-                        <p>{reportData?.scoreCard.incorrectAnswers ? reportData?.scoreCard.incorrectAnswers * -1: 0}</p>
+                        <p>{reportData?.scoreCard.incorrectAnswers ? reportData?.scoreCard.incorrectAnswers * -1 : 0}</p>
                     </div>
                     <div className={styles.ScoreCardLine}></div>
                     <div className={styles.statisticsCardMarks}>
@@ -111,12 +111,14 @@ export default function ScoreCard({ reportData }: { reportData: CompleteScoreCar
                 <table className={styles.overviewTable}>
                     <thead>
                         <tr>
-                            <th>Subject Name</th>
-                            <th>Attempts</th>
+                            <th>Subject</th>
+                            <th>Attempted Ques.</th>
                             <th>Incorrect</th>
                             <th>Percentage</th>
-                            <th>Score/Time</th>
-                            <th>How Did Topper Do?</th>
+                            <th>Score</th>
+                            <th>Time</th>
+                            <th>Topper's Score</th>
+                            <th>Topper's Time</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -124,11 +126,11 @@ export default function ScoreCard({ reportData }: { reportData: CompleteScoreCar
                             <td>{reportData?.scoreCard.subjectName}</td>
                             <td>{(reportData?.scoreCard.correctAnswers ?? 0) + (reportData?.scoreCard.incorrectAnswers ?? 0)}</td>
                             <td>{reportData?.scoreCard.incorrectAnswers}</td>
-                            <td>{reportData?.scoreCard.percentage.toFixed(2)}</td>
-                            <td>{reportData?.scoreCard.score} / 
-                                ({Math.floor((reportData?.scoreCard.timeTaken ?? 0) / 60)}h:{Math.floor((reportData?.scoreCard.timeTaken ?? 0) % 60)}m:{Math.floor(((reportData?.scoreCard.timeTaken ?? 0) % 1) * 60)}s)</td>
-                            <td>{reportData?.topperScore} / 
-                            ({Math.floor((reportData?.topperTimeTaken ?? 0) / 60)}h:{Math.floor((reportData?.topperTimeTaken ?? 0) % 60)}m:{Math.floor(((reportData?.topperTimeTaken ?? 0) % 1) * 60)}s)</td>
+                            <td>{reportData?.scoreCard.percentage.toFixed(2)}%</td>
+                            <td>{reportData?.scoreCard.score}</td>
+                            <td> {Math.floor((reportData?.scoreCard.timeTaken ?? 0) / 60)}h:{Math.floor((reportData?.scoreCard.timeTaken ?? 0) % 60)}m:{Math.floor(((reportData?.scoreCard.timeTaken ?? 0) % 1) * 60)}s</td>
+                            <td>{reportData?.topperScore} </td>
+                            <td>{Math.floor((reportData?.topperTimeTaken ?? 0) / 60)}h:{Math.floor((reportData?.topperTimeTaken ?? 0) % 60)}m:{Math.floor(((reportData?.topperTimeTaken ?? 0) % 1) * 60)}s</td>
                         </tr>
                     </tbody>
                 </table>

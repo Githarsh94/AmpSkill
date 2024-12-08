@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useUserStore } from '@/store/user';
-import { fetchQuestionReport, fetchTestScoreCard,fetchSolutionReport, fetchTopperList } from '../Services/student';
+import { fetchQuestionReport, fetchTestScoreCard, fetchSolutionReport, fetchTopperList } from '../Services/student';
 
 import styles from '../styles/dashboard.module.css';
 import ScoreCard from './ScoreCard';
@@ -10,7 +10,7 @@ import QuestionReports from './Question-Reports';
 import CompareYourself from './Compare-Yourself';
 
 //Score Card Interface
-interface ScoreCard{
+interface ScoreCard {
     email: string;
     testCode: string;
     subjectName: string;
@@ -27,14 +27,14 @@ interface ScoreCard{
     totalTime: number;
     totalQuestions: number;
 }
-interface CompleteScoreCard{
+interface CompleteScoreCard {
     scoreCard: ScoreCard,
     topperScore: number,
     topperTimeTaken: number,
     totalCandidates: number
 }
 
-interface HeaderOfAllTabs{
+interface HeaderOfAllTabs {
     title: string;
     totalCandidates: number;
     totalQuestions: number;
@@ -63,7 +63,7 @@ interface SolutionReport {
     questions: IQuestion[];
     userMarkedAnswers: markedAnswer[];
 }
-interface QuestionReport{
+interface QuestionReport {
     userMarkedAnswers: markedAnswer[];
     topperMarkedAnswers: markedAnswer[];
     noOfQuestions: number;
@@ -76,8 +76,8 @@ export default function TestsReports(testCode: any) {
     const [headerData, setHeaderData] = useState<HeaderOfAllTabs | null>(null);
     const email = useUserStore((state) => state.profile.user.email);
     const [solutionReport, setSolutionReport] = useState<SolutionReport | null>(null);
-    const[questionReport, setQuestionReport] = useState<QuestionReport | null>(null);
-    const [topperList,setTopperList] = useState<any>(null);
+    const [questionReport, setQuestionReport] = useState<QuestionReport | null>(null);
+    const [topperList, setTopperList] = useState<any>(null);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -99,7 +99,7 @@ export default function TestsReports(testCode: any) {
                     setQuestionReport(get_data);
                 }
                 const topper_data = await fetchTopperList(testCode.testCode);
-                if(topper_data){
+                if (topper_data) {
                     setTopperList(topper_data);
                 }
                 // console.log(topperList);
@@ -115,7 +115,7 @@ export default function TestsReports(testCode: any) {
         <div className={styles.reportsContainer}>
             {/* Header Section */}
             <div className={styles.reportsHeader}>
-                <h1 className="text-[30px] ">Reports</h1>
+                <h1 className="text-[30px] text-center">Reports</h1>
                 <div className={styles.reportsNav}>
                     {navButtons.map((tab) => (
                         <div
@@ -132,10 +132,10 @@ export default function TestsReports(testCode: any) {
             </div>
             {/* Conditional Content Based on Active Tab */}
             <div className={styles.tabContent}>
-                {activeTab === 'Score Card' && reportData && <div><ScoreCard reportData={reportData}/></div>}
+                {activeTab === 'Score Card' && reportData && <div><ScoreCard reportData={reportData} /></div>}
                 {activeTab === 'Solution Report' && headerData && solutionReport && <div><SolutionReports solutionReport={solutionReport} headerData={headerData} /></div>}
-                {activeTab === 'Question Report' && headerData && questionReport && <div><QuestionReports questionReport={questionReport} headerData={headerData}/></div>}
-                {activeTab === 'Compare Yourself' && headerData && topperList &&  <div><CompareYourself topperList={topperList} headerData={headerData}/></div>}
+                {activeTab === 'Question Report' && headerData && questionReport && <div><QuestionReports questionReport={questionReport} headerData={headerData} /></div>}
+                {activeTab === 'Compare Yourself' && headerData && topperList && <div><CompareYourself topperList={topperList} headerData={headerData} /></div>}
             </div>
 
         </div>
