@@ -6,6 +6,7 @@ import adminRoutes from './routes/admin.routes';
 import teacherRoutes from './routes/teacher.routes';
 import studentRoutes from './routes/student.routes';
 import authRoutes from './routes/auth.routes';
+import aiRoutes from './routes/ai.routes';
 import cors from 'cors';
 import loggerMiddleware from './middlewares/logger.middleware';
 
@@ -31,6 +32,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/ai',aiRoutes);
 
 mongoose.connect(ENV.MONGODB_URI || '')
     .then(() => console.log('Connected to MongoDB'))
