@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { Batch } from '../models/batch.model';
 import { User } from '../models/user.model';
+import { Test } from '../models/test.model';
 
 export const AdminController = {
     deleteBatch: async (req: Request, res: Response) => {
@@ -214,7 +215,7 @@ export const AdminController = {
 
             return res.status(200).json({ message: 'Teachers unassigned successfully' });
         } catch (error) {
-            return res.status(500).json({ message: (error as Error).message });
+            return res.status (500).json({ message: (error as Error).message });
         }
     },
     getAllTeachers: async (req: Request, res: Response) => {
@@ -227,6 +228,41 @@ export const AdminController = {
             return res.status(200).json({ teachers });
         } catch (err) {
             return res.status(500).json({ message: (err as Error).message });
+        }
+    },
+    generateReport: async (req: Request, res: Response) => {
+        try {
+            const { year } = req.body;
+            const totalUsers = await User.countDocuments();
+            const adminCount = await User.countDocuments({ role: 'admin' });
+            const teacherCount = await User.countDocuments({ role: 'teacher' });
+            const studentCount = await User.countDocuments({ role: 'student' });
+
+            const batchDetails = await Batch.find({}, 'batchName department branch year');
+            const totalBatches = batchDetails.length;
+
+            const tests = await Test.find({ });
+            // const totalTests = tests.length;
+            const testsForYear = tests.filter(test => test.startTime.getFullYear() === year);
+
+            const testDetails = testsForYear.map(test => ({
+                title: test.title,
+                testCode: test.testCode,
+                date: test.startTime,
+            }));
+
+            return res.status(200).json({
+                totalUsers,
+                adminCount,
+                teacherCount,
+                studentCount,
+                totalBatches,
+                batchDetails,
+                totalTests: testsForYear.length,
+                testDetails,
+            });
+        } catch (error) {
+            return res.status(500).json({ message: (error as Error).message });
         }
     }
 };

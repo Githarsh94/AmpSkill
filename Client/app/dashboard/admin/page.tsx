@@ -10,6 +10,7 @@ import AssignTeacher from '../../../components/AssignTeacher';
 import { fetchAdminProfile } from '../../../Services/admin';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
+import GenerateReport from '../../../components/generate_report';
 
 export default function AdminDashboard() {
 
@@ -47,6 +48,8 @@ export default function AdminDashboard() {
                 return <Batches />;
             case 'AssignTeacher':
                 return <AssignTeacher />;
+            case 'GenerateReport':
+                return <GenerateReport />;
             default:
                 return <Profile />;
         }
@@ -98,6 +101,18 @@ export default function AdminDashboard() {
                         className={styles.icon}
                     />
                     {isSidebarExpanded && <span>Assign Teachers</span>}
+                </button>
+                <button
+                    className={styles.sidebarButton}
+                    onClick={() => setActiveComponent('GenerateReport')}
+                    disabled={isLoading}
+                >
+                    <img
+                        src="/images/generate-report.png"
+                        alt="Generate Report"
+                        className={styles.icon}
+                    />
+                    {isSidebarExpanded && <span>Generate Report</span>}
                 </button>
                 <button
                     className={styles.sidebarButton}

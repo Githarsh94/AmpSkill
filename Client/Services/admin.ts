@@ -35,6 +35,26 @@ export interface IAssignTeachersPayload {
     year: number;
     teachers: { teacher: string; subject: string }[];
 }
+interface ReportData {
+    totalUsers: number;
+    adminCount: number;
+    teacherCount: number;
+    studentCount: number;
+    totalBatches: number;
+    batchDetails: {
+        _id: string;
+        batchName: string;
+        department: string;
+        branch: string;
+        year: number;
+    }[];
+    totalTests: number;
+    testDetails: {
+        title: string;
+        testCode: string;
+        date: string;
+    }[];
+}
 
 
 export const fetchAdminProfile = async (email: string): Promise<profileRequirements> => {
@@ -257,3 +277,29 @@ export const editProfile = async (email: string, name: string) => {
 
     return data;
 }
+
+export const generateReport = async (year: number): Promise<ReportData> => {
+    let idToken = localStorage.getItem('sessionId');
+    if (!idToken) {
+        const user = auth.currentUser;
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+        idToken = await user.getIdToken();
+    }
+    const response = await fetch('/admin/dashboard/generateReport', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ year })
+    });
+    const data = await response.json();
+    console.log(data);
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to generate the report');
+    }
+
+    return data;
+};
