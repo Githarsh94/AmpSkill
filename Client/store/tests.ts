@@ -16,7 +16,7 @@ interface IBatch {
     branch: string;
     year: string;
 }
-interface Test  {
+interface Test {
     title: string;
     description: string;
     questions: IQuestion[]; // Array of questions
@@ -31,14 +31,14 @@ interface Test  {
     isCameraAccessRequired: boolean;
     subjectName: string;
 }
-interface ArrayContent{
+interface ArrayContent {
     test: Test;
     score: number;
     correctAnswers: number;
     incorrectAnswers: number;
     totalQuestions: number;
 }
-interface TestStore{
+interface TestStore {
     activeTests: ArrayContent[];
     upcomingTests: ArrayContent[];
     completedTests: ArrayContent[];
@@ -56,25 +56,25 @@ export const useTestStore = create<TestStore>()(
             completedTests: [],
             missedTests: [],
             setActiveTests: (tests: ArrayContent[]) => set((state) => ({
-                activeTests: [...state.activeTests, ...tests],
+                activeTests: tests,
             })),
             setCompletedTests: (tests: ArrayContent[]) => set((state) => ({
-                completedTests: [...state.completedTests, ...tests],
+                completedTests: tests,
             })),
             setUpcomingTests: (tests: ArrayContent[]) => set((state) => ({
-                upcomingTests: [...state.upcomingTests, ...tests],
+                upcomingTests: tests,
             })),
             setMissedTests: (tests: ArrayContent[]) => set((state) => ({
-                missedTests: [...state.missedTests, ...tests],
+                missedTests: tests
             })),
         }),
-        { 
+        {
             name: 'test-store',
-            partialize: (state) => ({ 
+            partialize: (state) => ({
                 activeTests: state.activeTests,
                 completedTests: state.completedTests,
                 upcomingTests: state.upcomingTests,
-                missedTests: state.missedTests 
+                missedTests: state.missedTests
             }),
         }
     )

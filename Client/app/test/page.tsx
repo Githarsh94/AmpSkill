@@ -66,13 +66,36 @@ export default function TestPage() {
         if (testFlag) {
             document.addEventListener("fullscreenchange", handleFullscreenChange);
             document.addEventListener("visibilitychange", handleVisibilityChange);
+            window.addEventListener("beforeunload", handleBeforeUnload);
+            document.addEventListener("contextmenu", handleContextMenu);
+            document.addEventListener("keydown", handleKeyDown);
             return () => {
                 document.removeEventListener("fullscreenchange", handleFullscreenChange);
                 document.removeEventListener("visibilitychange", handleVisibilityChange);
+                window.removeEventListener("beforeunload", handleBeforeUnload);
+                document.removeEventListener("contextmenu", handleContextMenu);
+                document.removeEventListener("keydown", handleKeyDown);
             };
         }
     }, [testFlag]);
 
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue = '';
+    };
+
+    const handleContextMenu = (e: MouseEvent) => {
+        e.preventDefault();
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.ctrlKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'U' || e.key === 'u' || e.key === 'C' || e.key === 'c')) {
+            e.preventDefault();
+        }
+        if (e.key === 'F12') {
+            e.preventDefault();
+        }
+    };
 
     if (!email) {
         return (
@@ -88,7 +111,7 @@ export default function TestPage() {
                     </button>
                 </div>
             </div>
-        )
+        );
     }
     //write the logic to start the Test and setting up the test data into the state
     const startTest = async () => {

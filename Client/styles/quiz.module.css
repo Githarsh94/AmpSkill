@@ -1,11 +1,11 @@
 .instructionsPage {
     background-color: #ead2ef;
-    height: 100vh;
+    height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 1rem;
 }
 
 .instructionsMain {
@@ -13,7 +13,7 @@
     height: 100%;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 2rem;
     width: 100%;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .instructions {
-    border-radius: 10px;
+    border-radius: 1rem;
     width: 100%;
     font-size: large;
     display: flex;
@@ -32,21 +32,21 @@
     justify-content: center;
     height: 100%;
     background-color: white;
-    padding: 10px;
+    padding: 1rem;
 }
 
 .instructionsBottom {
     display: flex;
     justify-content: center;
     width: 100%;
-    padding: 10px;
+    padding: 1rem;
 }
 
 .instructionsBottom button {
     font-size: larger;
-    padding: 5px;
+    padding: 0.5rem;
     background-color: #cd90d9;
-    border-radius: 5px;
+    border-radius: 0.5rem;
 }
 
 

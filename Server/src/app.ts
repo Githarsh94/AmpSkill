@@ -32,7 +32,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/ai',aiRoutes);
+app.use('/api/ai', aiRoutes);
 
 mongoose.connect(ENV.MONGODB_URI || '')
     .then(() => console.log('Connected to MongoDB'))

@@ -22,7 +22,7 @@ interface IBatch {
     branch: string;
     year: string;
 }
-interface Test  {
+interface Test {
     title: string;
     description: string;
     questions: IQuestion[]; // Array of questions
@@ -37,7 +37,7 @@ interface Test  {
     isCameraAccessRequired: boolean;
     subjectName: string;
 }
-interface ArrayContent{
+interface ArrayContent {
     test: Test;
     score: number;
     correctAnswers: number;
@@ -68,30 +68,26 @@ export default function StudentTests({ setActiveComponent, setTestCode }: Studen
 
         const fetchTests = async () => {
             try {
-            const tests = await fetchAllTests(email);
-            // toast.success(tests.message);
+                const tests = await fetchAllTests(email);
+                // toast.success(tests.message);
 
-            if (JSON.stringify(tests.activeTests) !== JSON.stringify(activeTests)) {
-                setActiveTests([]);
-                setActiveTests(tests.activeTests);
-            }
+                if (JSON.stringify(tests.activeTests) !== JSON.stringify(activeTests)) {
+                    setActiveTests(tests.activeTests);
+                }
 
-            if (JSON.stringify(tests.completedTests) !== JSON.stringify(completedTests)) {
-                setCompletedTests([]);
-                setCompletedTests(tests.completedTests);
-            }
+                if (JSON.stringify(tests.completedTests) !== JSON.stringify(completedTests)) {
+                    setCompletedTests(tests.completedTests);
+                }
 
-            if (JSON.stringify(tests.upcomingTests) !== JSON.stringify(upcomingTests)) {
-                setUpcomingTests([]);
-                setUpcomingTests(tests.upcomingTests);
-            }
+                if (JSON.stringify(tests.upcomingTests) !== JSON.stringify(upcomingTests)) {
+                    setUpcomingTests(tests.upcomingTests);
+                }
 
-            if (JSON.stringify(tests.missedTests) !== JSON.stringify(missedTests)) {
-                setMissedTests([]);
-                setMissedTests(tests.missedTests);
-            }
+                if (JSON.stringify(tests.missedTests) !== JSON.stringify(missedTests)) {
+                    setMissedTests(tests.missedTests);
+                }
             } catch (error) {
-            console.error('Failed to fetch tests:', error);
+                console.error('Failed to fetch tests:', error);
             }
         };
 
