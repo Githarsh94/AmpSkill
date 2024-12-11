@@ -69,8 +69,19 @@ interface QuestionReport {
     noOfQuestions: number;
     questions: IQuestion[];
 }
+
+const LoadingAnim = () => (
+    <div className="flex justify-center items-center h-full">
+        <div className='flex space-x-3 justify-center items-center dark:invert'>
+            <span className='sr-only'>Loading...</span>
+            <div className='h-8 w-8 bg-[#bd6ecd] rounded-full animate-bounce [animation-delay:-0.3s]'></div>
+            <div className='h-8 w-8 bg-[#bd6ecd] rounded-full animate-bounce [animation-delay:-0.15s]'></div>
+            <div className='h-8 w-8 bg-[#bd6ecd] rounded-full animate-bounce'></div>
+        </div>
+    </div>
+);
+
 export default function TestsReports(testCode: any) {
-    // console.log("testCode "+ testCode.testCode);
     const [activeTab, setActiveTab] = useState('Score Card'); // Default active tab
     const [reportData, setReportData] = useState<CompleteScoreCard | null>(null);
     const [headerData, setHeaderData] = useState<HeaderOfAllTabs | null>(null);
@@ -78,7 +89,16 @@ export default function TestsReports(testCode: any) {
     const [solutionReport, setSolutionReport] = useState<SolutionReport | null>(null);
     const [questionReport, setQuestionReport] = useState<QuestionReport | null>(null);
     const [topperList, setTopperList] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [testCodeNotFound, setTestCodeNotFound] = useState(false);
+
     useEffect(() => {
+        if (!testCode.testCode) {
+            setTestCodeNotFound(true);
+            setLoading(false);
+            return;
+        }
+
         const fetchData = async () => {
             try {
                 const data = await fetchTestScoreCard(email, testCode.testCode);
@@ -102,9 +122,10 @@ export default function TestsReports(testCode: any) {
                 if (topper_data) {
                     setTopperList(topper_data);
                 }
-                // console.log(topperList);
+                setLoading(false);
             } catch (error) {
                 console.error(error);
+                setLoading(false);
             }
         };
         fetchData();
@@ -113,31 +134,44 @@ export default function TestsReports(testCode: any) {
     const navButtons = ['Score Card', 'Solution Report', 'Question Report', 'Compare Yourself'];
     return (
         <div className={styles.reportsContainer}>
-            {/* Header Section */}
-            <div className={styles.reportsHeader}>
-                <h1 className="text-[30px] text-center">Reports</h1>
-                <div className={styles.reportsNav}>
-                    {navButtons.map((tab) => (
-                        <div
-                            key={tab}
-                            className={`${styles.navButtonWrapper} ${activeTab === tab ? styles.activeNavButtonWrapper : ''
-                                }`}
-                            onClick={() => setActiveTab(tab)}
-                        >
-                            <button className={styles.navButton}>{tab}</button>
-                            {activeTab === tab && <div className={styles.activeUnderline}></div>}
-                        </div>
-                    ))}
+            {testCodeNotFound ? (
+                <div className="flex justify-center items-center h-full">
+                    <h1 className="text-[30px] text-center">Please access the reports through the completed tests tab</h1>
                 </div>
-            </div>
-            {/* Conditional Content Based on Active Tab */}
-            <div className={styles.tabContent}>
-                {activeTab === 'Score Card' && reportData && <div><ScoreCard reportData={reportData} /></div>}
-                {activeTab === 'Solution Report' && headerData && solutionReport && <div><SolutionReports solutionReport={solutionReport} headerData={headerData} /></div>}
-                {activeTab === 'Question Report' && headerData && questionReport && <div><QuestionReports questionReport={questionReport} headerData={headerData} /></div>}
-                {activeTab === 'Compare Yourself' && headerData && topperList && <div><CompareYourself topperList={topperList} headerData={headerData} /></div>}
-            </div>
-
+            ) : (
+                <>
+                    {/* Header Section */}
+                    <div className={styles.reportsHeader}>
+                        <h1 className="text-[30px] text-center">Reports</h1>
+                        <div className={styles.reportsNav}>
+                            {navButtons.map((tab) => (
+                                <div
+                                    key={tab}
+                                    className={`${styles.navButtonWrapper} ${activeTab === tab ? styles.activeNavButtonWrapper : ''
+                                        }`}
+                                    onClick={() => setActiveTab(tab)}
+                                >
+                                    <button className={styles.navButton}>{tab}</button>
+                                    {activeTab === tab && <div className={styles.activeUnderline}></div>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    {/* Conditional Content Based on Active Tab */}
+                    <div className={loading ? "flex flex-col justify-center items-center h-[60vh]" : styles.tabContent}>
+                        {loading ? (
+                            <LoadingAnim />
+                        ) : (
+                            <>
+                                {activeTab === 'Score Card' && reportData && <ScoreCard reportData={reportData} />}
+                                {activeTab === 'Solution Report' && headerData && solutionReport && <SolutionReports solutionReport={solutionReport} headerData={headerData} />}
+                                {activeTab === 'Question Report' && headerData && questionReport && <QuestionReports questionReport={questionReport} headerData={headerData} />}
+                                {activeTab === 'Compare Yourself' && headerData && topperList && <CompareYourself topperList={topperList} headerData={headerData} />}
+                            </>
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 }

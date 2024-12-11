@@ -48,8 +48,6 @@ export default function TeacherDashboard() {
                 return <div><TeacherBatches /></div>;
             case 'Tests':
                 return <div><TestCreation /></div>;
-            case 'Assignments':
-                return <div>Assignments</div>;
             default:
                 return <Profile />;
         }
@@ -88,18 +86,6 @@ export default function TeacherDashboard() {
                         className={styles.icon}
                     />
                     {isSidebarExpanded && <span>Batches</span>}
-                </button>
-                <button
-                    className={styles.sidebarButton}
-                    onClick={() => setActiveComponent('Assignments')}
-                    disabled={isLoading}
-                >
-                    <img
-                        src="/images/Assingments.png"
-                        alt="Assign Teachers"
-                        className={styles.icon}
-                    />
-                    {isSidebarExpanded && <span>Assignments</span>}
                 </button>
                 <button
                     className={styles.sidebarButton}

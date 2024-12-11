@@ -52,13 +52,40 @@
 
 /*quizPage css*/
 
+.questionNumberBar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 5%;
+    padding: 1rem;
+    background-color: #ead2ef;
+    border-radius: 1rem;
+}
+
+.questionNumberBar button {
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    background-color: #cd90d9;
+    border-radius: 0.5rem;
+}
+
+.questionNumberBar button:hover {
+    background-color: #e47bde;
+}
+
+.questionNumberBar button:active {
+    background-color: #b85dbf;
+}
+
 .quizPage {
     height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 20px 0 20px;
+    padding: 1.5rem 1.5rem 0 1.5rem;
     gap: 15px;
 }
 
