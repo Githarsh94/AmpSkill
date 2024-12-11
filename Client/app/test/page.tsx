@@ -60,8 +60,7 @@ export default function TestPage() {
             endTest();
         }
     }, [timeLeft, testFlag]);
-
-    // logic to keep on checking for fullscreen and tab switch
+    // logic to keep on checking for fullscreen, tab switch, and blur event
     useEffect(() => {
         if (testFlag) {
             document.addEventListener("fullscreenchange", handleFullscreenChange);
@@ -69,12 +68,17 @@ export default function TestPage() {
             window.addEventListener("beforeunload", handleBeforeUnload);
             document.addEventListener("contextmenu", handleContextMenu);
             document.addEventListener("keydown", handleKeyDown);
+            window.addEventListener("blur", handleVisibilityChange);
+            window.history.pushState(null, '', window.location.href);
+            window.addEventListener("popstate", handlePopState);
             return () => {
                 document.removeEventListener("fullscreenchange", handleFullscreenChange);
                 document.removeEventListener("visibilitychange", handleVisibilityChange);
                 window.removeEventListener("beforeunload", handleBeforeUnload);
                 document.removeEventListener("contextmenu", handleContextMenu);
                 document.removeEventListener("keydown", handleKeyDown);
+                window.removeEventListener("blur", handleVisibilityChange);
+                window.removeEventListener("popstate", handlePopState);
             };
         }
     }, [testFlag]);
@@ -92,9 +96,13 @@ export default function TestPage() {
         if (e.ctrlKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'U' || e.key === 'u' || e.key === 'C' || e.key === 'c')) {
             e.preventDefault();
         }
-        if (e.key === 'F12') {
+        if (e.key === 'F12' || e.key === 'Escape') {
             e.preventDefault();
         }
+    };
+
+    const handlePopState = () => {
+        window.history.pushState(null, '', window.location.href);
     };
 
     if (!email) {
@@ -116,7 +124,6 @@ export default function TestPage() {
     //write the logic to start the Test and setting up the test data into the state
     const startTest = async () => {
         try {
-            console.log(email, testCode);
             const fetchedTest = await fetchTest(email as string, testCode as string);
             setTestFlag(fetchedTest);
             setCurrentQuestionIndex(fetchedTest.questions[0].s_no - 1);
@@ -125,7 +132,7 @@ export default function TestPage() {
         }
         catch (err) {
             console.log(err);
-            throw new Error('Failed to start test');
+            throw new Error((err as Error).message);
         }
     }
 
@@ -278,91 +285,106 @@ export default function TestPage() {
         );
     }
     return (
-        <div className={styles.quizPage}>
-            <div className={styles.quizPageTop}>
-                <h1>{testFlag.title}</h1>
-                <div className={styles.warningCounter}>
-                    <h2>Warning Count: {warningCount}</h2>
-                </div>
-                <div className={styles.timer}>
-                    <h2>Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</h2>
-                </div>
+        <div className="flex h-full w-full">
+            <div className={styles.questionNumberBar}>
+                {testFlag.questions.map((question, index) => (
+                    <button
+                        key={index}
+                        className={styles.questionNumber}
+                        onClick={() => setCurrentQuestionIndex(index)}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
             </div>
-            <div className={styles.quizPageMain}>
-                <h1>Question {currentQuestionIndex + 1}
-                    <br />
-                    <span>{testFlag.questions[currentQuestionIndex].question}</span>
-                </h1>
-                <div className={styles.options}>
-                    <label>
-                        <input
-                            type="radio"
-                            name="option"
-                            value="Op1"
-                            checked={selectedAnswers[currentQuestionIndex] === 'Op1'}
-                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op1')}
-                        />
-                        {testFlag.questions[currentQuestionIndex].op1}
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="option"
-                            value="Op2"
-                            checked={selectedAnswers[currentQuestionIndex] === 'Op2'}
-                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op2')}
-                        />
-                        {testFlag.questions[currentQuestionIndex].op2}
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="option"
-                            value="Op3"
-                            checked={selectedAnswers[currentQuestionIndex] === 'Op3'}
-                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op3')}
-                        />
-                        {testFlag.questions[currentQuestionIndex].op3}
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="option"
-                            value="Op4"
-                            checked={selectedAnswers[currentQuestionIndex] === 'Op4'}
-                            onChange={() => enterTheAnswer(currentQuestionIndex, 'Op4')}
-                        />
-                        {testFlag.questions[currentQuestionIndex].op4}
-                    </label>
+            <div className={styles.quizPage}>
+                <div className={styles.quizPageTop}>
+                    <h1>{testFlag.title}</h1>
+                    <div className={styles.warningCounter}>
+                        <h2>Warning Count: {warningCount}</h2>
+                    </div>
+                    <div className={styles.timer}>
+                        <h2>Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</h2>
+                    </div>
                 </div>
+                <div className={styles.quizPageMain}>
+                    <h1>Question {currentQuestionIndex + 1}
+                        <br />
+                        <span>{testFlag.questions[currentQuestionIndex].question}</span>
+                    </h1>
+                    <div className={styles.options}>
+                        <label>
+                            <input
+                                type="radio"
+                                name="option"
+                                value="Op1"
+                                checked={selectedAnswers[currentQuestionIndex] === 'Op1'}
+                                onChange={() => enterTheAnswer(currentQuestionIndex, 'Op1')}
+                            />
+                            {testFlag.questions[currentQuestionIndex].op1}
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="option"
+                                value="Op2"
+                                checked={selectedAnswers[currentQuestionIndex] === 'Op2'}
+                                onChange={() => enterTheAnswer(currentQuestionIndex, 'Op2')}
+                            />
+                            {testFlag.questions[currentQuestionIndex].op2}
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="option"
+                                value="Op3"
+                                checked={selectedAnswers[currentQuestionIndex] === 'Op3'}
+                                onChange={() => enterTheAnswer(currentQuestionIndex, 'Op3')}
+                            />
+                            {testFlag.questions[currentQuestionIndex].op3}
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="option"
+                                value="Op4"
+                                checked={selectedAnswers[currentQuestionIndex] === 'Op4'}
+                                onChange={() => enterTheAnswer(currentQuestionIndex, 'Op4')}
+                            />
+                            {testFlag.questions[currentQuestionIndex].op4}
+                        </label>
+                    </div>
+                </div>
+                <div className={styles.quizPageBottom}>
+                    {currentQuestionIndex > 0 && (
+                        <button
+                            onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                        >
+                            Back
+                        </button>
+                    )}
+                    <button onClick={endTest}>Submit</button>
+                    {currentQuestionIndex < testFlag.questions.length - 1 && (
+                        <button
+                            onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                        >
+                            Next
+                        </button>
+                    )}
+                </div>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
+                />
             </div>
-            <div className={styles.quizPageBottom}>
-                <button
-                    onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-                    disabled={testFlag && currentQuestionIndex <= 0}
-                >
-                    Back
-                </button>
-                <button onClick={endTest}>Submit</button>
-                <button
-                    onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-                    disabled={testFlag && currentQuestionIndex >= testFlag.questions.length - 1}
-                >
-                    Next
-                </button>
-            </div>
-            <ToastContainer
-                position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
-            />
         </div>
     )
 }

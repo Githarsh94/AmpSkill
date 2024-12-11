@@ -13,6 +13,7 @@ export default function SignUp() {
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [role, setRole] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const router = useRouter();
 
     const handleGoogleSignUp = async (role: string) => {
@@ -90,16 +91,31 @@ export default function SignUp() {
                         type="email"
                         placeholder="Email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                         className={styles.input}
                     />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className={styles.input}
-                    />
+                    <div className="flex min-w-[350px]">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={styles.input}
+                        />
+                        {showPassword ? (
+                            <img className='cursor-pointer'
+                                src="https://fonts.gstatic.com/s/i/materialicons/visibility/v6/24px.svg"
+                                onClick={() => setShowPassword(false)}
+                                alt="Show Password"
+                            />
+                        ) : (
+                            <img className='cursor-pointer'
+                                src="https://fonts.gstatic.com/s/i/materialicons/visibility_off/v6/24px.svg"
+                                onClick={() => setShowPassword(true)}
+                                alt="Hide Password"
+                            />
+                        )}
+                    </div>
                     <div className={styles.roleSelection}>
                         <label>
                             <input

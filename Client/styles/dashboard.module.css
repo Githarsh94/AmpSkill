@@ -425,6 +425,7 @@
 /* TestReports section css */
 .reportsContainer {
     max-width: 1200px;
+    height: fit-content;
     margin: 20px auto;
     padding: 20px;
     background: #ead2ef;

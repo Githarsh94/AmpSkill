@@ -33,9 +33,14 @@ export default function SolutionReports({ solutionReport, headerData }: { soluti
         question: IQuestion,
         userAnswer: string | null
     ) => {
-        if (`Op${optionKey.slice(-1)}` === question.ans) {
-            return { color: 'green', fontWeight: 'bold', symbol: '✔️' }; // Correct answer
-        } else if (`Op${optionKey.slice(-1)}` === userAnswer) {
+        const isCorrectAnswer = `Op${optionKey.slice(-1)}` === question.ans;
+        const isUserAnswer = `Op${optionKey.slice(-1)}` === userAnswer;
+
+        if (isCorrectAnswer && isUserAnswer) {
+            return { color: 'green', fontWeight: 'bold', symbol: '✔️' }; // Correct user answer
+        } else if (isCorrectAnswer) {
+            return { color: 'green', fontWeight: 'bold', symbol: '' }; // Correct answer
+        } else if (isUserAnswer) {
             return { color: 'red', fontWeight: 'bold', symbol: '❌' }; // Incorrect user answer
         }
         return { color: 'black', symbol: '' }; // Neutral
