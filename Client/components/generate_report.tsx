@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import 'tailwindcss/tailwind.css';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { generateReport } from '../Services/admin';
