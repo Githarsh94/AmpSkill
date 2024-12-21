@@ -82,9 +82,9 @@ export const AdminController = {
         }
     },
     profile: async (req: Request, res: Response) => {
-        const { email } = req.body.email;
+        const email = req.body.email;
         try {
-            const user = await User.findOne(email);
+            const user = await User.findOne({ email });
             const batches = await Batch.find();
             const teachers = await User.find({ role: 'teacher' });
             const students = await User.find({ role: 'student' });
@@ -215,7 +215,7 @@ export const AdminController = {
 
             return res.status(200).json({ message: 'Teachers unassigned successfully' });
         } catch (error) {
-            return res.status (500).json({ message: (error as Error).message });
+            return res.status(500).json({ message: (error as Error).message });
         }
     },
     getAllTeachers: async (req: Request, res: Response) => {
@@ -241,7 +241,7 @@ export const AdminController = {
             const batchDetails = await Batch.find({}, 'batchName department branch year');
             const totalBatches = batchDetails.length;
 
-            const tests = await Test.find({ });
+            const tests = await Test.find({});
             // const totalTests = tests.length;
             const testsForYear = tests.filter(test => test.startTime.getFullYear() === year);
 

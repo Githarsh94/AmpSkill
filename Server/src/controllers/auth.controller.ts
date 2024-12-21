@@ -16,8 +16,12 @@ export const AuthController = {
             }
 
             // Sign up the user with Firebase
-            const firebaseUser = await AuthService.signUpWithEmail(email, password);
+            const firebaseUser = await AuthService.signUpWithEmail(email, password) || null;
             // console.log(firebaseUser);
+
+            if (!firebaseUser) {
+                return res.status(400).json({ message: 'There was an error signing you up, please try again after sometime.' });
+            }
             // Store the new user in MongoDB
             const newUser = new User({
                 uid: firebaseUser.user.uid,
@@ -129,7 +133,6 @@ export const AuthController = {
 
             // Extract user info from token
             const { email } = decodedToken;
-
             // Find the user in the database
             const existingUser = await User.findOne({ email });
 

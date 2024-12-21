@@ -26,12 +26,12 @@ export default function AdminDashboard() {
         const loadProfile = async () => {
             setIsLoading(true);
             try {
-                const userProfile = await fetchAdminProfile(email!);
+                const userProfile = await fetchAdminProfile(email);
                 setUserAndDetails(userProfile);
             } catch (error) {
                 //  console.error(error);
                 toast.error((error as Error).message);
-                router.push('/login');
+                setTimeout(() => router.push('/login'), 3000);
             } finally {
                 setIsLoading(false);
             }

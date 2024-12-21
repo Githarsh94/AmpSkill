@@ -6,8 +6,8 @@ import { isAdmin } from '../middlewares/isAdmin.middleware';
 
 const router = Router();
 
-// router.use(AuthMiddleware);
-// router.use(isAdmin);
+router.use(AuthMiddleware);
+router.use(isAdmin);
 
 router.post('/dashboard/assignTeachers', AdminController.assignTeachersToBatch);
 router.post('/dashboard/unassignTeachers', AdminController.unassignTeachersFromBatch);
@@ -17,5 +17,5 @@ router.post('/dashboard/getBatches', AdminController.getBatches);
 router.post('/dashboard/deleteBatch', AdminController.deleteBatch);
 router.get('/dashboard/getAllTeachers', AdminController.getAllTeachers);
 router.post('/dashboard/editUsername', AdminController.editProfile);
-router.post('/dashboard/generateReport',AdminController.generateReport);
+router.post('/dashboard/generateReport', AdminController.generateReport);
 export default router;
